@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ctr : MonoBehaviour {
+public class NavigationCtr : MonoBehaviour {
 	[SerializeField]
 	private NavMeshAgent m_agent;
 
