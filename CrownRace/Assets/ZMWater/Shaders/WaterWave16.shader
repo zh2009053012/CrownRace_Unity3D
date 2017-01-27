@@ -51,7 +51,7 @@
 			float4 _Dz0,_Dz1,_Dz2,_Dz3;
 			float4 _W0,_W1,_W2,_W3;
 			float4 _Params;//x:reflect  y:refract  z:spec tweek  w:spec power
-			float3 _SunRadiance;
+			//float3 _SunRadiance;
 			//
 			sampler2D _BumpTex;
 			float _BumpStrength;
@@ -311,8 +311,7 @@
 				reflUV = reflect( viewVector, worldNormal);
 				float dotRS = dot(reflUV, normalize(_WorldSpaceLightPos0.xyz));
 				float spec = pow( saturate(dotRS), _Params.w);
-				result.xyz += spec*_SunRadiance ;//+ blurH + blurV;
-				//result.xyz = reflectionColor.xyz;
+				result.xyz += spec ;//+ blurH + blurV;
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, result);
 				return result;

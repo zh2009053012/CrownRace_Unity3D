@@ -18,10 +18,11 @@ public class RollTheDice : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		if (null == m_rigidbody) {
-			m_rigidbody = GetComponent<Rigidbody> ();
+			m_rigidbody = GetComponentInChildren<Rigidbody> ();
 		}
+		m_rigidbody.gameObject.SetActive(false);
 		Random.seed = GetTimeStamp ();
 	}
 
@@ -34,46 +35,62 @@ public class RollTheDice : MonoBehaviour {
 	public void Roll(float force)
 	{
 		if (null != m_rigidbody) {
-			m_isRollOver = false;
+			m_rigidbody.gameObject.SetActive(true);
 			m_rigidbody.AddForce (RandomVector3()*m_rigidbody.mass*force);
 			m_rigidbody.AddTorque (RandomVector3 () * 5000);
-
+			m_isRollOver = false;
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyUp (KeyCode.R) && null != m_rigidbody ) {
-			Roll(Random.Range(10000, 20000));
-		}
-		if (m_rigidbody.velocity.sqrMagnitude < 0.01f) {
+//		if (Input.GetKeyUp (KeyCode.R) && null != m_rigidbody ) {
+//			Roll(Random.Range(10000, 20000));
+//		}
+		if (!m_isRollOver && m_rigidbody.velocity.sqrMagnitude < 0.001f) {
 			
 			if (null != m_rollOverCallback) {
-				m_rollOverCallback.Invoke (GetNumber());
+				uint num = GetNumber();
+				Debug.Log("roll end"+num);
+				m_rollOverCallback.Invoke (num);
 			}
 			m_isRollOver = true;
+			StartCoroutine(HideSelf(2));
+
 		}
+	}
+	IEnumerator HideSelf(float second)
+	{
+		yield return new WaitForSeconds(second);
+		m_rigidbody.gameObject.SetActive(false);
 	}
 	uint GetNumber()
 	{
-		if (Vector3.Dot (transform.up, Vector3.up) > 0.9f) {
+		if (Vector3.Dot (m_rigidbody.transform.up, Vector3.up) > 0.9f) {
 			return 5;
 		}
-		if (Vector3.Dot (-transform.up, Vector3.up) > 0.9f) {
+		if (Vector3.Dot (-m_rigidbody.transform.up, Vector3.up) > 0.9f) {
 			return 2;
 		}
-		if (Vector3.Dot (transform.right, Vector3.up) > 0.9f) {
+		if (Vector3.Dot (m_rigidbody.transform.right, Vector3.up) > 0.9f) {
 			return 4;
 		}
-		if (Vector3.Dot (-transform.right, Vector3.up) > 0.9f) {
+		if (Vector3.Dot (-m_rigidbody.transform.right, Vector3.up) > 0.9f) {
 			return 3;
 		}
-		if (Vector3.Dot (transform.forward, Vector3.up) > 0.9f) {
+		if (Vector3.Dot (m_rigidbody.transform.forward, Vector3.up) > 0.9f) {
 			return 1;
 		}
-		if (Vector3.Dot (-transform.forward, Vector3.up) > 0.9f) {
+		if (Vector3.Dot (-m_rigidbody.transform.forward, Vector3.up) > 0.9f) {
 			return 6;
 		}
+		Debug.Log(Vector3.Dot (m_rigidbody.transform.up, Vector3.up));
+		Debug.Log(Vector3.Dot (-m_rigidbody.transform.up, Vector3.up));
+		Debug.Log(Vector3.Dot (m_rigidbody.transform.right, Vector3.up));
+		Debug.Log(Vector3.Dot (-m_rigidbody.transform.right, Vector3.up));
+		Debug.Log(Vector3.Dot (m_rigidbody.transform.forward, Vector3.up));
+		Debug.Log(Vector3.Dot (-m_rigidbody.transform.forward, Vector3.up));
+
 		return 0;
 	}
 

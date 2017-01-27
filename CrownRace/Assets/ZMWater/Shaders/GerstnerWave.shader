@@ -39,8 +39,6 @@
 			{
 				float3 screenPos:TEXCOORD0;
 				float3 worldPos:TEXCOORD1;
-				//float3 reflUV:TEXCOORD1;
-				//float3 worldNormal:TEXCOORD2;
 				
 				UNITY_FOG_COORDS(2)
 				float4 vertex : SV_POSITION;
@@ -143,9 +141,7 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.screenPos = ComputeScreenPos(mul(_RefractCameraVP, float4(worldPos, 1))).xyw;
 				//o.screenPos = ComputeScreenPos(o.vertex).xyw;
-				//o.reflUV = reflect( normalize(worldPos-_WorldSpaceCameraPos.xyz), worldNormal);
 				o.worldPos = worldPos;
-				//o.worldNormal = worldNormal;
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
@@ -153,7 +149,6 @@
 			float4 frag (v2f i) : SV_Target
 			{
 				float4 result = float4(0,0,0,1);
-				// sample the texture
 				
 				float3 viewVector = normalize(i.worldPos - _WorldSpaceCameraPos.xyz);
 				float3 worldNormal = CalculateWavesNormal(i.worldPos);
@@ -165,10 +160,9 @@
 				float3 reflUV = reflect( normalize(i.worldPos-_WorldSpaceCameraPos.xyz), worldNormal);
 				float3 skyColor = texCUBE(_Skybox, reflUV);
 				
-				reflectionColor.xyz = lerp(skyColor, reflectionColor.xyz, reflectionColor.a);//reflectionColor.xyz+(1-reflectionColor.a)*skyColor;
+				reflectionColor.xyz = lerp(skyColor, reflectionColor.xyz, reflectionColor.a);
 				
 				result.xyz = lerp(refractionColor.xyz, reflectionColor.xyz, fresnel);
-				//result.xyz = reflectionColor.xyz;
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, result);
 				return result;
