@@ -40,12 +40,18 @@ public class ServerDealSystem {
 
 	static void DoLoginReq(int player_id, byte[] data)
 	{
+		
 		login_req req = NetUtils.Deserialize<login_req> (data);
 		Debug.Log ("server:receive login req:"+req.name+","+req.res_name);
 		login_ack ack = new login_ack ();
 		ack.player_id = player_id;
 		//cd.SendData<login_ack> (NET_CMD.LOGIN_ACK_CMD, ack);
 		TcpListenerHelper.Instance.clientsContainer.SendToClient<login_ack>(player_id, NET_CMD.LOGIN_ACK_CMD, ack);
+		object[] p = new object[3];
+		p[0] = (object)player_id;
+		p[1] = (object)TcpListenerHelper.Instance.clientsContainer.GetClientIP(player_id);
+		p[2] = (object)"PlayerA";
+		GameStateManager.Instance().FSM.CurrentState.Message("NewClientAdd", p);
 	}
 
 	public static void NotifyClientLeave(int player_id)

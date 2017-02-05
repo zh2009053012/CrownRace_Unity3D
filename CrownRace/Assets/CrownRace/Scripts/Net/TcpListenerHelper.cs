@@ -39,7 +39,7 @@ public class ClientData{
 				byte[] data;
 				if (NetUtils.ReceiveVarData (stream, out data)) {
 					Debug.Log ("receive data from client:" + id);
-				
+					TcpListenerHelper.Instance.AddReceiveDataToBufferList(id, data);
 				} else {
 					//close client and tell other clients that this one is disconnected from server.
 					Debug.Log("Receive:close client "+id);
@@ -100,6 +100,19 @@ public class ClientsContainer{
 	object lockClient = new object();
 
 	public ClientsContainer(){
+	}
+
+	public string GetClientIP(int player_id)
+	{
+		lock(lockClient)
+		{
+			foreach (ClientData cd in clientList) {
+				if (cd.id == player_id) {
+					return cd.client.Client.LocalEndPoint.ToString();
+				}
+			}
+		}
+		return "";
 	}
 
 	public bool SetClientTimeStamp(int player_id, ulong timestamp){
@@ -261,26 +274,42 @@ public class TcpListenerHelper : MonoBehaviour {
 
 	#region listen client connect
 	public ClientsContainer clientsContainer = new ClientsContainer();
+	private IPAddress serverIP;
+	public string ServerIP{
+		get{return serverIP.ToString();}
+	}
 	Thread connectThread;
 
 	public bool StartListen()
 	{
 		try{
-			//server = new TcpListener (NetUtils.GetInternalIP(), 8000);
-			server = new TcpListener(NetUtils.GetInternalIP(), 8000);
+			serverIP = NetUtils.GetInternalIP();
+			server = new TcpListener(serverIP, 8000);
 			server.Start ();
-		}catch(SocketException err) {
+		}catch(Exception err) {
 			Debug.Log ("start server failed."+err.Message);
 			return false;
 		}
 		Debug.Log("Waiting for a client...");
 		connectThread = new Thread (new ThreadStart(WaitForConcept));
 		connectThread.Start ();
-		receiveDataThread = new Thread (new ThreadStart (DoClientRequest));
-		receiveDataThread.Start ();
+//		receiveDataThread = new Thread (new ThreadStart (DoClientRequest));
+//		receiveDataThread.Start ();
 		sendTickThread = new Thread (new ThreadStart(SendTickToClient));
 		sendTickThread.Start ();
 		return true;
+	}
+	public void Close()
+	{
+		clientsContainer.CloseAllClient ();
+		if(null != connectThread)
+			connectThread.Abort ();
+//		if (null != receiveDataThread)
+//			receiveDataThread.Abort ();
+		if (null != sendTickThread)
+			sendTickThread.Abort ();
+		if(null != server)
+			server.Stop();
 	}
 		
 	void WaitForConcept()
@@ -319,7 +348,7 @@ public class TcpListenerHelper : MonoBehaviour {
 	private LinkedList<ReceiveClientData> receiveDataBufferList = new LinkedList<ReceiveClientData>();
 	private LinkedList<ReceiveClientData> receiveDataProcessList = new LinkedList<ReceiveClientData>();
 	private object receiveDataLock = new object();
-	private Thread receiveDataThread;
+	//private Thread receiveDataThread;
 
 	public void AddReceiveDataToBufferList(int player_id, byte[] data)
 	{
@@ -327,27 +356,26 @@ public class TcpListenerHelper : MonoBehaviour {
 			receiveDataBufferList.AddLast (new ReceiveClientData(player_id, data));
 		}
 	}
-
-	void DoClientRequest()
+	//should be called by main thread
+	void DealReceiveData()
 	{
-		while (true) {
-			if (receiveDataBufferList.Count > 0) {
-				lock (receiveDataLock) {
-					foreach (ReceiveClientData item in receiveDataBufferList) {
-						receiveDataProcessList.AddLast (item);
-					}
-					receiveDataBufferList.Clear ();
+
+		if (receiveDataBufferList.Count > 0) {
+			lock (receiveDataLock) {
+				foreach (ReceiveClientData item in receiveDataBufferList) {
+					receiveDataProcessList.AddLast (item);
 				}
-				foreach (ReceiveClientData item in receiveDataProcessList) {
-					//call by other model
-					if (item != null) {
-						ServerDealSystem.DoClientReq (item);
-					}
-				}
-				receiveDataProcessList.Clear ();
+				receiveDataBufferList.Clear ();
 			}
-			Thread.Sleep (100);
+			foreach (ReceiveClientData item in receiveDataProcessList) {
+				//call by other model
+				if (item != null) {
+					ServerDealSystem.DoClientReq (item);
+				}
+			}
+			receiveDataProcessList.Clear ();
 		}
+
 	}
 
 	#endregion
@@ -391,17 +419,14 @@ public class TcpListenerHelper : MonoBehaviour {
 
 	#endregion
 
+	void Update()
+	{
+		DealReceiveData();
+	}
+
 	void OnApplicationQuit()
 	{
 		Debug.Log("quit");
-		clientsContainer.CloseAllClient ();
-		if(null != connectThread)
-			connectThread.Abort ();
-		if (null != receiveDataThread)
-			receiveDataThread.Abort ();
-		if (null != sendTickThread)
-			sendTickThread.Abort ();
-		if(null != server)
-			server.Stop();
+		Close();
 	}
 }

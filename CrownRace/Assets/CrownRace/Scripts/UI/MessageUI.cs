@@ -7,6 +7,12 @@ public class MessageUI : MonoBehaviour {
 	[SerializeField]
 	private Text m_message;
 	private VoidEvent m_callback;
+
+	void Awake()
+	{
+		gameObject.SetActive(false);
+	}
+
 	public void ShowMessage(string message, float seconds, VoidEvent callback=null)
 	{
 		gameObject.SetActive(true);
