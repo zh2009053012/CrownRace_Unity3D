@@ -55,8 +55,8 @@ public class RollTheDice : MonoBehaviour {
 				m_rollOverCallback.Invoke (num);
 			}
 			m_isRollOver = true;
-			StartCoroutine(HideSelf(2));
-
+			//StartCoroutine(HideSelf(2));
+			m_rigidbody.gameObject.SetActive(false);
 		}
 	}
 	IEnumerator HideSelf(float second)
