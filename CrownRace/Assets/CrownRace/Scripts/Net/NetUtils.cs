@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System;
+using System.Net.NetworkInformation;
 
 public class NetUtils {
 
@@ -18,20 +19,53 @@ public class NetUtils {
 		IPHostEntry host;
 		IPAddress localIP = null;
 		host = Dns.GetHostEntry(Dns.GetHostName());
+		string gateway = GetGateway ();
 
 		foreach(IPAddress ip in host.AddressList)
 		{
-			if(ip.AddressFamily.ToString() == "InterNetwork" &&
-				!ip.ToString().StartsWith("169.254."))
+			if(ip.AddressFamily.ToString() == "InterNetwork" && ip.ToString().StartsWith("192.168."))
 			{
-				localIP = ip;
-				break;
+				if (string.IsNullOrEmpty (gateway)) {
+					localIP = ip;
+					break;
+				} else {
+					string[] masks = gateway.Split ('.');
+					string mask = masks [0] + "." + masks [1] + "." + masks [2] + ".";
+					if (ip.ToString ().StartsWith (mask)) {
+						localIP = ip;
+						break;
+					}
+				}
 			}
 		}
 		Debug.Log (localIP);
 		return localIP;
 	}
-		
+
+	public static string GetGateway()
+	{
+		NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
+		foreach (NetworkInterface item in nics) {
+			IPInterfaceProperties property = item.GetIPProperties ();
+			GatewayIPAddressInformationCollection gateways = property.GatewayAddresses;
+			foreach (GatewayIPAddressInformation gateway in gateways) {
+				if(gateway.Address.ToString().StartsWith("192.168."))
+					return gateway.Address.ToString ();
+			}
+		}
+		return "";
+	}
+
+	public static bool PingIP(string ip)
+	{
+		try{
+			System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping ();
+			PingReply reply = ping.Send (ip, 1000);
+			return true;
+		}catch{
+			return false;
+		}
+	}
 
 	public static byte[] Serialize(IExtensible msg)
 	{

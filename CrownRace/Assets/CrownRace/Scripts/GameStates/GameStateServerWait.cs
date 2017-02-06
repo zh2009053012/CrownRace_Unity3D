@@ -32,6 +32,7 @@ public class GameStateServerWait : IStateBase {
 		GameObject messageUIPrefab = Resources.Load("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate(messageUIPrefab);
 		messageUI = messageUIGO.GetComponent<MessageUI>();
+		messageUI.Init ();
 		//
 		playerItemPrefab = Resources.Load("UI/PlayerItemUI")as GameObject;
 		//
@@ -39,26 +40,9 @@ public class GameStateServerWait : IStateBase {
 		GameObject go = GameObject.Instantiate (prefab);
 		ctr = go.GetComponent<GameServerUI> ();
 		//
-		if(TcpListenerHelper.Instance.StartListen())
-		{
-			ctr.ServerIP = TcpListenerHelper.Instance.ServerIP;
-		}else{
-			messageUI.ShowMessage("开启服务器失败", 3, DoBackToStart);
-		}
-		//
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.LOGIN_ACK_CMD, LoginAck, "LoginAck");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq, "HeartbeatReq");
-		if(TcpClientHelper.Instance.Connect(TcpListenerHelper.Instance.ServerIP, 8000))
-		{
-			Debug.Log("connect server success.");
-			login_req req = new login_req();
-			req.name = "";
-			req.res_name = "";
-			TcpClientHelper.Instance.SendData<login_req>(NET_CMD.LOGIN_REQ_CMD, req);
-			Debug.Log("send login req");
-		}else{
-			Debug.Log("connect server failed.");
-		}
+
 	}
 
 	public void Execute(GameStateBase owner)
@@ -68,6 +52,7 @@ public class GameStateServerWait : IStateBase {
 
 	public void Exit(GameStateBase owner)
 	{
+		Debug.Log ("exit GameStateServerWait");
 		if (null != ctr && null != ctr.gameObject) {
 			GameObject.Destroy (ctr.gameObject);
 		}
@@ -75,29 +60,78 @@ public class GameStateServerWait : IStateBase {
 
 	public void Message(string message, object[] parameters)
 	{
-		if(message.Equals("BackToStart"))
-		{
-			DoBackToStart();
-		}else if(message.Equals("StartGame"))
-		{
+		if (message.Equals ("BackToStart")) {
+			DoBackToStart ();
+		} else if (message.Equals ("StartGame")) {
 			
-		}else if(message.Equals("NewClientAdd"))
-		{
-			DoNewClientAdd(parameters);
+		} else if (message.Equals ("NewClientAdd")) {
+			DoNewClientAdd (parameters);
+		} else if (message.Equals ("StartServer")) {
+			DoStartServer (parameters);
 		}
 	}
+	void DoStartServer(object[] p)
+	{
+		string ipstr = (string)p [0];
+		string endpointstr = (string)p [1];
+		IPAddress ip;
+		int port;
+		if (IPAddress.TryParse (ipstr, out ip) &&
+			int.TryParse (endpointstr, out port)) {
+			DoRealStartServer (ip, port);
+		} else {
+			ip = NetUtils.GetInternalIP ();
+			port = 8000;
+			ctr.ServerIP = ip.ToString ();
+			ctr.ServerPort = port.ToString();
+			DoRealStartServer (ip, port);
+		}
+	}
+
+	void DoRealStartServer(IPAddress ip, int port)
+	{
+		if(TcpListenerHelper.Instance.StartListen(ip, port))
+		{
+			ctr.SetReadOnlyIPInput (true);
+			ctr.SetStartBtnEnable (false);
+			DoClientConnectToServer ();
+		}else{
+			messageUI.ShowMessage ("服务器启动失败,请检查ip地址是否正确.", 5);
+		}
+
+	}
+	void DoClientConnectToServer()
+	{
+		if(TcpClientHelper.Instance.Connect(TcpListenerHelper.Instance.ServerIP, TcpListenerHelper.Instance.Port))
+		{
+			Debug.Log("connect server success.");
+			login_req req = new login_req();
+			req.name = "";
+			req.res_name = "";
+			TcpClientHelper.Instance.SendData<login_req>(NET_CMD.LOGIN_REQ_CMD, req);
+		}else{
+			messageUI.ShowMessage ("客户端连接失败!", DoBackToStart);
+		}
+	}
+
 	void DoNewClientAdd(object[] p)
 	{
 		int player_id = (int)p[0];
 		string client_ip = (string)p[1];
 		string resource_name = (string)p[2];
+		Debug.Log ("DoNewClientAdd:"+player_id+","+client_ip+","+resource_name);
 		GameObject go = GameObject.Instantiate(playerItemPrefab);
 		go.transform.parent = ctr.gridGroupCtr.transform;
 		go.transform.localScale = Vector3.one;
+		PlayerItemUI playerItemUI = go.GetComponent<PlayerItemUI> ();
+		string[] ep = client_ip.Split (':');
+		playerItemUI.SetInfo (resource_name, ep.Length>0?ep[0]:"");
 	}
 
 	void DoBackToStart()
 	{
+		Debug.Log ("DoBackToStart");
+		TcpClientHelper.Instance.Close ();
 		TcpListenerHelper.Instance.Close();
 		GameStateManager.Instance().FSM.ChangeState(GameStateStart.Instance());
 	}

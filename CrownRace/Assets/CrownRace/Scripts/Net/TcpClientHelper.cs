@@ -35,7 +35,6 @@ public class TcpClientHelper : MonoBehaviour {
 	NetworkStream stream;
 
 	#region receive message
-	Thread receiveThread;
 
 	private Dictionary<NET_CMD, List<MessageEvent>> map = new Dictionary<NET_CMD, List<MessageEvent>>();
 	private object lockMap = new object();
@@ -87,12 +86,14 @@ public class TcpClientHelper : MonoBehaviour {
 		return true;
 	}
 	//
+	Thread receiveThread;
+	bool isReceiveThreadAlive;
 	private LinkedList<byte[]> receiveDataBufferList = new LinkedList<byte[]>();
 	private LinkedList<byte[]> receiveDataProcessList = new LinkedList<byte[]>();
 	private object receiveDataLock = new object();
 	void Receive()
 	{
-		while(true)
+		while(isReceiveThreadAlive)
 		{
 			Debug.Log ("do receive");
 			if (stream.CanRead) {
@@ -102,6 +103,9 @@ public class TcpClientHelper : MonoBehaviour {
 						receiveDataBufferList.AddLast (data);
 					}
 				} else {
+					lock (receiveDataLock) {
+						isReceiveThreadAlive = false;
+					}
 					//disconnect
 					Debug.Log("disconnect");
 					Close();
@@ -141,6 +145,7 @@ public class TcpClientHelper : MonoBehaviour {
 	//
 	#region send message
 	Thread sendThread;
+	bool isSendThreadAlive;
 	private LinkedList<byte[]> sendDataBufferList = new LinkedList<byte[]>();
 	private LinkedList<byte[]> sendDataProcessList = new LinkedList<byte[]>();
 	private object sendDataLock = new object();
@@ -159,7 +164,8 @@ public class TcpClientHelper : MonoBehaviour {
 	}
 
 	void SendToServer(){
-		while(true)
+
+		while(isSendThreadAlive)
 		{
 			if (sendDataBufferList.Count > 0) {
 				lock (sendDataLock) {
@@ -170,15 +176,18 @@ public class TcpClientHelper : MonoBehaviour {
 				}
 				foreach (byte[] item in sendDataProcessList) {
 					if (!NetUtils.SendVarData (stream, item)) {
+						lock(sendDataLock){isSendThreadAlive = false;}
 						//disconnect
 						Debug.Log("SendToServer:disconnect");
 						Close ();
+						break;
 					}
 				}
 				sendDataProcessList.Clear ();
 			}
 			Thread.Sleep(100);
 		}
+
 	}
 	#endregion
 
@@ -187,13 +196,15 @@ public class TcpClientHelper : MonoBehaviour {
 		try{
 			client = new TcpClient();
 			client.Connect(hostName, port);
-		}catch(SocketException err){
+		}catch(Exception err){
 			Debug.Log("connect server failed.");
 			return false;
 		}
 		stream = client.GetStream();
 		receiveThread = new Thread(new ThreadStart(Receive));
 		receiveThread.Start();
+		//
+		isSendThreadAlive = true;
 		sendThread = new Thread(new ThreadStart(SendToServer));
 		sendThread.Start();
 		return true;
@@ -201,17 +212,26 @@ public class TcpClientHelper : MonoBehaviour {
 
 	public void Close()
 	{
-		Debug.Log ("close");
-		if (null != map)
-			map.Clear ();
-		if(null != receiveThread)
-			receiveThread.Abort();
-		if(null != sendThread)
-			sendThread.Abort();
-		if(null != stream)
-			stream.Close();
-		if(null != client)
-			client.Close();
+		Debug.Log ("close client");
+		try{
+			if (null != map)
+				map.Clear ();
+			if (null != receiveThread) {
+				lock(receiveDataLock){isReceiveThreadAlive = false;}
+			}
+			if(null != sendThread)
+			{
+				lock(sendDataLock){isSendThreadAlive = false;}
+			}
+			if(null != stream)
+				stream.Close();
+			if (null != client) {
+				client.Close ();
+			}
+		}
+		catch(Exception err) {
+			Debug.Log ("close error:"+err.Message);
+		}
 	}
 
 
@@ -227,6 +247,7 @@ public class TcpClientHelper : MonoBehaviour {
 
 	void OnApplicationQuit()
 	{
+		Debug.Log ("quit client");
 		Close ();
 	}
 }

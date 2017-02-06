@@ -18,7 +18,8 @@ public class ClientData{
 	public TcpClient client;
 	public NetworkStream stream;
 	public Thread thread;
-
+	private bool isThreadAlive;
+	private object threadLock = new object ();
 
 	public ClientData(TcpListener server, TcpClient c)
 	{
@@ -27,14 +28,15 @@ public class ClientData{
 		this.server = server;
 		client = c;
 		stream = c.GetStream();
+		isThreadAlive = true;
 		thread = new Thread(new ThreadStart(Receive));
 		thread.Start();
 	}
 	void Receive()
 	{
-		Debug.Log("ready to receive data from client "+id);
+		//Debug.Log("ready to receive data from client "+id);
 
-		while(true){
+		while(isThreadAlive){
 			if (stream.CanRead) {
 				byte[] data;
 				if (NetUtils.ReceiveVarData (stream, out data)) {
@@ -73,14 +75,15 @@ public class ClientData{
 	{
 		Debug.Log ("CLientData::Close "+id);
 		try{
-			Debug.Log("close thread "+thread);
 			if(null != thread)
-				thread.Abort();
-			Debug.Log("close stream:"+stream);
+			{
+				lock (threadLock) {
+					isThreadAlive = false;
+				}
+			}
 			if(null != stream)
 				stream.Close();
 			if (null != client) {
-				Debug.Log("close client "+id);
 				client.Close ();
 				count--;
 			}
@@ -250,13 +253,19 @@ public class TcpListenerHelper : MonoBehaviour {
 	#region single model
 	private static TcpListenerHelper instance;
 	private static object lockHelper = new object ();
+	private static int mainThreadID=-1;
 	public static TcpListenerHelper Instance{
 		get{ 
 			if (instance == null) {
 				lock (lockHelper) {
 					if (instance == null) {
-						GameObject go = new GameObject ("TcpListenerHelper");
-						instance = go.AddComponent<TcpListenerHelper> ();
+						if (mainThreadID == -1 || Thread.CurrentThread.ManagedThreadId == mainThreadID) {
+							GameObject go = new GameObject ("TcpListenerHelper");
+							instance = go.AddComponent<TcpListenerHelper> ();
+							if (mainThreadID == -1) {
+								mainThreadID = Thread.CurrentThread.ManagedThreadId;
+							}
+						}
 					}
 				
 				}
@@ -278,23 +287,31 @@ public class TcpListenerHelper : MonoBehaviour {
 	public string ServerIP{
 		get{return serverIP.ToString();}
 	}
+	private int port;
+	public int Port{
+		get{ return port;}
+	}
 	Thread connectThread;
+	bool isConnectThreadAlive;
+	object connectThreadLock = new object();
 
-	public bool StartListen()
+	public bool StartListen(IPAddress ip, int port)
 	{
 		try{
-			serverIP = NetUtils.GetInternalIP();
-			server = new TcpListener(serverIP, 8000);
+			serverIP = ip;
+			this.port = port;
+			server = new TcpListener(ip, port);
 			server.Start ();
 		}catch(Exception err) {
 			Debug.Log ("start server failed."+err.Message);
 			return false;
 		}
 		Debug.Log("Waiting for a client...");
+		isConnectThreadAlive = true;
 		connectThread = new Thread (new ThreadStart(WaitForConcept));
 		connectThread.Start ();
-//		receiveDataThread = new Thread (new ThreadStart (DoClientRequest));
-//		receiveDataThread.Start ();
+		//
+		isSendTickThreadAlive = true;
 		sendTickThread = new Thread (new ThreadStart(SendTickToClient));
 		sendTickThread.Start ();
 		return true;
@@ -302,21 +319,25 @@ public class TcpListenerHelper : MonoBehaviour {
 	public void Close()
 	{
 		clientsContainer.CloseAllClient ();
-		if(null != connectThread)
-			connectThread.Abort ();
-//		if (null != receiveDataThread)
-//			receiveDataThread.Abort ();
-		if (null != sendTickThread)
-			sendTickThread.Abort ();
+		if (null != connectThread) {
+			lock (connectThreadLock) {
+				isConnectThreadAlive = false;
+			}
+		}
+		if (null != sendTickThread) {
+			lock (sendTickThreadLock) {
+				isSendTickThreadAlive = false;
+			}
+		}
 		if(null != server)
 			server.Stop();
 	}
 		
 	void WaitForConcept()
 	{
-		while(true)
+		while(isConnectThreadAlive)
 		{
-			while(!server.Pending())
+			while(isConnectThreadAlive && !server.Pending())
 			{
 				Thread.Sleep(1000);
 			}
@@ -348,7 +369,6 @@ public class TcpListenerHelper : MonoBehaviour {
 	private LinkedList<ReceiveClientData> receiveDataBufferList = new LinkedList<ReceiveClientData>();
 	private LinkedList<ReceiveClientData> receiveDataProcessList = new LinkedList<ReceiveClientData>();
 	private object receiveDataLock = new object();
-	//private Thread receiveDataThread;
 
 	public void AddReceiveDataToBufferList(int player_id, byte[] data)
 	{
@@ -382,10 +402,11 @@ public class TcpListenerHelper : MonoBehaviour {
 
 	#region send tick to clients
 	private Thread sendTickThread;
-
+	private bool isSendTickThreadAlive;
+	private object sendTickThreadLock = new object();
 	void SendTickToClient()
 	{
-		while (true) {
+		while (isSendTickThreadAlive) {
 			
 			//check timestamp
 //			ulong timestamp = GameUtils.GetUTCTimeStamp();
@@ -411,6 +432,9 @@ public class TcpListenerHelper : MonoBehaviour {
 				clientsContainer.SendToAllClient<heartbeat_req> (NET_CMD.HEARTBEAT_REQ_CMD, hb);
 			}catch(Exception err) {
 				Debug.Log ("send tick to client error:"+err.Message);
+				lock (sendTickThreadLock) {
+					isSendTickThreadAlive = false;
+				}
 			}
 
 			Thread.Sleep (1000);

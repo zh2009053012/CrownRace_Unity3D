@@ -50,7 +50,7 @@ public class ServerDealSystem {
 		object[] p = new object[3];
 		p[0] = (object)player_id;
 		p[1] = (object)TcpListenerHelper.Instance.clientsContainer.GetClientIP(player_id);
-		p[2] = (object)"PlayerA";
+		p[2] = (object)GameGlobalData.AllocatePlayerResName();
 		GameStateManager.Instance().FSM.CurrentState.Message("NewClientAdd", p);
 	}
 

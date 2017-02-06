@@ -23,10 +23,10 @@ public class GameStateStart : IStateBase {
 	private GameStartUI ctr;
 	public void Enter(GameStateBase owner)
 	{
+		Debug.Log ("enter GameStateStart");
 		GameObject prefab = Resources.Load ("UI/GameStartUICanvas")as GameObject;
 		GameObject go = GameObject.Instantiate (prefab);
 		ctr = go.GetComponent<GameStartUI> ();
-
 	}
 
 	public void Execute(GameStateBase owner)
@@ -36,6 +36,7 @@ public class GameStateStart : IStateBase {
 
 	public void Exit(GameStateBase owner)
 	{
+		Debug.Log ("exit GameStateStart");
 		if (null != ctr && null != ctr.gameObject) {
 			GameObject.Destroy (ctr.gameObject);
 		}
@@ -46,12 +47,16 @@ public class GameStateStart : IStateBase {
 		if (message.Equals ("OnCreateGameBtnClick")) {
 			DoCreateGameBtnClick ();
 		} else if (message.Equals ("OnJoinGameBtnClick")) {
-		
+			DoJoinGameBtnClick ();
 		}
 	}
 
 	void DoCreateGameBtnClick()
 	{
 		GameStateManager.Instance ().FSM.ChangeState (GameStateServerWait.Instance ());
+	}
+	void DoJoinGameBtnClick()
+	{
+		GameStateManager.Instance ().FSM.ChangeState (GameStateClientConnect.Instance ());
 	}
 }
