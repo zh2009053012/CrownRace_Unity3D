@@ -201,6 +201,7 @@ public class TcpClientHelper : MonoBehaviour {
 			return false;
 		}
 		stream = client.GetStream();
+		isReceiveThreadAlive = true;
 		receiveThread = new Thread(new ThreadStart(Receive));
 		receiveThread.Start();
 		//

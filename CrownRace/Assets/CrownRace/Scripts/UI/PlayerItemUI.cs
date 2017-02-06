@@ -10,9 +10,18 @@ public class PlayerItemUI : MonoBehaviour {
 	private Text ipText;
 	[SerializeField]
 	private Text resNameText;
+	public string ResName{
+		get{ return resNameText.text;}
+	}
 
-	public void SetInfo(string resName, string ip)
+	private int playerID;
+	public int PlayerID{
+		get{return playerID;}
+	}
+
+	public void SetInfo(int player_id, string resName, string ip)
 	{
+		playerID = player_id;
 		if (iconListUI == null) {
 			iconListUI = iconListUITrans.GetComponentInChildren<IconListUI> ();
 		}

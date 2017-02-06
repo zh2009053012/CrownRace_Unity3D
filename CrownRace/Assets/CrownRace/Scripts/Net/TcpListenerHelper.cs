@@ -248,7 +248,7 @@ public class ClientsContainer{
 
 }
 
-public class TcpListenerHelper : MonoBehaviour {
+public class TcpListenerHelper : GameStateBase {
 
 	#region single model
 	private static TcpListenerHelper instance;

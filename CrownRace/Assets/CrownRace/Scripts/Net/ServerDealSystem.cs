@@ -42,16 +42,19 @@ public class ServerDealSystem {
 	{
 		
 		login_req req = NetUtils.Deserialize<login_req> (data);
-		Debug.Log ("server:receive login req:"+req.name+","+req.res_name);
+		Debug.Log ("server:receive login req:");
 		login_ack ack = new login_ack ();
-		ack.player_id = player_id;
+		ack.data.player_id = player_id;
+		ack.data.res_name = GameGlobalData.AllocatePlayerResName ();
 		//cd.SendData<login_ack> (NET_CMD.LOGIN_ACK_CMD, ack);
 		TcpListenerHelper.Instance.clientsContainer.SendToClient<login_ack>(player_id, NET_CMD.LOGIN_ACK_CMD, ack);
-		object[] p = new object[3];
-		p[0] = (object)player_id;
-		p[1] = (object)TcpListenerHelper.Instance.clientsContainer.GetClientIP(player_id);
-		p[2] = (object)GameGlobalData.AllocatePlayerResName();
-		GameStateManager.Instance().FSM.CurrentState.Message("NewClientAdd", p);
+		if (!string.IsNullOrEmpty (ack.data.res_name)) {
+			object[] p = new object[3];
+			p [0] = (object)player_id;
+			p [1] = (object)TcpListenerHelper.Instance.clientsContainer.GetClientIP (player_id);
+			p [2] = (object)ack.data.res_name;
+			GameStateManager.Instance ().FSM.CurrentState.Message ("NewClientAdd", p);
+		}
 	}
 
 	public static void NotifyClientLeave(int player_id)
@@ -60,5 +63,13 @@ public class ServerDealSystem {
 		leave_game_ntf ntf = new leave_game_ntf ();
 		ntf.player_id = player_id;
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<leave_game_ntf> (NET_CMD.LEAVE_GAME_NTF_CMD, ntf);
+		if (GameStateManager.Instance ().FSM.CurrentState == GameStateServerWait.Instance ()) {
+			object[] p = new object[1];
+			p [0] = (object)player_id;
+			ThreadMessage msg = new ThreadMessage ();
+			msg.msg = "ClientDisconnect";
+			msg.parameters = p;
+			GameStateServerWait.Instance ().AddToMsgList (msg);
+		}
 	}
 }

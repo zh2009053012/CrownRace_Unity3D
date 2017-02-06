@@ -67,7 +67,7 @@ Shader "FX/StarNest" {
 		
 		CGPROGRAM
 		
-		
+		#pragma target 3.0
 		#pragma surface surf Lambert
 		#pragma multi_compile __ CLAMPOUT
 		#include "UnityCG.cginc"

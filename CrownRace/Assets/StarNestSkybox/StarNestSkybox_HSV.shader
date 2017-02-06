@@ -73,6 +73,7 @@ Shader "Skybox/StarNestHue" {
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma target 3.0
 			#pragma multi_compile __ CLAMPOUT
 			#include "UnityCG.cginc"
 			#include "hsv.cginc"
