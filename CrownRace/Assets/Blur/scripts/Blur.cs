@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class Blur : MonoBehaviour {
-	public bool m_isOpen = true;
+
 	public Shader m_blurShader;
 	public Shader m_cutoffShader;
 	public Shader m_blendShader;
@@ -83,22 +83,22 @@ public class Blur : MonoBehaviour {
 
 	void OnEnable()
 	{
-		Shader.EnableKeyword("BLUR_ON");
-		Shader.DisableKeyword("BLUR_OFF");
+		
+		Shader.EnableKeyword ("BLUR_ON");
+		Shader.DisableKeyword ("BLUR_OFF");
+
 	}
 	void OnDisable()
 	{
-		Shader.EnableKeyword("BLUR_OFF");
-		Shader.DisableKeyword("BLUR_ON");
+
+		Shader.EnableKeyword ("BLUR_OFF");
+		Shader.DisableKeyword ("BLUR_ON");
+		
 	}
 
 	void OnRenderImage(RenderTexture source, RenderTexture destination)
 	{
-		if(!m_isOpen)
-		{
-			Graphics.Blit(source, destination);
-			return;
-		}
+
 		Shader.SetGlobalTexture("_SourceTex", source);
 
 		RenderTexture lightTex = RenderTexture.GetTemporary(Mathf.FloorToInt(source.width*0.0625f/m_blurSize), 

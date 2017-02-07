@@ -40,7 +40,7 @@ public class ClientData{
 			if (stream.CanRead) {
 				byte[] data;
 				if (NetUtils.ReceiveVarData (stream, out data)) {
-					Debug.Log ("receive data from client:" + id);
+					//Debug.Log ("receive data from client:" + id);
 					TcpListenerHelper.Instance.AddReceiveDataToBufferList(id, data);
 				} else {
 					//close client and tell other clients that this one is disconnected from server.
@@ -51,7 +51,9 @@ public class ClientData{
 					} else {
 						Debug.Log ("remove client failed."+id);
 					}
-					ServerDealSystem.NotifyClientLeave (id);
+					object[] p = new object[1];
+					p [0] = (object)id;
+					ServerGlobalState.Instance ().Message ("NotifyClientLeave", p);
 					Close ();
 				}
 			}
@@ -142,14 +144,28 @@ public class ClientsContainer{
 	}
 
 	public void SendToAllClient<T>(NET_CMD cmd, T msg)where T:ProtoBuf.IExtensible{
-		Debug.Log ("ready to send to all client.");
+		//Debug.Log ("ready to send to all client.");
 		lock (lockClient) {
-			Debug.Log ("send to all client."+clientList.Count);
+			//Debug.Log ("send to all client."+clientList.Count);
 			foreach (ClientData cd in clientList) {
 				if (cd.SendData<T> (cmd, msg)) {
-					Debug.Log ("send to player "+cd.id+" success");
+					//Debug.Log ("send to player "+cd.id+" success");
 				} else {
 					Debug.Log ("send to player "+cd.id+" failed.");
+				}
+			}
+		}
+	}
+
+	public void SendToAllClientExcept<T>(int player_id, NET_CMD cmd, T msg)where T:ProtoBuf.IExtensible{
+		lock (lockClient) {
+			foreach (ClientData cd in clientList) {
+				if (cd.id != player_id) {
+					if (cd.SendData<T> (cmd, msg)) {
+					
+					} else {
+						Debug.Log ("send to player "+cd.id+" failed.");
+					}
 				}
 			}
 		}
@@ -314,6 +330,10 @@ public class TcpListenerHelper : GameStateBase {
 		isSendTickThreadAlive = true;
 		sendTickThread = new Thread (new ThreadStart(SendTickToClient));
 		sendTickThread.Start ();
+		//
+		FSM = new StateMachine(this);
+		FSM.GlobalState = ServerGlobalState.Instance();
+		FSM.GlobalState.Enter (this);
 		return true;
 	}
 	public void Close()
@@ -356,6 +376,56 @@ public class TcpListenerHelper : GameStateBase {
 	#endregion
 
 	#region do client request 
+	private Dictionary<NET_CMD, List<ServerMessageEvent>> map = new Dictionary<NET_CMD, List<ServerMessageEvent>>();
+	private object lockMap = new object();
+	public bool UnregisterNetMsg(NET_CMD cmd, ServerMessageEvent.NetMessageEvent method)
+	{
+		lock(lockMap)
+		{
+			List<ServerMessageEvent> list;
+			if(map.TryGetValue(cmd, out list))
+			{
+				for(int i=0; i<list.Count; i++)
+				{
+					if(list[i].method.Equals(method))
+					{
+						list.RemoveAt(i);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	public bool RegisterNetMsg(NET_CMD cmd, ServerMessageEvent.NetMessageEvent method, string methodName="")
+	{
+		if(null == method)
+			return false;
+		ServerMessageEvent me = new ServerMessageEvent(method, methodName);
+		lock(lockMap)
+		{
+			List<ServerMessageEvent> list;
+			if(map.TryGetValue(cmd, out list))
+			{
+				for(int i=0; i<list.Count; i++)
+				{
+					//already register
+					if(list[i].method.Equals(method))
+					{
+						return true;
+					}
+				}
+				//not register
+				list.Add(me);
+				return true;
+			}
+			list = new List<ServerMessageEvent>();
+			list.Add(me);
+			map.Add(cmd, list);
+		}
+		return true;
+	}
+
 	public class ReceiveClientData
 	{
 		public int player_id;
@@ -388,9 +458,19 @@ public class TcpListenerHelper : GameStateBase {
 				receiveDataBufferList.Clear ();
 			}
 			foreach (ReceiveClientData item in receiveDataProcessList) {
-				//call by other model
-				if (item != null) {
-					ServerDealSystem.DoClientReq (item);
+				if (item == null) {
+					continue;
+					//ServerDealSystem.DoClientReq (item);
+				}
+				//
+				packet package = (packet)NetUtils.Deserialize<packet>(item.data);
+				List<ServerMessageEvent> list;
+				if(map.TryGetValue(package.cmd, out list))
+				{
+					for (int i = 0; i < list.Count; i++) {
+						//Debug.Log("receive:"+package.cmd+",call func:"+list[i].methodName);
+						list[i].method.Invoke(item.player_id, package.payload);
+					}
 				}
 			}
 			receiveDataProcessList.Clear ();
@@ -424,7 +504,7 @@ public class TcpListenerHelper : GameStateBase {
 //				TcpListenerHelper.Instance.CloseClient(disconnect);
 //			}
 			//
-			Debug.Log("send tick");
+			//Debug.Log("send tick");
 			try{
 				heartbeat_req hb = new heartbeat_req ();
 				hb.server_timestamp = GameUtils.GetUTCTimeStamp ();
@@ -446,11 +526,19 @@ public class TcpListenerHelper : GameStateBase {
 	void Update()
 	{
 		DealReceiveData();
+		if(null != FSM)
+			FSM.Update ();
 	}
 
 	void OnApplicationQuit()
 	{
 		Debug.Log("quit");
+		if (FSM != null) {
+			if (FSM.GlobalState != null)
+				FSM.GlobalState.Exit (this);
+			if (FSM.CurrentState != null)
+				FSM.CurrentState.Exit (this);
+		}
 		Close();
 	}
 }

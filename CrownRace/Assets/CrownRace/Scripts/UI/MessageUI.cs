@@ -6,6 +6,7 @@ public delegate void VoidEvent();
 public class MessageUI : MonoBehaviour {
 	public Text m_messageText;
 	public Image m_bg;
+	public Image m_mask;
 	private float m_showTime;
 	private bool m_isHitClose = true;
 	private VoidEvent m_callback;
@@ -16,11 +17,22 @@ public class MessageUI : MonoBehaviour {
 		m_callback = null;
 		this.gameObject.SetActive(false);
 	}
+	public void ShowNotify(string message, float showTime=3)
+	{
+		m_callback = null;
+		m_isHitClose = true;
+		m_bg.enabled = false;
+		m_mask.enabled = false;
+		SetMessage(message);
+		this.gameObject.SetActive(true);
+		StartCoroutine(Hide(showTime));
+	}
 	public void ShowMessage(string message, VoidEvent e, float showTime=3)
 	{
 		m_callback = e;
 		m_isHitClose = true;
-		//m_messageText.color = Color.white;
+		m_bg.enabled = true;
+		m_mask.enabled = true;
 		SetMessage(message);
 		this.gameObject.SetActive(true);
 		StartCoroutine(Hide(showTime));
@@ -29,7 +41,8 @@ public class MessageUI : MonoBehaviour {
 	{
 		m_callback = null;
 		m_isHitClose = true;
-		//m_messageText.color = Color.white;
+		m_bg.enabled = true;
+		m_mask.enabled = true;
 		SetMessage(message);
 		this.gameObject.SetActive(true);
 		StartCoroutine(Hide(showTime));
@@ -38,6 +51,8 @@ public class MessageUI : MonoBehaviour {
 	{
 		m_callback = e;
 		m_isHitClose = isHitClose;
+		m_bg.enabled = true;
+		m_mask.enabled = true;
 		m_messageText.color = color;
 		SetMessage(message);
 		this.gameObject.SetActive(true);
@@ -66,6 +81,7 @@ public class MessageUI : MonoBehaviour {
 			{
 				m_callback.Invoke();
 				m_callback = null;
+				m_messageText.text = "";
 			}
 		}
 	}

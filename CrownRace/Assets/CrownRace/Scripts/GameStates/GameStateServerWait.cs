@@ -34,32 +34,6 @@ public class GameStateServerWait : IStateBase {
 	private MessageUI messageUI;
 	private GameObject playerItemPrefab;
 	private List<PlayerItemUI> playerItemList = new List<PlayerItemUI> ();
-	#region thread msg
-	//receive from TcpListener's message(the msg form other thread, but we should deal it at main thread)
-	private LinkedList<ThreadMessage> msgBufferList = new LinkedList<ThreadMessage>();
-	private LinkedList<ThreadMessage> msgProcessList = new LinkedList<ThreadMessage> ();
-	private object msgLock = new object ();
-	public void AddToMsgList(ThreadMessage msg){
-		lock (msgLock) {
-			msgBufferList.AddLast (msg);
-		}
-	}
-	void DealThreadMsg()
-	{
-		if (msgBufferList.Count <= 0)
-			return;
-		lock (msgLock) {
-			foreach (ThreadMessage item in msgBufferList) {
-				msgProcessList.AddLast (item);
-			}
-			msgBufferList.Clear ();
-		}
-		foreach (ThreadMessage msg in msgProcessList) {
-			Message (msg.msg, msg.parameters);
-		}
-		msgProcessList.Clear ();
-	}
-	#endregion
 
 	public void Enter(GameStateBase owner)
 	{
@@ -75,19 +49,18 @@ public class GameStateServerWait : IStateBase {
 		ctr = go.GetComponent<GameServerUI> ();
 		//
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.LOGIN_ACK_CMD, LoginAck, "LoginAck");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq, "HeartbeatReq");
-
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf, "AllPlayerDataNtf");
 	}
 
 	public void Execute(GameStateBase owner)
 	{
-		DealThreadMsg ();
+		
 	}
 
 	public void Exit(GameStateBase owner)
 	{
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.LOGIN_ACK_CMD, LoginAck);
-		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf);
 		Debug.Log ("exit GameStateServerWait");
 		if (null != ctr && null != ctr.gameObject) {
 			GameObject.Destroy (ctr.gameObject);
@@ -99,14 +72,20 @@ public class GameStateServerWait : IStateBase {
 		if (message.Equals ("BackToStart")) {
 			DoBackToStart ();
 		} else if (message.Equals ("StartGame")) {
-			
+			DoStartGame ();
 		} else if (message.Equals ("NewClientAdd")) {
 			DoNewClientAdd (parameters);
 		} else if (message.Equals ("StartServer")) {
 			DoStartServer (parameters);
 		} else if (message.Equals ("ClientDisconnect")) {
 			DoClientDisconnect (parameters);
-		}
+		} 
+	}
+	void DoStartGame()
+	{
+		Debug.Log ("DoStartGame");
+		TcpListenerHelper.Instance.FSM.CurrentState = ServerStateStartGame.Instance ();
+		TcpListenerHelper.Instance.FSM.CurrentState.Enter (TcpListenerHelper.Instance);
 	}
 	void DoClientDisconnect(object[] p)
 	{
@@ -120,7 +99,7 @@ public class GameStateServerWait : IStateBase {
 		}
 		if (null != target) {
 			playerItemList.Remove (target);
-			GameGlobalData.RemovePlayerData (player_id);
+			GameGlobalData.RemoveServerPlayerData (player_id);
 			GameGlobalData.ResyclePlayerResName (target.ResName);
 			GameObject.Destroy (target.gameObject);
 		}
@@ -180,7 +159,11 @@ public class GameStateServerWait : IStateBase {
 		string[] ep = client_ip.Split (':');
 		playerItemUI.SetInfo (player_id, resource_name, ep.Length>0?ep[0]:"");
 		playerItemList.Add (playerItemUI);
-		GameGlobalData.AddPlayerData (new PlayerData(player_id, resource_name));
+
+		player_data data = new player_data ();
+		data.player_id = player_id;
+		data.res_name = resource_name;
+		GameGlobalData.AddServerPlayerData (data);
 	}
 
 	void DoBackToStart()
@@ -190,7 +173,7 @@ public class GameStateServerWait : IStateBase {
 		TcpListenerHelper.Instance.Close();
 		GameGlobalData.PlayerID = -1;
 		GameGlobalData.PlayerResName = "";
-		GameStateManager.Instance().FSM.ChangeState(GameStateStart.Instance());
+		GameStateManager.Instance().FSM.ChangeState(GameStateLaunch.Instance());
 	}
 	void LoginAck(byte[] data)
 	{
@@ -200,16 +183,16 @@ public class GameStateServerWait : IStateBase {
 		GameGlobalData.PlayerID = ack.data.player_id;
 		GameGlobalData.PlayerResName = ack.data.res_name;
 	}
-	void HeartbeatReq(byte[] data)
-	{
-		Debug.Log("receive HeartbeatReq");
-		heartbeat_req req = NetUtils.Deserialize<heartbeat_req>(data);
-		if(GameGlobalData.PlayerID >= 0)
-		{
-			heartbeat_ack ack = new heartbeat_ack();
-			ack.player_id = GameGlobalData.PlayerID;
-			TcpClientHelper.Instance.SendData<heartbeat_ack>(NET_CMD.HEARTBEAT_ACK_CMD, ack);
-		}
-	}
 
+	void AllPlayerDataNtf(byte[] data)
+	{
+		Debug.Log ("AllPlayerDatantf");
+		all_player_data_ntf ntf = NetUtils.Deserialize<all_player_data_ntf> (data);
+		foreach(player_data item in ntf.all_player)
+		{
+			GameGlobalData.AddClientPlayerData (item);
+		}
+		SceneLoading.LoadSceneName = GameGlobalData.GameSceneName;
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
+	}
 }

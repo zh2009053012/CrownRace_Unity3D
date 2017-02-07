@@ -9,14 +9,46 @@ message heartbeat_ack{
 }
 
 message login_req{
-	required string name=1;
-	required string res_name=2;
 }
 
 message login_ack{
-	required int32 player_id=1;
+	required player_data data=1;
 }
 
 message leave_game_ntf{
 	required int32 player_id=1;
+}
+
+message player_data{
+	required int32 player_id=1;
+	required string res_name=2;
+}
+
+message all_player_data_ntf{
+	repeated player_data all_player=1;
+}
+
+message player_round_end_req{
+	required int32 player_id=1;
+}
+
+message player_roll_dice_ntf{
+	required int32 player_id=1;
+}
+
+message dice_sync_ntf{
+	required int32 player_id=9;
+	required bool is_active=1;
+	required float pos_x=2;
+	required float pos_y=3;
+	required float pos_z=4;
+	required float rotation_x=5;
+	required float rotation_y=6;
+	required float rotation_z=7;
+	required float rotation_w=8;
+}
+
+message roll_dice_over_ntf{
+	required int32 player_id=1;
+	required int32 dice_num=2;
 }

@@ -91,11 +91,22 @@ public class TcpClientHelper : MonoBehaviour {
 	private LinkedList<byte[]> receiveDataBufferList = new LinkedList<byte[]>();
 	private LinkedList<byte[]> receiveDataProcessList = new LinkedList<byte[]>();
 	private object receiveDataLock = new object();
+	void AddExitMsg()
+	{
+		leave_game_ntf ntf = new leave_game_ntf ();
+		ntf.player_id = GameGlobalData.PlayerID;
+		packet pack = new packet ();
+		pack.cmd = NET_CMD.LEAVE_GAME_NTF_CMD;
+		pack.payload = NetUtils.Serialize (ntf);
+		lock (receiveDataLock) {
+			receiveDataBufferList.AddLast (NetUtils.Serialize(pack));
+		}
+	}
 	void Receive()
 	{
 		while(isReceiveThreadAlive)
 		{
-			Debug.Log ("do receive");
+			//Debug.Log ("do receive");
 			if (stream.CanRead) {
 				byte[] data;
 				if (NetUtils.ReceiveVarData (stream, out data)) {
@@ -108,7 +119,8 @@ public class TcpClientHelper : MonoBehaviour {
 					}
 					//disconnect
 					Debug.Log("disconnect");
-					Close();
+					//Close();
+					AddExitMsg();
 				}
 			}
 		}
@@ -131,10 +143,9 @@ public class TcpClientHelper : MonoBehaviour {
 				List<MessageEvent> list;
 				if(map.TryGetValue(package.cmd, out list))
 				{
-					foreach(MessageEvent me in list)
-					{
-						Debug.Log("receive:"+package.cmd+",call func:"+me.methodName);
-						me.method.Invoke(package.payload);
+					for (int i = 0; i < list.Count; i++) {
+						//Debug.Log("receive:"+package.cmd+",call func:"+list[i].methodName);
+						list[i].method.Invoke(package.payload);
 					}
 				}
 			}
@@ -179,7 +190,8 @@ public class TcpClientHelper : MonoBehaviour {
 						lock(sendDataLock){isSendThreadAlive = false;}
 						//disconnect
 						Debug.Log("SendToServer:disconnect");
-						Close ();
+						//Close ();
+						AddExitMsg();
 						break;
 					}
 				}

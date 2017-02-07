@@ -51,7 +51,22 @@ namespace com.crownrace.msg
       HEARTBEAT_ACK_CMD = 4,
             
       [global::ProtoBuf.ProtoEnum(Name=@"LEAVE_GAME_NTF_CMD", Value=5)]
-      LEAVE_GAME_NTF_CMD = 5
+      LEAVE_GAME_NTF_CMD = 5,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ALL_PLAYER_DATA_NTF_CMD", Value=6)]
+      ALL_PLAYER_DATA_NTF_CMD = 6,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_ROUND_END_REQ_CMD", Value=7)]
+      PLAYER_ROUND_END_REQ_CMD = 7,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_ROLL_DICE_NTF_CMD", Value=8)]
+      PLAYER_ROLL_DICE_NTF_CMD = 8,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DICE_SYNC_NTF_CMD", Value=9)]
+      DICE_SYNC_NTF_CMD = 9,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE_OVER_NTF", Value=10)]
+      ROLL_DICE_OVER_NTF = 10
     }
   
 }

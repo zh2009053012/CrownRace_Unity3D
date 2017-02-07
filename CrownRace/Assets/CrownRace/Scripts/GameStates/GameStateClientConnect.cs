@@ -42,6 +42,7 @@ public class GameStateClientConnect : IStateBase {
 		//
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.LOGIN_ACK_CMD, LoginAck, "LoginAck");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq, "HeartbeatReq");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf, "AllPlayerDataNtf");
 	}
 
 	public void Execute(GameStateBase owner)
@@ -53,6 +54,7 @@ public class GameStateClientConnect : IStateBase {
 	{
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.LOGIN_ACK_CMD, LoginAck);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf);
 		if (null != messageUI) {
 			GameObject.Destroy (messageUI.gameObject);
 		}
@@ -114,7 +116,7 @@ public class GameStateClientConnect : IStateBase {
 		//
 		GameGlobalData.PlayerID = -1;
 		GameGlobalData.PlayerResName = "";
-		GameStateManager.Instance ().FSM.ChangeState (GameStateStart.Instance());
+		GameStateManager.Instance ().FSM.ChangeState (GameStateLaunch.Instance());
 	}
 	void LoginAck(byte[] data)
 	{
@@ -134,5 +136,16 @@ public class GameStateClientConnect : IStateBase {
 			ack.player_id = GameGlobalData.PlayerID;
 			TcpClientHelper.Instance.SendData<heartbeat_ack>(NET_CMD.HEARTBEAT_ACK_CMD, ack);
 		}
+	}
+	void AllPlayerDataNtf(byte[] data)
+	{
+		Debug.Log ("ALlPlayerDatantf");
+		all_player_data_ntf ntf = NetUtils.Deserialize<all_player_data_ntf> (data);
+		foreach(player_data item in ntf.all_player)
+		{
+			GameGlobalData.AddClientPlayerData (item);
+		}
+		SceneLoading.LoadSceneName = GameGlobalData.GameSceneName;
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
 	}
 }

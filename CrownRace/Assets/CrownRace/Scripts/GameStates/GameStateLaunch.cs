@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameStateStart : IStateBase {
+public class GameStateLaunch : IStateBase {
 
-	private GameStateStart()
+	private GameStateLaunch()
 	{}
 
-	private static GameStateStart m_instance;
+	private static GameStateLaunch m_instance;
 	private static object m_lockHelper = new object();
-	public static GameStateStart Instance()
+	public static GameStateLaunch Instance()
 	{
 		if (null == m_instance) {
 			lock (m_lockHelper) {
 				if (null == m_instance) {
-					m_instance = new GameStateStart ();
+					m_instance = new GameStateLaunch ();
 				}
 			}
 		}
@@ -23,7 +23,7 @@ public class GameStateStart : IStateBase {
 	private GameStartUI ctr;
 	public void Enter(GameStateBase owner)
 	{
-		Debug.Log ("enter GameStateStart");
+		Debug.Log ("enter GameStateLaunch");
 		GameObject prefab = Resources.Load ("UI/GameStartUICanvas")as GameObject;
 		GameObject go = GameObject.Instantiate (prefab);
 		ctr = go.GetComponent<GameStartUI> ();
@@ -36,7 +36,7 @@ public class GameStateStart : IStateBase {
 
 	public void Exit(GameStateBase owner)
 	{
-		Debug.Log ("exit GameStateStart");
+		Debug.Log ("exit GameStateLaunch");
 		if (null != ctr && null != ctr.gameObject) {
 			GameObject.Destroy (ctr.gameObject);
 		}

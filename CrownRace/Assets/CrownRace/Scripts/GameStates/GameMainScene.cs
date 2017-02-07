@@ -3,11 +3,6 @@ using System.Collections;
 
 public class GameMainScene : GameStateBase {
 	[SerializeField]
-	private RollTheDice m_rollDiceCtr;
-	public RollTheDice RollDiceCtr{
-		get{return m_rollDiceCtr;}
-	}
-	[SerializeField]
 	private Map m_map;
 	public Map GameMap{
 		get{return m_map;}
@@ -21,9 +16,9 @@ public class GameMainScene : GameStateBase {
 	void Start () {
 		FSM = new StateMachine (this);
 		GameStateManager.Instance ().FSM = FSM;
-		FSM.GlobalState = GameStateMainSceneGlobal.Instance ();
+		FSM.GlobalState = GameGlobalState.Instance ();
 		FSM.GlobalState.Enter (this);
-		FSM.CurrentState = GameStateNull.Instance ();
+		FSM.CurrentState = GameStateRound.Instance ();
 		FSM.CurrentState.Enter (this);
 	}
 	

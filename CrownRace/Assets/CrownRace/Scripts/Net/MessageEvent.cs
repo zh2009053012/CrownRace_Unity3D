@@ -16,3 +16,15 @@ public class MessageEvent {
 		this.methodName = methodName;
 	}
 }
+public class ServerMessageEvent{
+	public delegate void NetMessageEvent (int player_id, byte[] data);
+	public string methodName;
+	public NetMessageEvent method;
+	public ServerMessageEvent(){
+	}
+	public ServerMessageEvent(NetMessageEvent method, string methodName="")
+	{
+		this.method = method;
+		this.methodName = methodName;
+	}
+}

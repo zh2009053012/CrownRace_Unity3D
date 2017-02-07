@@ -6,6 +6,17 @@ public class RollTheDice : MonoBehaviour {
 
 	[SerializeField]
 	private Rigidbody m_rigidbody;
+	public bool IsKinematic{
+		get{ 
+			return m_rigidbody.isKinematic;
+		}
+		set{ 
+			m_rigidbody.isKinematic = value;
+		}
+	}
+	public GameObject Dice{
+		get{ return m_rigidbody.gameObject;}
+	}
 	private RollOverEvent m_rollOverCallback;
 	private bool m_isRollOver = true;
 	public bool RegisterRollOverNotify(RollOverEvent callback)
@@ -43,11 +54,11 @@ public class RollTheDice : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 //		if (Input.GetKeyUp (KeyCode.R) && null != m_rigidbody ) {
 //			Roll(Random.Range(10000, 20000));
 //		}
-		if (!m_isRollOver && m_rigidbody.velocity.sqrMagnitude < 0.001f) {
+		if (!m_isRollOver && m_rigidbody.IsSleeping() && m_rigidbody.velocity.sqrMagnitude < 0.001f) {
 			
 			if (null != m_rollOverCallback) {
 				uint num = GetNumber();
@@ -84,12 +95,6 @@ public class RollTheDice : MonoBehaviour {
 		if (Vector3.Dot (-m_rigidbody.transform.forward, Vector3.up) > 0.9f) {
 			return 6;
 		}
-		Debug.Log(Vector3.Dot (m_rigidbody.transform.up, Vector3.up));
-		Debug.Log(Vector3.Dot (-m_rigidbody.transform.up, Vector3.up));
-		Debug.Log(Vector3.Dot (m_rigidbody.transform.right, Vector3.up));
-		Debug.Log(Vector3.Dot (-m_rigidbody.transform.right, Vector3.up));
-		Debug.Log(Vector3.Dot (m_rigidbody.transform.forward, Vector3.up));
-		Debug.Log(Vector3.Dot (-m_rigidbody.transform.forward, Vector3.up));
 
 		return 0;
 	}

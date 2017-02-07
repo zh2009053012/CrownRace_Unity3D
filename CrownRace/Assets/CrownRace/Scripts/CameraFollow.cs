@@ -20,6 +20,8 @@ public class CameraFollow : MonoBehaviour {
 	}
 	void Update()
 	{
+		if (null == FollowTarget)
+			return;
 		if(!m_isGlobalView && Input.GetMouseButtonDown(0))
 		{
 			m_preMousePos = Input.mousePosition;
@@ -53,7 +55,7 @@ public class CameraFollow : MonoBehaviour {
 	// Update is called once per frame
 	void LateUpdate () {
 		//Debug.Log ("camera move before:"+transform.position);
-		if(!m_isGlobalView)
+		if(!m_isGlobalView && null != FollowTarget)
 		{
 			targetPos = FollowTarget.position + Offset;
 			transform.position = Vector3.Lerp(transform.position, targetPos, MoveSpeed*Time.deltaTime);
