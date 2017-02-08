@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Generated from: proto/protocol.proto
+// Note: requires additional types generated from: proto/packet.proto
 namespace com.crownrace.msg
 {
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"heartbeat_req")]
@@ -146,6 +147,95 @@ namespace com.crownrace.msg
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
   
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"player_move_over_ntf")]
+  public partial class player_move_over_ntf : global::ProtoBuf.IExtensible
+  {
+    public player_move_over_ntf() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"cell_effect_req")]
+  public partial class cell_effect_req : global::ProtoBuf.IExtensible
+  {
+    public cell_effect_req() {}
+    
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"cell_effect_ack")]
+  public partial class cell_effect_ack : global::ProtoBuf.IExtensible
+  {
+    public cell_effect_ack() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private com.crownrace.msg.CELL_EFFECT _cell_effect;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"cell_effect", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public com.crownrace.msg.CELL_EFFECT cell_effect
+    {
+      get { return _cell_effect; }
+      set { _cell_effect = value; }
+    }
+    private int _effect_num;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"effect_num", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int effect_num
+    {
+      get { return _effect_num; }
+      set { _effect_num = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"cell_effect_ntf")]
+  public partial class cell_effect_ntf : global::ProtoBuf.IExtensible
+  {
+    public cell_effect_ntf() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private com.crownrace.msg.CELL_EFFECT _cell_effect;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"cell_effect", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public com.crownrace.msg.CELL_EFFECT cell_effect
+    {
+      get { return _cell_effect; }
+      set { _cell_effect = value; }
+    }
+    private int _effect_num;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"effect_num", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int effect_num
+    {
+      get { return _effect_num; }
+      set { _effect_num = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"player_roll_dice_ntf")]
   public partial class player_roll_dice_ntf : global::ProtoBuf.IExtensible
   {
@@ -254,6 +344,23 @@ namespace com.crownrace.msg
     {
       get { return _dice_num; }
       set { _dice_num = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"move_to_end_ntf")]
+  public partial class move_to_end_ntf : global::ProtoBuf.IExtensible
+  {
+    public move_to_end_ntf() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)

@@ -39,7 +39,10 @@ public class GameStateClientConnect : IStateBase {
 		ctr.DisConnectBtnInteractable = false;
 		ctr.SetInputReadOnly( false );
 		ctr.SetNotifyText ("");
-		//
+	}
+
+	void InitRegisterNetMsg()
+	{
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.LOGIN_ACK_CMD, LoginAck, "LoginAck");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq, "HeartbeatReq");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf, "AllPlayerDataNtf");
@@ -100,6 +103,7 @@ public class GameStateClientConnect : IStateBase {
 				ctr.SetInputReadOnly ( true);
 				ctr.SetNotifyText ("连接服务器成功,等待服务器开始游戏.");
 
+				InitRegisterNetMsg ();
 				login_req req = new login_req();
 				TcpClientHelper.Instance.SendData<login_req>(NET_CMD.LOGIN_REQ_CMD, req);
 
@@ -141,9 +145,11 @@ public class GameStateClientConnect : IStateBase {
 	{
 		Debug.Log ("ALlPlayerDatantf");
 		all_player_data_ntf ntf = NetUtils.Deserialize<all_player_data_ntf> (data);
+		GameGlobalData.ClearClientPlayerData ();
 		foreach(player_data item in ntf.all_player)
 		{
-			GameGlobalData.AddClientPlayerData (item);
+			PlayerRoundData round = new PlayerRoundData (item.player_id, item.res_name);
+			GameGlobalData.AddClientPlayerData (round);
 		}
 		SceneLoading.LoadSceneName = GameGlobalData.GameSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);

@@ -1,3 +1,4 @@
+import "proto/packet.proto";
 package com.crownrace.msg;
 
 message heartbeat_req{
@@ -32,6 +33,25 @@ message player_round_end_req{
 	required int32 player_id=1;
 }
 
+message player_move_over_ntf{
+	required int32 player_id=1;
+}
+
+message cell_effect_req{
+}
+
+message cell_effect_ack{
+	required int32 player_id=3;
+	required CELL_EFFECT cell_effect=1;
+	required int32 effect_num=2;
+}
+
+message cell_effect_ntf{
+	required int32 player_id=1;
+	required CELL_EFFECT cell_effect=2;
+	required int32 effect_num=3;
+}
+
 message player_roll_dice_ntf{
 	required int32 player_id=1;
 }
@@ -51,4 +71,7 @@ message dice_sync_ntf{
 message roll_dice_over_ntf{
 	required int32 player_id=1;
 	required int32 dice_num=2;
+}
+message move_to_end_ntf{
+	required int32 player_id=1;
 }

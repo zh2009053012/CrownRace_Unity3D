@@ -77,6 +77,7 @@ public class RollTheDice : MonoBehaviour {
 	}
 	uint GetNumber()
 	{
+		return 3;
 		if (Vector3.Dot (m_rigidbody.transform.up, Vector3.up) > 0.9f) {
 			return 5;
 		}
@@ -95,8 +96,8 @@ public class RollTheDice : MonoBehaviour {
 		if (Vector3.Dot (-m_rigidbody.transform.forward, Vector3.up) > 0.9f) {
 			return 6;
 		}
-
-		return 0;
+		Debug.LogError ("RollTheDice::GetNumber:error.");
+		return 1;
 	}
 
 	Vector3 RandomVector3()

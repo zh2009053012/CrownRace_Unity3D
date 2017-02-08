@@ -50,6 +50,10 @@ public class GameStateServerWait : IStateBase {
 		//
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.LOGIN_ACK_CMD, LoginAck, "LoginAck");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf, "AllPlayerDataNtf");
+
+		GameGlobalData.ClearServerPlayerData ();
+		GameGlobalData.ResetPlayerRoundEnd ();
+		GameGlobalData.ResetPlayerMoveOver ();
 	}
 
 	public void Execute(GameStateBase owner)
@@ -70,7 +74,7 @@ public class GameStateServerWait : IStateBase {
 	public void Message(string message, object[] parameters)
 	{
 		if (message.Equals ("BackToStart")) {
-			DoBackToStart ();
+			DoBackToStart (parameters);
 		} else if (message.Equals ("StartGame")) {
 			DoStartGame ();
 		} else if (message.Equals ("NewClientAdd")) {
@@ -84,8 +88,7 @@ public class GameStateServerWait : IStateBase {
 	void DoStartGame()
 	{
 		Debug.Log ("DoStartGame");
-		TcpListenerHelper.Instance.FSM.CurrentState = ServerStateStartGame.Instance ();
-		TcpListenerHelper.Instance.FSM.CurrentState.Enter (TcpListenerHelper.Instance);
+		TcpListenerHelper.Instance.FSM.ChangeState (ServerStateStartGame.Instance ());
 	}
 	void DoClientDisconnect(object[] p)
 	{
@@ -142,7 +145,7 @@ public class GameStateServerWait : IStateBase {
 			login_req req = new login_req();
 			TcpClientHelper.Instance.SendData<login_req>(NET_CMD.LOGIN_REQ_CMD, req);
 		}else{
-			messageUI.ShowMessage ("客户端连接失败!", DoBackToStart);
+			messageUI.ShowMessage ("客户端连接失败!", DoBackToStart, null);
 		}
 	}
 
@@ -157,16 +160,17 @@ public class GameStateServerWait : IStateBase {
 		go.transform.localScale = Vector3.one;
 		PlayerItemUI playerItemUI = go.GetComponent<PlayerItemUI> ();
 		string[] ep = client_ip.Split (':');
-		playerItemUI.SetInfo (player_id, resource_name, ep.Length>0?ep[0]:"");
+		//playerItemUI.SetInfo (player_id, resource_name, ep.Length>0?ep[0]:"");
+		playerItemUI.SetInfo (player_id, resource_name, client_ip.ToLower());
 		playerItemList.Add (playerItemUI);
 
-		player_data data = new player_data ();
-		data.player_id = player_id;
-		data.res_name = resource_name;
-		GameGlobalData.AddServerPlayerData (data);
+		PlayerRoundData data = new PlayerRoundData(player_id, resource_name);
+		if (GameGlobalData.AddServerPlayerData (data)) {
+			Debug.Log ("add server playerdata success.");
+		}
 	}
 
-	void DoBackToStart()
+	void DoBackToStart(object[] p)
 	{
 		Debug.Log ("DoBackToStart");
 		TcpClientHelper.Instance.Close ();
@@ -190,7 +194,7 @@ public class GameStateServerWait : IStateBase {
 		all_player_data_ntf ntf = NetUtils.Deserialize<all_player_data_ntf> (data);
 		foreach(player_data item in ntf.all_player)
 		{
-			GameGlobalData.AddClientPlayerData (item);
+			GameGlobalData.AddClientPlayerData (new PlayerRoundData(item.player_id, item.res_name));
 		}
 		SceneLoading.LoadSceneName = GameGlobalData.GameSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);

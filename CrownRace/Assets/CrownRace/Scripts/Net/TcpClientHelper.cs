@@ -141,12 +141,13 @@ public class TcpClientHelper : MonoBehaviour {
 			foreach(byte[] item in receiveDataProcessList){
 				packet package = (packet)NetUtils.Deserialize<packet>(item);
 				List<MessageEvent> list;
-				if(map.TryGetValue(package.cmd, out list))
-				{
+				if (map.TryGetValue (package.cmd, out list)) {
 					for (int i = 0; i < list.Count; i++) {
 						//Debug.Log("receive:"+package.cmd+",call func:"+list[i].methodName);
-						list[i].method.Invoke(package.payload);
+						list [i].method.Invoke (package.payload);
 					}
+				} else {
+					Debug.Log ("receive:"+package.cmd+" can not find func.");
 				}
 			}
 			receiveDataProcessList.Clear();
@@ -197,7 +198,7 @@ public class TcpClientHelper : MonoBehaviour {
 				}
 				sendDataProcessList.Clear ();
 			}
-			Thread.Sleep(100);
+			Thread.Sleep(30);
 		}
 
 	}
@@ -212,6 +213,7 @@ public class TcpClientHelper : MonoBehaviour {
 			Debug.Log("connect server failed.");
 			return false;
 		}
+		Debug.Log ("client ip:"+client.Client.LocalEndPoint.ToString());
 		stream = client.GetStream();
 		isReceiveThreadAlive = true;
 		receiveThread = new Thread(new ThreadStart(Receive));
@@ -231,10 +233,12 @@ public class TcpClientHelper : MonoBehaviour {
 				map.Clear ();
 			if (null != receiveThread) {
 				lock(receiveDataLock){isReceiveThreadAlive = false;}
+				receiveDataBufferList.Clear();
 			}
 			if(null != sendThread)
 			{
 				lock(sendDataLock){isSendThreadAlive = false;}
+				sendDataBufferList.Clear();
 			}
 			if(null != stream)
 				stream.Close();

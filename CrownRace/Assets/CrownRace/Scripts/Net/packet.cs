@@ -65,8 +65,52 @@ namespace com.crownrace.msg
       [global::ProtoBuf.ProtoEnum(Name=@"DICE_SYNC_NTF_CMD", Value=9)]
       DICE_SYNC_NTF_CMD = 9,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE_OVER_NTF", Value=10)]
-      ROLL_DICE_OVER_NTF = 10
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE_OVER_NTF_CMD", Value=10)]
+      ROLL_DICE_OVER_NTF_CMD = 10,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_MOVE_OVER_NTF_CMD", Value=11)]
+      PLAYER_MOVE_OVER_NTF_CMD = 11,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"CELL_EFFECT_REQ_CMD", Value=12)]
+      CELL_EFFECT_REQ_CMD = 12,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"CELL_EFFECT_ACK_CMD", Value=13)]
+      CELL_EFFECT_ACK_CMD = 13,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"CELL_EFFECT_NTF_CMD", Value=14)]
+      CELL_EFFECT_NTF_CMD = 14,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MOVE_TO_END_NTF_CMD", Value=15)]
+      MOVE_TO_END_NTF_CMD = 15
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]
+    public enum CELL_EFFECT
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"NONE", Value=1)]
+      NONE = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FORWARD", Value=2)]
+      FORWARD = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"BACK", Value=3)]
+      BACK = 3,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PAUSE", Value=4)]
+      PAUSE = 4,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_CARD", Value=5)]
+      ROLL_CARD = 5,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE", Value=6)]
+      ROLL_DICE = 6,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"START", Value=7)]
+      START = 7,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"END", Value=8)]
+      END = 8
     }
   
 }

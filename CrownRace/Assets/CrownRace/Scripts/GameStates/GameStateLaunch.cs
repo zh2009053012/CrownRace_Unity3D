@@ -27,6 +27,14 @@ public class GameStateLaunch : IStateBase {
 		GameObject prefab = Resources.Load ("UI/GameStartUICanvas")as GameObject;
 		GameObject go = GameObject.Instantiate (prefab);
 		ctr = go.GetComponent<GameStartUI> ();
+		//
+		TcpClientHelper.Instance.Close();
+		TcpListenerHelper.Instance.Close ();
+		GameGlobalData.PlayerID = -1;
+		GameGlobalData.PlayerResName = "";
+		GameGlobalData.ClearClientPlayerData ();
+		GameGlobalData.ClearServerPlayerData ();
+		GameGlobalData.InitResName ();
 	}
 
 	public void Execute(GameStateBase owner)

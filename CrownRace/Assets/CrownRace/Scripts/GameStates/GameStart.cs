@@ -8,8 +8,7 @@ public class GameStart : GameStateBase {
 		FSM = new StateMachine (this);
 		GameStateManager.Instance ().FSM = FSM;
 
-		FSM.CurrentState = GameStateLaunch.Instance ();
-		FSM.CurrentState.Enter (FSM.Owner);
+		FSM.ChangeState (GameStateLaunch.Instance ());
 		FSM.GlobalState = GameGlobalState.Instance ();
 		FSM.GlobalState.Enter (FSM.Owner);
 	}

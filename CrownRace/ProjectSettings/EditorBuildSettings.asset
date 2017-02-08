@@ -8,6 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/CrownRace/Scenes/LoginScene.unity
   - enabled: 1
-    path: Assets/CrownRace/Scenes/LoadScene.unity
-  - enabled: 1
     path: Assets/CrownRace/Scenes/GameScene.unity
+  - enabled: 1
+    path: Assets/CrownRace/Scenes/LoadScene.unity

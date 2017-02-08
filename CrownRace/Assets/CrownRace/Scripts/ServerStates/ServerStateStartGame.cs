@@ -49,18 +49,21 @@ public class ServerStateStartGame : IStateBase {
 	void NotifyClientPlayerData()
 	{
 		Debug.Log ("server NotifyCLientPlayerData:");
-		all_player_data_ntf ntf = GameGlobalData.GetServerAllPlayerData ();
-		foreach (player_data data in ntf.all_player) {
-			PlayerRoundData roundData = new PlayerRoundData (data.player_id, false);
-			GameGlobalData.AddPlayerRoundData (roundData);
+		all_player_data_ntf ntf = new all_player_data_ntf ();
+		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData ();
+		foreach (PlayerRoundData data in list) {
+			player_data item = new player_data ();
+			item.player_id = data.player_id;
+			item.res_name = data.res_name;
+			ntf.all_player.Add (item);
 		}
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<all_player_data_ntf> (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, ntf);
 	}
 	void PlayerRoundEnd(int player_id, byte[] data)
 	{
 		player_round_end_req req = NetUtils.Deserialize<player_round_end_req> (data);
+		Debug.Log ("PlayerRoundEnd:"+player_id+","+req.player_id);
 		if (req.player_id == player_id) {
-			Debug.Log ("PlayerRoundEnd:"+player_id);
 			GameGlobalData.SetPlayerRoundEnd (player_id, true);
 			if (GameGlobalData.IsAllPlayerRoundEnd ()) {
 				TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());

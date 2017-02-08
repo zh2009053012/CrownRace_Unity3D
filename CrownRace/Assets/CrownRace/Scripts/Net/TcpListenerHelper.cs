@@ -61,7 +61,7 @@ public class ClientData{
 	}
 	public bool SendData<T>(NET_CMD cmd, T message)where T:ProtoBuf.IExtensible
 	{
-		Debug.Log("send data to client "+id);
+		//Debug.Log("send data to client "+id);
 
 		packet pack = new packet ();
 		pack.cmd = cmd;
@@ -87,7 +87,6 @@ public class ClientData{
 				stream.Close();
 			if (null != client) {
 				client.Close ();
-				count--;
 			}
 		}catch(Exception err) {
 			Debug.Log ("close error:"+err.Message);
@@ -106,14 +105,17 @@ public class ClientsContainer{
 
 	public ClientsContainer(){
 	}
-
+	public int GetClientNum()
+	{
+		return clientList.Count;
+	}
 	public string GetClientIP(int player_id)
 	{
 		lock(lockClient)
 		{
 			foreach (ClientData cd in clientList) {
 				if (cd.id == player_id) {
-					return cd.client.Client.LocalEndPoint.ToString();
+					return cd.client.Client.RemoteEndPoint.ToString();
 				}
 			}
 		}
@@ -149,7 +151,7 @@ public class ClientsContainer{
 			//Debug.Log ("send to all client."+clientList.Count);
 			foreach (ClientData cd in clientList) {
 				if (cd.SendData<T> (cmd, msg)) {
-					//Debug.Log ("send to player "+cd.id+" success");
+					//Debug.Log ("send to player "+cd.id+" "+cmd+" success");
 				} else {
 					Debug.Log ("send to player "+cd.id+" failed.");
 				}
@@ -173,9 +175,14 @@ public class ClientsContainer{
 
 	public void AddClient(ClientData cd)
 	{
-		if(cd != null)
-		lock (lockClient) {
-			clientList.Add (cd);
+		if (cd != null) {
+			Debug.Log ("AddClient:"+cd.id);
+			lock (lockClient) {
+				clientList.Add (cd);
+			}
+		}
+		foreach (ClientData item in clientList) {
+			Debug.Log(item.id+","+item.client.Client.RemoteEndPoint.ToString());
 		}
 	}
 	public bool RemoveClient(int player_id)
@@ -193,6 +200,10 @@ public class ClientsContainer{
 			}
 			if (index >= 0) {
 				clientList.RemoveAt (index);
+				Debug.Log ("remove success.");
+				foreach (ClientData item in clientList) {
+					Debug.Log(item.id+","+item.client.Client.RemoteEndPoint.ToString());
+				}
 				return true;
 			} 
 		}
@@ -244,6 +255,9 @@ public class ClientsContainer{
 					Debug.Log("close over");
 					clientList.RemoveAt (index);
 					Debug.Log("remove over");
+					foreach (ClientData item in clientList) {
+						Debug.Log(item.id+","+item.client.Client.RemoteEndPoint.ToString());
+					}
 					return true;
 				}
 			}catch(Exception err) {
@@ -339,6 +353,9 @@ public class TcpListenerHelper : GameStateBase {
 	public void Close()
 	{
 		clientsContainer.CloseAllClient ();
+		if (null != map) {
+			map.Clear ();
+		}
 		if (null != connectThread) {
 			lock (connectThreadLock) {
 				isConnectThreadAlive = false;
@@ -361,6 +378,8 @@ public class TcpListenerHelper : GameStateBase {
 			{
 				Thread.Sleep(1000);
 			}
+			if (clientsContainer.GetClientNum () >= 4)
+				continue;
 			TcpClient client = server.AcceptTcpClient();
 
 			ClientData data;
@@ -511,7 +530,7 @@ public class TcpListenerHelper : GameStateBase {
 
 				clientsContainer.SendToAllClient<heartbeat_req> (NET_CMD.HEARTBEAT_REQ_CMD, hb);
 			}catch(Exception err) {
-				Debug.Log ("send tick to client error:"+err.Message);
+				//Debug.Log ("send tick to client error:"+err.Message);
 				lock (sendTickThreadLock) {
 					isSendTickThreadAlive = false;
 				}
