@@ -81,7 +81,10 @@ namespace com.crownrace.msg
       CELL_EFFECT_NTF_CMD = 14,
             
       [global::ProtoBuf.ProtoEnum(Name=@"MOVE_TO_END_NTF_CMD", Value=15)]
-      MOVE_TO_END_NTF_CMD = 15
+      MOVE_TO_END_NTF_CMD = 15,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_PAUSE_NTF_CMD", Value=16)]
+      PLAYER_PAUSE_NTF_CMD = 16
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]

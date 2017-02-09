@@ -55,6 +55,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_REQ_CMD, CellEffectReq, "CellEffectReq");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf, "CellEffectNtf");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer, "ReceiveMoveToEndFromServer");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf, "PlayerPauseNtf");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -94,6 +95,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.CELL_EFFECT_REQ_CMD, CellEffectReq);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf);
 		//
 		//
 		if (null != m_messageUICtr) {
@@ -106,7 +108,7 @@ public class GameStateRound : IStateBase {
 			GameObject.Destroy (m_diceCtr.gameObject);
 		}
 	}
-
+	#region message func
 	public void Message(string message, object[] parameters)
 	{
 		Debug.Log("GameStateMainScene::Message:"+message);
@@ -116,13 +118,40 @@ public class GameStateRound : IStateBase {
 			DoRollDice ();
 		}
 	}
-
+	void DoRollDice()
+	{
+		if(m_isMovingOver){
+			m_diceCtr.IsKinematic = false;
+			m_diceCtr.Roll(15000);
+			m_isMovingOver = false;
+			m_isSyncDice = true;
+		}
+	}
 	void DoMovingOver(object[] p)
 	{
 		m_roundUICtr.RollDiceBtn.interactable = false;
 		m_isMovingOver = true;
 		m_isSyncDice = false;
 		SendMoveOver ();
+	}
+	#endregion
+
+	#region server to client. client to server
+	string PlayerName(int player_id){
+		string msg = "";
+		if (player_id == m_localPlayer.PlayerID) {
+			msg = "你";
+		} else {
+			msg = "玩家"+GameGlobalData.GetClientPlayerData(player_id).res_name;
+		}
+		return msg;
+	}
+	void PlayerPauseNtf(byte[] data)
+	{
+		player_pause_ntf ntf = NetUtils.Deserialize<player_pause_ntf> (data);
+		m_messageUICtr.ShowNotify (PlayerName(ntf.player_id) + "本回合无法投掷骰子", (x) => {
+			SendServerRoundEnd();
+		}, null, 1);
 	}
 	void SendMoveOver()
 	{
@@ -139,12 +168,7 @@ public class GameStateRound : IStateBase {
 	}
 	void CellEffectNtf(byte[] data){
 		cell_effect_ntf ntf = NetUtils.Deserialize<cell_effect_ntf> (data);
-		string msg = "";
-		if (ntf.player_id == m_localPlayer.PlayerID) {
-			msg = "你";
-		} else {
-			msg = "玩家"+GameGlobalData.GetClientPlayerData(ntf.player_id).res_name;
-		}
+		string msg = PlayerName (ntf.player_id);
 		Debug.Log ("CellEffectNtf:"+ntf.player_id);
 		object[] p = new object[2];
 		p [0] = (object)ntf.player_id;
@@ -170,7 +194,10 @@ public class GameStateRound : IStateBase {
 			m_messageUICtr.ShowNotify (msg + "获得抽卡机会", 1);
 			break;
 		case CELL_EFFECT.ROLL_DICE:
-			m_messageUICtr.ShowNotify (msg + "获得额外投掷骰子的机会",  (x)=>{SendServerRoundEnd();}, null, 1);
+			m_messageUICtr.ShowNotify (msg + "获得额外投掷骰子的机会",  (x)=>{
+				if(ntf.player_id == m_localPlayer.PlayerID)
+					m_roundUICtr.RollDiceBtn.interactable = true;
+			}, null, 1);
 			break;
 		case CELL_EFFECT.END:
 			SendMoveToEndToServer ();
@@ -186,26 +213,13 @@ public class GameStateRound : IStateBase {
 	void ReceiveMoveToEndFromServer(byte[] data)
 	{
 		move_to_end_ntf ntf = NetUtils.Deserialize<move_to_end_ntf> (data);
-		if (ntf.player_id == m_localPlayer.PlayerID) {
-			m_messageUICtr.ShowMessage ("你获得了胜利", (x) => {
-				SendServerRoundEnd ();
-			}, null, 5);
-		} else {
-			m_messageUICtr.ShowMessage ("玩家"+GameGlobalData.GetClientPlayerData(ntf.player_id).res_name+"获得了胜利", (x) => {
-				SendServerRoundEnd ();
-			}, null, 5);
-		}
-	}
+		string msg = PlayerName (ntf.player_id);
 
-	void DoRollDice()
-	{
-		if(m_isMovingOver){
-			m_diceCtr.IsKinematic = false;
-			m_diceCtr.Roll(15000);
-			m_isMovingOver = false;
-			m_isSyncDice = true;
-		}
+		m_messageUICtr.ShowMessage (msg+"获得了胜利", (x) => {
+			SendServerRoundEnd ();
+		}, null, 5);
 	}
+		
 	void SyncDicePosRotationFromServer(byte[] data)
 	{
 		dice_sync_ntf ntf = NetUtils.Deserialize<dice_sync_ntf> (data);
@@ -232,6 +246,57 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.SendData<dice_sync_ntf> (NET_CMD.DICE_SYNC_NTF_CMD, ntf);
 	}
 
+	void SendServerRoundEnd()
+	{
+		Debug.Log ("SendServerRoundEnd"+ GameGlobalData.PlayerID+","+m_localPlayer.PlayerID);
+		player_round_end_req req = new player_round_end_req ();
+		req.player_id = GameGlobalData.PlayerID;
+		TcpClientHelper.Instance.SendData<player_round_end_req> (NET_CMD.PLAYER_ROUND_END_REQ_CMD, req);
+	}
+	void RollCallback(uint num){
+		Debug.Log("rollcallback:"+num);
+		roll_dice_over_ntf ntf = new roll_dice_over_ntf ();
+		ntf.player_id = m_localPlayer.PlayerID;
+		ntf.dice_num = (int)num;
+		TcpClientHelper.Instance.SendData<roll_dice_over_ntf> (NET_CMD.ROLL_DICE_OVER_NTF_CMD, ntf);
+	}
+	void RollDiceOverNtfFromServer(byte[] data)
+	{
+		roll_dice_over_ntf ntf = NetUtils.Deserialize<roll_dice_over_ntf> (data);
+		Debug.Log ("RollDiceOverNtfFromServer:"+ntf.player_id);
+		string msg = PlayerName (ntf.player_id);
+
+		m_messageUICtr.ShowNotify (msg+"移动"+ntf.dice_num+"步", (x)=>{
+			MovePlayerCellNum (ntf.player_id, ntf.dice_num);
+		}, null, 1);
+	}
+
+	void PlayerRollDiceNtf(byte[] data)
+	{
+		Debug.Log ("client:PlayerRollDiceNtf");
+		player_roll_dice_ntf ntf = NetUtils.Deserialize<player_roll_dice_ntf> (data);
+		string msg = PlayerName (ntf.player_id);
+	
+		m_messageUICtr.ShowNotify ("轮到"+msg+"投掷骰子", (x)=>{
+			if(ntf.player_id == m_localPlayer.PlayerID)
+				m_roundUICtr.RollDiceBtn.interactable = true;
+		}, null, 2);	
+	}
+	void PlayerLeaveNtf(byte[] data)
+	{
+		leave_game_ntf ntf = NetUtils.Deserialize<leave_game_ntf> (data);
+		if (ntf.player_id == m_localPlayer.PlayerID) {
+			m_messageUICtr.ShowMessage ("你已经被服务器强制退出游戏", DoBackToLogin, null);
+		} else {
+			m_messageUICtr.ShowNotify ("玩家" + GameGlobalData.GetClientPlayerData (ntf.player_id).res_name + "退出游戏");
+			Player player = GetPlayer (ntf.player_id);
+			m_playerList.Remove (player);
+			GameGlobalData.RemoveClientPlayerData (ntf.player_id);
+			GameObject.Destroy (player.gameObject);
+		}
+	}
+	#endregion
+
 	void InitPlayers()
 	{
 		List<PlayerRoundData> list = GameGlobalData.GetClientPlayerDataList ();
@@ -252,35 +317,13 @@ public class GameStateRound : IStateBase {
 		}
 
 	}
-	void SendServerRoundEnd()
+	void DoBackToLogin(object[] p)
 	{
-		Debug.Log ("SendServerRoundEnd"+ GameGlobalData.PlayerID+","+m_localPlayer.PlayerID);
-		player_round_end_req req = new player_round_end_req ();
-		req.player_id = GameGlobalData.PlayerID;
-		TcpClientHelper.Instance.SendData<player_round_end_req> (NET_CMD.PLAYER_ROUND_END_REQ_CMD, req);
-	}
-	void RollCallback(uint num){
-		Debug.Log("rollcallback:"+num);
-		roll_dice_over_ntf ntf = new roll_dice_over_ntf ();
-		ntf.player_id = m_localPlayer.PlayerID;
-		ntf.dice_num = (int)num;
-		TcpClientHelper.Instance.SendData<roll_dice_over_ntf> (NET_CMD.ROLL_DICE_OVER_NTF_CMD, ntf);
-	}
-	void RollDiceOverNtfFromServer(byte[] data)
-	{
-		roll_dice_over_ntf ntf = NetUtils.Deserialize<roll_dice_over_ntf> (data);
-		Debug.Log ("RollDiceOverNtfFromServer:"+ntf.player_id);
-		if (ntf.player_id == m_localPlayer.PlayerID) {
-			m_messageUICtr.ShowNotify ("你移动"+ntf.dice_num+"步", (x)=>{
-				MovePlayerCellNum (ntf.player_id, ntf.dice_num);
-			}, null, 1);
-		} else {
-			string msg = "玩家" + GameGlobalData.GetClientPlayerData (ntf.player_id).res_name + "移动" + ntf.dice_num + "步";
-			m_messageUICtr.ShowNotify (msg, (x)=>{
-				MovePlayerCellNum (ntf.player_id, ntf.dice_num);
-			}, null, 1);
-		}
-
+		TcpClientHelper.Instance.Close ();
+		GameGlobalData.ClearClientPlayerData ();
+		SceneLoading.LoadSceneName = GameGlobalData.LoginSceneName;
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
+		//GameStateManager.Instance ().FSM.ChangeState (GameStateClientConnect.Instance ());
 	}
 	void MovePlayerCellNum(int player_id, int num)
 	{
@@ -327,38 +370,5 @@ public class GameStateRound : IStateBase {
 		}
 		player.CurMapGrid = target;
 		player.GotoMapGrid(list);
-	}
-	void PlayerRollDiceNtf(byte[] data)
-	{
-		Debug.Log ("client:PlayerRollDiceNtf");
-		player_roll_dice_ntf ntf = NetUtils.Deserialize<player_roll_dice_ntf> (data);
-		if (ntf.player_id == m_localPlayer.PlayerID) {
-			m_messageUICtr.ShowNotify ("轮到你投掷骰子");	
-			m_roundUICtr.RollDiceBtn.interactable = true;
-		} else {
-			m_messageUICtr.ShowNotify ("轮到玩家"+GameGlobalData.GetClientPlayerData(ntf.player_id).res_name+"投掷骰子");
-			m_roundUICtr.RollDiceBtn.interactable = false;
-		}
-	}
-	void PlayerLeaveNtf(byte[] data)
-	{
-		leave_game_ntf ntf = NetUtils.Deserialize<leave_game_ntf> (data);
-		if (ntf.player_id == m_localPlayer.PlayerID) {
-			m_messageUICtr.ShowMessage ("你已经被服务器强制退出游戏", DoBackToLogin, null);
-		} else {
-			m_messageUICtr.ShowNotify ("玩家" + GameGlobalData.GetClientPlayerData (ntf.player_id).res_name + "退出游戏");
-			Player player = GetPlayer (ntf.player_id);
-			m_playerList.Remove (player);
-			GameGlobalData.RemoveClientPlayerData (ntf.player_id);
-			GameObject.Destroy (player.gameObject);
-		}
-	}
-	void DoBackToLogin(object[] p)
-	{
-		TcpClientHelper.Instance.Close ();
-		GameGlobalData.ClearClientPlayerData ();
-		SceneLoading.LoadSceneName = GameGlobalData.LoginSceneName;
-		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
-		//GameStateManager.Instance ().FSM.ChangeState (GameStateClientConnect.Instance ());
 	}
 }

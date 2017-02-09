@@ -75,3 +75,7 @@ message roll_dice_over_ntf{
 message move_to_end_ntf{
 	required int32 player_id=1;
 }
+message player_pause_ntf{
+	required int32 player_id=1;
+	required int32 left_pause_round=2;
+}

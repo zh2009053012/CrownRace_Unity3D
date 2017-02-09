@@ -367,4 +367,28 @@ namespace com.crownrace.msg
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
   
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"player_pause_ntf")]
+  public partial class player_pause_ntf : global::ProtoBuf.IExtensible
+  {
+    public player_pause_ntf() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private int _left_pause_round;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"left_pause_round", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int left_pause_round
+    {
+      get { return _left_pause_round; }
+      set { _left_pause_round = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
 }

@@ -36,7 +36,7 @@ public class ServerStateRound : IStateBase {
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_ACK_CMD, CellEffectAck, "CellEffectAck");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, MoveToEndNtf, "MoveToEndNtf");
 		GameGlobalData.ResetPlayerRoundEnd ();
-		SendPlayerRollDiceNtf ();
+		NotifyNextRoundPlayer ();
 	}
 
 	public void Execute(GameStateBase owner)
@@ -66,18 +66,47 @@ public class ServerStateRound : IStateBase {
 		
 		int player_id = (int)p [0];
 		Debug.Log ("Server DoClientDisconnect"+player_id);
-		GameGlobalData.RemoveServerPlayerData (player_id);
+
 		if (m_curRoundPlayer.player_id == player_id) {
+			GameGlobalData.RemoveServerPlayerData (player_id);
 			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());
+		} else {
+//			PlayerRoundData data = GameGlobalData.GetServerPlayerData (player_id);
+//			List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData ();
+//			list.Remove (data);
+//			bool isOthersRoundOver = true;
+//			bool isOthersMoveOver = true;
+//			foreach(PlayerRoundData player in list)
+//			{
+//				if (!player.is_move_over)
+//					isOthersMoveOver = false;
+//				if (!player.is_round_over)
+//					isOthersRoundOver = false;
+//			}
+//			if (isOthersRoundOver && !data.is_round_over) {
+//				TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());
+//			} else if (isOthersMoveOver && !data.is_move_over) {
+//				cell_effect_req req = new cell_effect_req ();
+//				TcpListenerHelper.Instance.clientsContainer.SendToClient<cell_effect_req> (m_curRoundPlayer.player_id, NET_CMD.CELL_EFFECT_REQ_CMD, req);
+//			}
+			GameGlobalData.RemoveServerPlayerData (player_id);
 		}
 	}
-	void SendPlayerRollDiceNtf()
+	void NotifyNextRoundPlayer()
 	{
-		Debug.Log ("SendPlayerRollDiceNtf");
+		Debug.Log ("NotifyNextRoundPlayer");
 		m_curRoundPlayer = GameGlobalData.GetServerNextPlayerData ();
-		player_roll_dice_ntf ntf = new player_roll_dice_ntf ();
-		ntf.player_id = m_curRoundPlayer.player_id;
-		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<player_roll_dice_ntf> (NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, ntf);
+		if (m_curRoundPlayer.PauseNum > 0) {
+			m_curRoundPlayer.MinusPauseNum ();
+			player_pause_ntf ntf = new player_pause_ntf ();
+			ntf.player_id = m_curRoundPlayer.player_id;
+			ntf.left_pause_round = m_curRoundPlayer.PauseNum;
+			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<player_pause_ntf> (NET_CMD.PLAYER_PAUSE_NTF_CMD, ntf);
+		} else {
+			player_roll_dice_ntf ntf = new player_roll_dice_ntf ();
+			ntf.player_id = m_curRoundPlayer.player_id;
+			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<player_roll_dice_ntf> (NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, ntf);
+		}
 	}
 	void SyncDicePosRotationFormClient(int player_id, byte[] data)
 	{
@@ -131,6 +160,7 @@ public class ServerStateRound : IStateBase {
 		case CELL_EFFECT.FORWARD:
 			break;
 		case CELL_EFFECT.PAUSE:
+			m_curRoundPlayer.PauseNum = ack.effect_num;
 			break;
 		case CELL_EFFECT.ROLL_CARD:
 			break;

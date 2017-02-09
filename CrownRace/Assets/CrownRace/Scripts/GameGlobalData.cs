@@ -11,6 +11,7 @@ public class PlayerRoundData{
 	private int pause_num;
 	public int PauseNum{
 		get{ return pause_num;}
+		set{ pause_num = value;}
 	}
 	public void MinusPauseNum(){
 		pause_num--;
