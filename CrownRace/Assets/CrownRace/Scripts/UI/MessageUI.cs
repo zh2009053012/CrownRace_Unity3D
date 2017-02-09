@@ -19,8 +19,16 @@ public class MessageUI : MonoBehaviour {
 		m_callback = null;
 		this.gameObject.SetActive(false);
 	}
+	//In order to prevent the current msg shut down by other msg. this will cause the current callback would never invoke.
+	void CheckCallback()
+	{
+		if (null != m_callback) {
+			m_callback.Invoke (m_parameter);
+		}
+	}
 	public void ShowNotify(string message, float showTime=3)
 	{
+		CheckCallback ();
 		m_callback = null;
 		m_parameter = null;
 		m_isHitClose = true;
@@ -32,6 +40,7 @@ public class MessageUI : MonoBehaviour {
 	}
 	public void ShowNotify(string message, ParameterEvent e, object[] p, float showTime=3)
 	{
+		CheckCallback ();
 		m_callback = e;
 		m_parameter = p;
 		m_isHitClose = true;
@@ -43,6 +52,7 @@ public class MessageUI : MonoBehaviour {
 	}
 	public void ShowMessage(string message, ParameterEvent e, object[] p, float showTime=3)
 	{
+		CheckCallback ();
 		m_callback = e;
 		m_parameter = p;
 		m_isHitClose = true;
@@ -54,6 +64,7 @@ public class MessageUI : MonoBehaviour {
 	}
 	public void ShowMessage(string message, float showTime=3)
 	{
+		CheckCallback ();
 		m_callback = null;
 		m_parameter = null;
 		m_isHitClose = true;
@@ -65,6 +76,7 @@ public class MessageUI : MonoBehaviour {
 	}
 	public void ShowMessage(string message, Color color, float showTime, bool isHitClose, ParameterEvent e, object[] p)
 	{
+		CheckCallback ();
 		m_callback = e;
 		m_parameter = p;
 		m_isHitClose = isHitClose;

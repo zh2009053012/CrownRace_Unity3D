@@ -41,6 +41,13 @@ public class CameraFollow : MonoBehaviour {
 					-RotateSpeed*dirY*Time.deltaTime);
 			}
 			Offset = transform.position - FollowTarget.position;
+		}else if(!m_isGlobalView && Mathf.Abs(Input.GetAxis("Mouse ScrollWheel"))>0){
+			float scaleOffset = Input.GetAxis ("Mouse ScrollWheel");
+			float dist = Offset.magnitude;
+
+			if ((dist > 10 && scaleOffset < 0) || (dist < 200 && scaleOffset > 0)) {
+				Offset = (transform.position - FollowTarget.position).normalized * (dist + scaleOffset * Time.deltaTime * 1000);
+			}
 		}else if(Input.GetKeyDown(KeyCode.P))
 		{
 			m_isGlobalView = !m_isGlobalView;

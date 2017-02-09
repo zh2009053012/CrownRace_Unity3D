@@ -67,6 +67,13 @@ namespace com.crownrace.msg
       get { return _data; }
       set { _data = value; }
     }
+    private bool _is_success;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"is_success", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public bool is_success
+    {
+      get { return _is_success; }
+      set { _is_success = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }

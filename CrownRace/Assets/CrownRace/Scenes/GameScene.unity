@@ -75,15 +75,15 @@ NavMeshSettings:
   m_ObjectHideFlags: 0
   m_BuildSettings:
     serializedVersion: 2
-    agentRadius: 0.25
+    agentRadius: 0.1
     agentHeight: 2
     agentSlope: 45
-    agentClimb: 0.4
+    agentClimb: 1
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
     accuratePlacement: 0
     minRegionArea: 2
-    cellSize: 0.083333336
+    cellSize: 0.033333335
     manualCellSize: 0
   m_NavMeshData: {fileID: 23800000, guid: 3c17fad5367bd12439020e5fe28a4c18, type: 2}
 --- !u!1 &994424
@@ -7807,10 +7807,10 @@ Prefab:
     - target: {fileID: 2364990, guid: 876b7e6939331074984bd4c564935b4a, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: f5c04f9a5b5648a4aabffe233d94a754, type: 2}
+      objectReference: {fileID: 2100000, guid: 4ccd7d5218fb3694c88da3281a1bf68b, type: 2}
     - target: {fileID: 11453700, guid: 876b7e6939331074984bd4c564935b4a, type: 2}
       propertyPath: m_cellEffect
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11453700, guid: 876b7e6939331074984bd4c564935b4a, type: 2}
       propertyPath: m_preGrid
@@ -11304,6 +11304,10 @@ Prefab:
       propertyPath: m_preGrid
       value: 
       objectReference: {fileID: 1218386708}
+    - target: {fileID: 11453700, guid: 876b7e6939331074984bd4c564935b4a, type: 2}
+      propertyPath: m_cellEffect
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 876b7e6939331074984bd4c564935b4a, type: 2}
   m_IsPrefabParent: 0
@@ -18329,7 +18333,7 @@ Prefab:
       objectReference: {fileID: 2100000, guid: 4ccd7d5218fb3694c88da3281a1bf68b, type: 2}
     - target: {fileID: 11453700, guid: 876b7e6939331074984bd4c564935b4a, type: 2}
       propertyPath: m_cellEffect
-      value: 1
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 876b7e6939331074984bd4c564935b4a, type: 2}

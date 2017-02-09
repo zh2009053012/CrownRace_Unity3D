@@ -310,7 +310,11 @@ public class TcpListenerHelper : GameStateBase {
 	#endregion
 
 	TcpListener server;
-
+	bool isStopListen = false;
+	public bool IsStopListen{
+		set{ isStopListen = value;}
+		get{ return isStopListen;}
+	}
 	#region listen client connect
 	public ClientsContainer clientsContainer = new ClientsContainer();
 	private IPAddress serverIP;
@@ -332,6 +336,7 @@ public class TcpListenerHelper : GameStateBase {
 			this.port = port;
 			server = new TcpListener(ip, port);
 			server.Start ();
+			IsStopListen = false;
 		}catch(Exception err) {
 			Debug.Log ("start server failed."+err.Message);
 			return false;
@@ -378,8 +383,12 @@ public class TcpListenerHelper : GameStateBase {
 			{
 				Thread.Sleep(1000);
 			}
-			if (clientsContainer.GetClientNum () >= 4)
+
+			if (isStopListen || clientsContainer.GetClientNum () >= 4) {
+				TcpClient disconnect = server.AcceptTcpClient();
+				disconnect.Close ();
 				continue;
+			}
 			TcpClient client = server.AcceptTcpClient();
 
 			ClientData data;

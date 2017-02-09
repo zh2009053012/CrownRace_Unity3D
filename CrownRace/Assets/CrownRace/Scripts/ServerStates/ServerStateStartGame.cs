@@ -29,7 +29,7 @@ public class ServerStateStartGame : IStateBase {
 		GameGlobalData.ResetPlayerRoundEnd ();
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_ROUND_END_REQ_CMD, PlayerRoundEnd, "PlayerRoundEnd");
 		NotifyClientPlayerData ();
-
+		TcpListenerHelper.Instance.IsStopListen = true;
 	}
 
 	public void Execute(GameStateBase owner)

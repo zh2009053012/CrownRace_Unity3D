@@ -14,6 +14,7 @@ message login_req{
 
 message login_ack{
 	required player_data data=1;
+	required bool is_success=2;
 }
 
 message leave_game_ntf{

@@ -29,7 +29,7 @@ public class GameMainScene : GameStateBase {
 		}
 	}
 
-	void OnDestory()
+	void OnDestroy()
 	{
 		if (FSM != null) {
 			FSM.GlobalState.Exit (this);

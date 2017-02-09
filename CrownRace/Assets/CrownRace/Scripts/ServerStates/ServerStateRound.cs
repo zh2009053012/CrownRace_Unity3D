@@ -90,6 +90,14 @@ public class ServerStateRound : IStateBase {
 //				TcpListenerHelper.Instance.clientsContainer.SendToClient<cell_effect_req> (m_curRoundPlayer.player_id, NET_CMD.CELL_EFFECT_REQ_CMD, req);
 //			}
 			GameGlobalData.RemoveServerPlayerData (player_id);
+
+			if (GameGlobalData.IsAllPlayerRoundEnd ()) {
+				TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());
+			}
+			else if (GameGlobalData.IsAllPlayerMoveOver ()) {
+				cell_effect_req req = new cell_effect_req ();
+				TcpListenerHelper.Instance.clientsContainer.SendToClient<cell_effect_req> (m_curRoundPlayer.player_id, NET_CMD.CELL_EFFECT_REQ_CMD, req);
+			}
 		}
 	}
 	void NotifyNextRoundPlayer()

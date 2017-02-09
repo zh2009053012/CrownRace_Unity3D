@@ -46,6 +46,7 @@ public class GameStateClientConnect : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.LOGIN_ACK_CMD, LoginAck, "LoginAck");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq, "HeartbeatReq");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf, "AllPlayerDataNtf");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.LEAVE_GAME_NTF_CMD, PlayerLeaveNtf, "PlayerLeaveNtf");
 	}
 
 	public void Execute(GameStateBase owner)
@@ -58,6 +59,7 @@ public class GameStateClientConnect : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.LOGIN_ACK_CMD, LoginAck);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.HEARTBEAT_REQ_CMD, HeartbeatReq);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.LEAVE_GAME_NTF_CMD, PlayerLeaveNtf);
 		if (null != messageUI) {
 			GameObject.Destroy (messageUI.gameObject);
 		}
@@ -99,14 +101,10 @@ public class GameStateClientConnect : IStateBase {
 
 			if (TcpClientHelper.Instance.Connect (ipStr, port)) {
 				ctr.ConnectBtnInteractable = false;
-				ctr.DisConnectBtnInteractable = true;
-				ctr.SetInputReadOnly ( true);
-				ctr.SetNotifyText ("连接服务器成功,等待服务器开始游戏.");
-
 				InitRegisterNetMsg ();
 				login_req req = new login_req();
 				TcpClientHelper.Instance.SendData<login_req>(NET_CMD.LOGIN_REQ_CMD, req);
-
+				//ctr.SetNotifyText ("请求加入游戏");
 			} else {
 				messageUI.ShowMessage ("连接服务器失败");
 			}
@@ -124,11 +122,22 @@ public class GameStateClientConnect : IStateBase {
 	}
 	void LoginAck(byte[] data)
 	{
-		
 		login_ack ack = NetUtils.Deserialize<login_ack>(data);
 		Debug.Log("receive LoginAck:"+ack.data.player_id+","+ack.data.res_name);
-		GameGlobalData.PlayerID = ack.data.player_id;
-		GameGlobalData.PlayerResName = ack.data.res_name;
+		if (ack.is_success) {
+			GameGlobalData.PlayerID = ack.data.player_id;
+			GameGlobalData.PlayerResName = ack.data.res_name;
+			//
+
+			ctr.DisConnectBtnInteractable = true;
+			ctr.SetInputReadOnly ( true);
+			ctr.SetNotifyText ("连接服务器成功,等待服务器开始游戏.");
+
+		} else {
+			TcpClientHelper.Instance.Close ();
+			messageUI.ShowMessage ("服务器正在游戏.");
+		}
+
 	}
 	void HeartbeatReq(byte[] data)
 	{
@@ -153,5 +162,12 @@ public class GameStateClientConnect : IStateBase {
 		}
 		SceneLoading.LoadSceneName = GameGlobalData.GameSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
+	}
+	void PlayerLeaveNtf(byte[] data)
+	{
+		leave_game_ntf ntf = NetUtils.Deserialize<leave_game_ntf> (data);
+
+		messageUI.ShowMessage ("加入游戏失败", null, null);
+		TcpClientHelper.Instance.Close ();
 	}
 }

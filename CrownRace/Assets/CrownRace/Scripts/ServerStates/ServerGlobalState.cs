@@ -96,17 +96,23 @@ public class ServerGlobalState : IStateBase {
 		Debug.Log ("server:receive login req:");
 		login_ack ack = new login_ack ();
 		ack.data = new player_data ();
-		ack.data.player_id = player_id;
-		ack.data.res_name = GameGlobalData.AllocatePlayerResName ();
-		//cd.SendData<login_ack> (NET_CMD.LOGIN_ACK_CMD, ack);
-		TcpListenerHelper.Instance.clientsContainer.SendToClient<login_ack>(player_id, NET_CMD.LOGIN_ACK_CMD, ack);
-		if (!string.IsNullOrEmpty (ack.data.res_name)) {
+		if (TcpListenerHelper.Instance.IsStopListen) {
+			ack.is_success = false;
+		} else {
+			ack.data.player_id = player_id;
+			ack.data.res_name = GameGlobalData.AllocatePlayerResName ();
+			ack.is_success = true;
+			if (string.IsNullOrEmpty (ack.data.res_name))
+				Debug.LogError ("res_name is null.");
 			object[] p = new object[3];
 			p [0] = (object)player_id;
 			p [1] = (object)TcpListenerHelper.Instance.clientsContainer.GetClientIP (player_id);
 			p [2] = (object)ack.data.res_name;
 			GameStateManager.Instance ().FSM.CurrentState.Message ("NewClientAdd", p);
+
 		}
+		TcpListenerHelper.Instance.clientsContainer.SendToClient<login_ack>(player_id, NET_CMD.LOGIN_ACK_CMD, ack);
+
 	}
 
 	void NotifyClientLeave(object[] ps)

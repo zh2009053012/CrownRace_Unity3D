@@ -47,6 +47,7 @@ public class GameStateRound : IStateBase {
 	{
 		Debug.Log ("enter GameStateRound");
 		m_owner = (GameMainScene)owner;
+		m_playerList.Clear ();
 		//
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, PlayerRollDiceNtf, "PlayerRollDiceNtf");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFromServer, "SyncDicePosRotationFromServer");
@@ -302,12 +303,11 @@ public class GameStateRound : IStateBase {
 		List<PlayerRoundData> list = GameGlobalData.GetClientPlayerDataList ();
 		foreach (PlayerRoundData data in list) {
 			GameObject prefab = Resources.Load ("Players/" + data.res_name)as GameObject;
-			GameObject go = GameObject.Instantiate (prefab);
+			GameObject go = GameObject.Instantiate (prefab, m_owner.GameMap.StartGrid.PlayerPos(data.res_name), new Quaternion())as GameObject;
 			Player ctr = go.GetComponent<Player> ();
 			ctr.PlayerID = data.player_id;
 			ctr.ResName = data.res_name;
 			ctr.CurMapGrid = m_owner.GameMap.StartGrid;
-			ctr.transform.position = ctr.CurMapGrid.PlayerPos(data.res_name);
 
 			if (data.player_id == GameGlobalData.PlayerID) {
 				m_localPlayer = ctr;

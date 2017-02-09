@@ -66,6 +66,12 @@ public class GameStateServerWait : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.LOGIN_ACK_CMD, LoginAck);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, AllPlayerDataNtf);
 		Debug.Log ("exit GameStateServerWait");
+		foreach(PlayerItemUI item in playerItemList)
+		{
+			if (null != item && item.gameObject != null)
+				GameObject.Destroy (item.gameObject);
+		}
+		playerItemList.Clear ();
 		if (null != ctr && null != ctr.gameObject) {
 			GameObject.Destroy (ctr.gameObject);
 		}
@@ -88,7 +94,8 @@ public class GameStateServerWait : IStateBase {
 	void DoStartGame()
 	{
 		Debug.Log ("DoStartGame");
-		TcpListenerHelper.Instance.FSM.ChangeState (ServerStateStartGame.Instance ());
+		if(TcpListenerHelper.Instance.clientsContainer.GetClientNum()>0)
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateStartGame.Instance ());
 	}
 	void DoClientDisconnect(object[] p)
 	{
