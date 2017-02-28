@@ -43,7 +43,7 @@ public class TransmitionEffect : MonoBehaviour {
 	public void Play(){
 		if (!m_ps.isPlaying) {
 			m_ps.Play ();
-			m_anim.Play ();
+			//m_anim.Play ();
 			StartCoroutine (StopParticleSystem(m_ps.duration));
 	
 		}
