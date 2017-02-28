@@ -1,0 +1,33 @@
+用法：
+1、创建一个材质，shader选项选择"CardEffect/CardEffect_ZM"。
+2、将材质赋值给目标模型。
+
+参数说明：
+MainTex : 主贴图
+Color : 颜色
+MaskTex : 蒙版贴图，用于过滤后续的四个叠加图层，RGBA四个通道分别对应_MotionTex1、			_MotionTex2、_MotionTex3以及_MotionTex4。
+
+BlendMode : 混合模式，目前支持四种混合模式，扭曲/相加/相减/相乘。
+	_DistortPower: 混合模式为扭曲时显示该参数，用于调整扭曲的力度。
+
+UseMove : 是否移动UV。
+    MoveDirection : 开启UseMove后可见，(x, y)值调整UV移动方向以及移动速度。
+
+UseRotate : 是否旋转UV。
+	Rotate Center&Speed : 开启UseRotate后可见，(x, y)是旋转的中心点，z是起始旋转角度，w是旋转速度。
+
+Motion Texture : 用于叠加的贴图。
+Color Param : 贴图的颜色参数。公式: col=col*(x+y*max(0, sin(t*z+w)))。
+	x表示贴图基本颜色的强弱，当x=1时，无变化，x>1时贴图变亮，x<1贴图变暗。
+	y表示周期变话的颜色的强弱。（sin是一个周期函数）
+	z表示颜色周期变化的快慢。
+	w表示周期的偏移。
+
+Tiling : UV的缩放
+Offset : UV的偏移
+
+注意：
+1、当使用distort时，扭曲的目标是其上一张贴图的uv。例如，MotionTexture1的BlendMode设置为distort，
+  则扭曲的是MainTex；如果MotionTexture3的BlendMode设置为distort，则扭曲的是MotionTexture2。参考材质"distort2"相关设置。
+2、整个shader有4个Motion Texture，当未选择Motion Texture时，此层的相关计算将不会运行。
+  Use Move和Use Rotate同理，不勾选则不会浪费性能。

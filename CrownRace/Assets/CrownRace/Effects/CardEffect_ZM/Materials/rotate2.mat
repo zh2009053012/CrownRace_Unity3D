@@ -1,0 +1,194 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: rotate2
+  m_Shader: {fileID: 4800000, guid: 6bcebd4a408c7be46b4da0a75b6bd927, type: 3}
+  m_ShaderKeywords: _MOTION1_BLEND_ADD_ON _MOTION1_ON _MOTION1_ROTATE_ON _MOTION2_BLEND_ADD_ON
+    _MOTION2_ON _MOTION2_ROTATE_ON
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 6b5ce2759c05e824c846d3ade149d32b, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MaskTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 80b1c552c7cf99b4faad22890bda5cda, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MotionTex1
+        second:
+          m_Texture: {fileID: 2800000, guid: 36f9cf9480f85e344b8309ac4b33e0c2, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MotionTex2
+        second:
+          m_Texture: {fileID: 2800000, guid: 36f9cf9480f85e344b8309ac4b33e0c2, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MotionTex3
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MotionTex4
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _BlendMode1
+        second: 0
+      data:
+        first:
+          name: _IsMove1
+        second: 0
+      data:
+        first:
+          name: _IsRotate1
+        second: 0
+      data:
+        first:
+          name: _DistortParam1
+        second: 0.015
+      data:
+        first:
+          name: _BlendMode2
+        second: 0
+      data:
+        first:
+          name: _IsMove2
+        second: 0
+      data:
+        first:
+          name: _IsRotate2
+        second: 0
+      data:
+        first:
+          name: _DistortParam2
+        second: 0.015
+      data:
+        first:
+          name: _BlendMode3
+        second: 0
+      data:
+        first:
+          name: _IsMove3
+        second: 0
+      data:
+        first:
+          name: _IsRotate3
+        second: 0
+      data:
+        first:
+          name: _DistortParam3
+        second: 0.015
+      data:
+        first:
+          name: _BlendMode4
+        second: 0
+      data:
+        first:
+          name: _IsMove4
+        second: 0
+      data:
+        first:
+          name: _IsRotate4
+        second: 0
+      data:
+        first:
+          name: _DistortParam4
+        second: 0.015
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _MotionColor1
+        second: {r: 0.11961596, g: 0.7352941, b: 0.037846014, a: 0}
+      data:
+        first:
+          name: _ColorParam1
+        second: {r: 1, g: 2, b: 5, a: 1}
+      data:
+        first:
+          name: _MoveParam1
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _RotateParam1
+        second: {r: 0.5, g: 0.5, b: 0, a: 0.5}
+      data:
+        first:
+          name: _MotionColor2
+        second: {r: 0.11961596, g: 0.7352941, b: 0.037846014, a: 0}
+      data:
+        first:
+          name: _ColorParam2
+        second: {r: 1, g: 2, b: 5, a: 0}
+      data:
+        first:
+          name: _MoveParam2
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _RotateParam2
+        second: {r: 0.5, g: 0.5, b: 0.5, a: -0.5}
+      data:
+        first:
+          name: _MotionColor3
+        second: {r: 1, g: 1, b: 1, a: 0}
+      data:
+        first:
+          name: _ColorParam3
+        second: {r: 1, g: 0, b: 1, a: 1}
+      data:
+        first:
+          name: _MoveParam3
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _RotateParam3
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _MotionColor4
+        second: {r: 1, g: 1, b: 1, a: 0}
+      data:
+        first:
+          name: _ColorParam4
+        second: {r: 1, g: 0, b: 1, a: 1}
+      data:
+        first:
+          name: _MoveParam4
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _RotateParam4
+        second: {r: 0, g: 0, b: 0, a: 0}

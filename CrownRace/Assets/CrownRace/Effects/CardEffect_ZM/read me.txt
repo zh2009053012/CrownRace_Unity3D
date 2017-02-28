@@ -1,0 +1,29 @@
+How to use:
+1、Create a material, select "CardEffect/CardEffect_ZM" in the shader options.
+2、Drag the material to the target mesh.
+
+Parameter Description:
+
+MainTex : base texture
+Color : the color of the base texture
+MaskTex : mask texture. Used to mask the motion texture. It has RGBA four channels. R channel is used by MotionTex1. G channel is used by MotionTex2. B channel is used by MotionTex3. A channel is used by MotionTex4.
+
+BlendMode : There are four blend mode, add/minus/multiply/distort.
+	_DistortPower : The power of distort. Only choose the distort blend mode can see.
+
+UseMove : Does move the uv.
+	MoveDirection : (x, y) is the moving direction and speed.
+
+UseRotate : Does rotate the uv.
+	Rotate Center&Speed : (x, y) is the center of rotation. z is the rotation offset. w is the rotation speed.
+
+Motion Texture : The texture used to overlay.
+Color Param : Equation is col=col*(x+y*max(0, sin(t*z+w))). x is the base power of motion texture. y is the additive power. And z is the cycle speed. w is the cycle offset. If you want the twinkling effect, you will use this, or not, set the y zero.
+
+Tiling : Used to scale uv.
+Offset : uv offset.
+
+Notice:
+1、When you use the distort blend mode, it distorts the previous texture. For example, if you set the MotionTex1's blend mode as distort, it will distort MainTex. And if you set the MotionTex2's blend mode as distort, it will distort MoTionTex1.
+2、If you does not select the motion texture, the shader code of this motion texture will not be executed. The same as "Use Move" and "Use Rotate".
+
