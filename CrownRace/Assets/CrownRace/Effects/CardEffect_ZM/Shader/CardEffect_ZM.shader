@@ -52,6 +52,7 @@
 	}
 	SubShader
 	{
+		offset -1,-1
 		Tags { "RenderType"="Opaque" }
 		LOD 100
 
@@ -187,7 +188,7 @@
 				return offsetUV;
 			}
 			half2 DoMove(half2 uv, half4 param){
-				return uv+param.xy*half2(_Time.y, _Time.y);
+				return uv+frac(param.xy*half2(_Time.y, _Time.y));
 			}
 			half2 DoRotate(half2 uv, half4 param){
 				float cosx = cos(param.z+param.w*_Time.y);
