@@ -42,17 +42,18 @@ public class CardPositionCtr : MonoBehaviour {
 	}
 	void SelectCard(GameObject go){
 		m_curSelect = go;
-		m_prePos = m_curSelect.transform.position;
-		m_preRotate = m_curSelect.transform.rotation;
+		m_prePos = m_curSelect.transform.localPosition;
+		m_preRotate = m_curSelect.transform.localRotation;
 		//
-		MoveTo(m_curSelect, m_cardShowPos.position, 0.1f);
-		RotateTo (m_curSelect, m_cardShowPos.rotation.eulerAngles, 0.1f);
+		MoveTo(m_curSelect, m_cardShowPos.localPosition, 0.1f);
+		RotateTo (m_curSelect, m_cardShowPos.localRotation.eulerAngles, 0.1f);
 	}
 	void BackCurSelectPos()
 	{
 		if (m_curSelect != null) {
 			MoveTo(m_curSelect, m_prePos, 0.1f);
-			RotateTo (m_curSelect, m_preRotate.eulerAngles, 0.1f);
+			RotateTo(m_curSelect, m_preRotate.eulerAngles, 0.1f);
+		
 			m_curSelect = null;
 		}
 	}
@@ -78,17 +79,17 @@ public class CardPositionCtr : MonoBehaviour {
 		if(m_list.Count > 0)
 			t=(m_list.Count+1)/(float)(m_list.Count+2);
 		
-		dst = CMath.Lerp (m_left.position, m_right.position, t);
+		dst = CMath.Lerp (m_left.localPosition, m_right.localPosition, t);
 		MoveTo(go, dst, 1);
-		RotateTo(go, Quaternion.Lerp(m_left.rotation, m_right.rotation, t).eulerAngles, 1);
+		RotateTo(go, Quaternion.Lerp(m_left.localRotation, m_right.localRotation, t).eulerAngles, 1);
 
 		for(int i=0; i<m_list.Count; i++)
 		{
 			t = (i+1)/(float)(m_list.Count+2);
-			Vector3 pos = CMath.Lerp (m_left.position, m_right.position, t);
+			Vector3 pos = CMath.Lerp (m_left.localPosition, m_right.localPosition, t);
 			pos = pos - go.transform.forward*Mathf.Sin(Mathf.PI*i/(float)(m_list.Count))*0.1f;
 			MoveTo(m_list[i], pos, 1);
-			Quaternion q = Quaternion.Lerp(m_left.rotation, m_right.rotation, t);
+			Quaternion q = Quaternion.Lerp(m_left.localRotation, m_right.localRotation, t);
 			RotateTo(m_list[i], q.eulerAngles, 1);
 		}
 
@@ -112,7 +113,8 @@ public class CardPositionCtr : MonoBehaviour {
 		args.Add("time", 1);
 		args.Add("loopType", "none");
 		args.Add("delay", 0);
-		args.Add("position", m_cardNearPos.position);
+		args.Add("islocal", true);
+		args.Add("position", m_cardNearPos.localPosition);
 		args.Add("oncomplete", "CardMoveToNear");
 		args.Add("oncompleteparams", go);
 		args.Add("oncompletetarget", this.gameObject);
@@ -124,7 +126,8 @@ public class CardPositionCtr : MonoBehaviour {
 		args2.Add("time", 1);
 		args2.Add("loopType", "none");
 		args2.Add("delay", 0);
-		args2.Add("rotation", m_cardNearPos.rotation.eulerAngles);
+		args2.Add("islocal", true);
+		args2.Add("rotation", m_cardNearPos.localRotation.eulerAngles);
 
 		iTween.RotateTo(go, args2);
 	}
@@ -138,6 +141,7 @@ public class CardPositionCtr : MonoBehaviour {
 		args.Add("oncomplete", "CardMoveOver");
 		args.Add("oncompleteparams", go);
 		args.Add("oncompletetarget", this.gameObject);
+		args.Add("islocal", true);
 		iTween.MoveTo(go, args);
 	}
 	void RotateTo(GameObject go, Vector3 dst, float time){
@@ -146,6 +150,7 @@ public class CardPositionCtr : MonoBehaviour {
 		args.Add("time", time);
 		args.Add("loopType", "none");
 		args.Add("rotation", dst);
+		args.Add("islocal", true);
 		iTween.RotateTo(go, args);
 	}
 }
