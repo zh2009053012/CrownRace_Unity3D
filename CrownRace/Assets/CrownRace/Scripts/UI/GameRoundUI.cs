@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class GameRoundUI : MonoBehaviour {
 	public Button RollDiceBtn;
+	public Transform HeadContent;
 	// Use this for initialization
 	void Start () {
 	

@@ -43,6 +43,17 @@ public class GameStateRound : IStateBase {
 		return null;
 	}
 
+	private List<PlayerHeadUI> m_headUIList = new List<PlayerHeadUI>();
+	private PlayerHeadUI GetHeadUI(int player_id){
+		foreach(PlayerHeadUI ui in m_headUIList){
+			if(ui.ID == player_id){
+				return ui;
+			}
+
+		}
+		return null;
+	}
+
 	public void Enter(GameStateBase owner)
 	{
 		Debug.Log ("enter GameStateRound");
@@ -117,7 +128,13 @@ public class GameStateRound : IStateBase {
 			DoMovingOver (parameters);
 		} else if (message.Equals ("RollDiceBtn")) {
 			DoRollDice ();
+		}else if(message.Equals("HeadBarClick")){
+			DoHeadBarClick(parameters);
 		}
+	}
+	void DoHeadBarClick(object[] p){
+		int player_id = (int)p[0];
+		Debug.Log("DoHeadBarCLick:"+player_id);
 	}
 	void DoRollDice()
 	{
@@ -177,6 +194,9 @@ public class GameStateRound : IStateBase {
 		switch (ntf.cell_effect) {
 		case CELL_EFFECT.NONE:
 			m_messageUICtr.ShowNotify (msg + "回合结束", (x)=>{SendServerRoundEnd();}, null,2);
+			//
+			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+			uiCtr.ShowDiceImage(false);
 			break;
 		case CELL_EFFECT.BACK:
 			m_messageUICtr.ShowNotify (msg + "后退"+ntf.effect_num+"步", (x)=>{
@@ -253,6 +273,7 @@ public class GameStateRound : IStateBase {
 		player_round_end_req req = new player_round_end_req ();
 		req.player_id = GameGlobalData.PlayerID;
 		TcpClientHelper.Instance.SendData<player_round_end_req> (NET_CMD.PLAYER_ROUND_END_REQ_CMD, req);
+
 	}
 	void RollCallback(uint num){
 		Debug.Log("rollcallback:"+num);
@@ -281,6 +302,9 @@ public class GameStateRound : IStateBase {
 		m_messageUICtr.ShowNotify ("轮到"+msg+"投掷骰子", (x)=>{
 			if(ntf.player_id == m_localPlayer.PlayerID)
 				m_roundUICtr.RollDiceBtn.interactable = true;
+			//
+			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+			uiCtr.ShowDiceImage(true);
 		}, null, 2);	
 	}
 	void PlayerLeaveNtf(byte[] data)
@@ -294,6 +318,10 @@ public class GameStateRound : IStateBase {
 			m_playerList.Remove (player);
 			GameGlobalData.RemoveClientPlayerData (ntf.player_id);
 			GameObject.Destroy (player.gameObject);
+			//
+			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+			m_headUIList.Remove(uiCtr);
+			GameObject.Destroy(uiCtr.gameObject);
 		}
 	}
 	#endregion
@@ -301,6 +329,7 @@ public class GameStateRound : IStateBase {
 	void InitPlayers()
 	{
 		List<PlayerRoundData> list = GameGlobalData.GetClientPlayerDataList ();
+		GameObject headPrefab = Resources.Load("UI/PlayerHeadUI")as GameObject;
 		foreach (PlayerRoundData data in list) {
 			GameObject prefab = Resources.Load ("Players/" + data.res_name)as GameObject;
 			GameObject go = GameObject.Instantiate (prefab, m_owner.GameMap.StartGrid.PlayerPos(data.res_name), new Quaternion())as GameObject;
@@ -314,9 +343,18 @@ public class GameStateRound : IStateBase {
 				m_owner.CameraCtr.FollowTarget = ctr.transform;
 			}
 			m_playerList.Add (ctr);
+			//head
+			GameObject head = GameObject.Instantiate(headPrefab);
+			head.transform.parent = m_roundUICtr.HeadContent;
+			head.transform.localScale = Vector3.one;
+			PlayerHeadUI headCtr = head.GetComponent<PlayerHeadUI>();
+			headCtr.SetInfo(data.player_id, data.res_name, 0);
+			headCtr.ShowDiceImage(false);
+			m_headUIList.Add(headCtr);
 		}
 
 	}
+
 	void DoBackToLogin(object[] p)
 	{
 		TcpClientHelper.Instance.Close ();
