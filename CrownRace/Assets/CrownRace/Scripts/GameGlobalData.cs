@@ -39,6 +39,21 @@ public class PlayerRoundData{
 	public bool is_round_over;
 	public bool is_move_over;
 	public List<CardEffect> card_list = new List<CardEffect>();
+	public CardEffect GetCardEffect(int id){
+		foreach(CardEffect ce in card_list){
+			if (ce.id == id){
+				return ce;
+			}
+		}
+		return null;
+	}
+	public bool RemoveCardEffect(int id){
+		CardEffect ce = GetCardEffect(id);
+		if(ce != null)
+			return card_list.Remove(ce);
+		return false;
+	}
+
 	private int pause_num;
 	public int PauseNum{
 		get{ return pause_num;}

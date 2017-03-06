@@ -10,28 +10,44 @@ public class CardPositionCtr : MonoBehaviour {
 	public Transform m_cardNearPos;
 	public Transform m_cardShowPos;
 	private List<CardEffectCtr> m_list = new List<CardEffectCtr>();
-	private GameObject m_curSelect;
+	private static CardEffectCtr m_curSelect;
+	public static CardEffectCtr CurSelect{
+		get{return m_curSelect;}
+	}
 	private Vector3 m_prePos;
 	private Vector3 m_preScale;
 	private Quaternion m_preRotate;
 	private bool m_isReadyUse = false;
+	public bool IsReadyUse{
+		get{return m_isReadyUse;}
+	}
+	public static bool IsSelectCard{
+		get{return m_curSelect!=null;}
+	}
 	// Use this for initialization
 	void Start () {
 		
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if(Input.GetKeyDown(KeyCode.A)){
-			AddCard(Random.Range(0, GameGlobalData.CardList.Length), null);
+	public void DestroyCurSelectCard(){
+		if(null != m_curSelect){
+			m_list.Remove(m_curSelect);
+			GameObject.Destroy(m_curSelect.gameObject);
+			m_curSelect = null;
+			ResortCardPos();
 		}
+	}
+	// Update is called once per frame
+	public void MyUpdate (bool isRollDice) {
+//		if(Input.GetKeyDown(KeyCode.A)){
+//			AddCard(Random.Range(0, GameGlobalData.CardList.Length), null);
+//		}
 		if (Input.GetMouseButtonDown (0)) {
 			GameObject go = TryHitCard ();
 			if (go != null) {
 				if (m_curSelect == null) {
 					SelectCard (go);
 				} else {
-					if (m_curSelect.Equals (go)) {
+					if (m_curSelect.gameObject.Equals (go)) {
 						m_isReadyUse = true;
 					} else {
 						BackCurSelectPos ();
@@ -42,42 +58,38 @@ public class CardPositionCtr : MonoBehaviour {
 				BackCurSelectPos ();
 			}
 		}else if(Input.GetMouseButtonUp(0)){
-			if(m_isReadyUse){
+			if(!isRollDice && m_isReadyUse){
 				m_isReadyUse = false;
 				BackCurSelectPos();
 			}
 		}
-		if(m_isReadyUse){
-			FollowCursor(m_curSelect);
+		if(!isRollDice && m_isReadyUse){
+			if(m_curSelect != null)
+				FollowCursor(m_curSelect.gameObject);
 		}
 	}
 	void FollowCursor(GameObject go){
 		float x = Input.mousePosition.x;
 		float y = Input.mousePosition.y;
-		// x = x < 0?0:x;
-		// x = x>Screen.width?Screen.width:x;
-		// y = y < 0?0:y;
-		// y = y>Screen.height?Screen.height:y;
-		Debug.Log(Input.mousePosition);
 		Vector3 screenPos = new Vector3(x, y, 3);
 		go.transform.position = Camera.main.ScreenToWorldPoint(screenPos);
 		go.transform.localScale = new Vector3(8,8,8);
 	}
 	void SelectCard(GameObject go){
-		m_curSelect = go;
-		m_prePos = m_curSelect.transform.localPosition;
-		m_preRotate = m_curSelect.transform.localRotation;
-		m_preScale = m_curSelect.transform.localScale;
+		m_curSelect = go.GetComponent<CardEffectCtr>();
+		m_prePos = go.transform.localPosition;
+		m_preRotate = go.transform.localRotation;
+		m_preScale = go.transform.localScale;
 		//
-		MoveTo(m_curSelect, m_cardShowPos.localPosition, 0.1f);
-		RotateTo (m_curSelect, m_cardShowPos.localRotation.eulerAngles, 0.1f);
+		MoveTo(go, m_cardShowPos.localPosition, 0.1f);
+		RotateTo (go, m_cardShowPos.localRotation.eulerAngles, 0.1f);
 	}
 	void BackCurSelectPos()
 	{
 		if (m_curSelect != null) {
 			m_curSelect.transform.localScale = m_preScale;
-			MoveTo(m_curSelect, m_prePos, 0.1f);
-			RotateTo(m_curSelect, m_preRotate.eulerAngles, 0.1f);
+			MoveTo(m_curSelect.gameObject, m_prePos, 0.1f);
+			RotateTo(m_curSelect.gameObject, m_preRotate.eulerAngles, 0.1f);
 		
 			m_curSelect = null;
 		}
@@ -91,12 +103,23 @@ public class CardPositionCtr : MonoBehaviour {
 		}
 		return null;
 	}
-
+	void ResortCardPos(){
+		float t;
+		for(int i=0; i<m_list.Count; i++)
+		{
+			t = (i+2)/(float)(m_list.Count+2);
+			Vector3 pos = CMath.Lerp (m_left.localPosition, m_right.localPosition, t);
+			pos = pos - m_list[i].transform.forward*Mathf.Sin(Mathf.PI*i/(float)(m_list.Count))*0.1f;
+			MoveTo(m_list[i].gameObject, pos, 1);
+			Quaternion q = Quaternion.Lerp(m_left.localRotation, m_right.localRotation, t);
+			RotateTo(m_list[i].gameObject, q.eulerAngles, 1);
+		}
+	}
 	void CardMoveToNear(CardEffectCtr ctr){
 		Vector3 dst = Vector3.zero;
 		float t=0.5f;
 		if(m_list.Count > 0)
-			t=(m_list.Count+1)/(float)(m_list.Count+2);
+			t=(m_list.Count+2)/(float)(m_list.Count+3);
 		
 		dst = CMath.Lerp (m_left.localPosition, m_right.localPosition, t);
 		MoveTo(ctr.gameObject, dst, 1);
@@ -104,9 +127,9 @@ public class CardPositionCtr : MonoBehaviour {
 
 		for(int i=0; i<m_list.Count; i++)
 		{
-			t = (i+1)/(float)(m_list.Count+2);
+			t = (i+2)/(float)(m_list.Count+3);
 			Vector3 pos = CMath.Lerp (m_left.localPosition, m_right.localPosition, t);
-			pos = pos - ctr.transform.forward*Mathf.Sin(Mathf.PI*i/(float)(m_list.Count))*0.1f;
+			pos = pos - m_list[i].transform.forward*Mathf.Sin(Mathf.PI*i/(float)(m_list.Count))*0.1f;
 			MoveTo(m_list[i].gameObject, pos, 1);
 			Quaternion q = Quaternion.Lerp(m_left.localRotation, m_right.localRotation, t);
 			RotateTo(m_list[i].gameObject, q.eulerAngles, 1);
@@ -168,6 +191,7 @@ public class CardPositionCtr : MonoBehaviour {
 	}
 	public void AddCard(int id, VoidEvent callback){
 		m_cardMoveOverEvent = callback;
+		m_isReadyUse = false;
 		BackCurSelectPos ();
 
 		GameObject prefab = Resources.Load("Cards/card_"+id)as GameObject;

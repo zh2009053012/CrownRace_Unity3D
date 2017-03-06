@@ -69,6 +69,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer, "ReceiveMoveToEndFromServer");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf, "PlayerPauseNtf");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf, "RollCardNtf");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf, "UseCardNtf");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -95,6 +96,10 @@ public class GameStateRound : IStateBase {
 		if (m_isSyncDice) {
 			SyncDicePosRotationToServer ();
 		}
+		if(Input.GetMouseButtonUp(0)){
+			DoSelectHeadBar(targetUseCardPlayer);
+		}
+		m_owner.CardCtr.MyUpdate(m_isDoRollDice);
 	}
 
 	public void Exit(GameStateBase owner)
@@ -110,6 +115,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf);
 		//
 		//
 		if (null != m_messageUICtr) {
@@ -123,6 +129,7 @@ public class GameStateRound : IStateBase {
 		}
 	}
 	#region message func
+	private bool m_isDoRollDice = false;
 	public void Message(string message, object[] parameters)
 	{
 		Debug.Log("GameStateMainScene::Message:"+message);
@@ -132,7 +139,43 @@ public class GameStateRound : IStateBase {
 			DoRollDice ();
 		}else if(message.Equals("HeadBarClick")){
 			DoHeadBarClick(parameters);
+		}else if(message.Equals("OnPointerEnter")){
+			DoPointerEnterHeadBar(parameters);
+		}else if(message.Equals("OnPointerExit")){
+			DoPointerExitHeadBar(parameters);
+		}else if(message.Equals("OnSelectHeadBar")){
 		}
+	}
+	void DoSelectHeadBar(int player_id){
+		Debug.Log("DoSelectHeadBar"+player_id+m_owner.CardCtr.IsReadyUse);
+		if(!m_owner.CardCtr.IsReadyUse || targetUseCardPlayer < 0){
+			return;
+		}
+		PlayerHeadUI ui = GetHeadUI(player_id);
+		ui.ShowHighlight(false);
+		use_card_ntf ntf = new use_card_ntf();
+		ntf.use_player_id = GameGlobalData.PlayerID;
+		ntf.target_player_id = ui.ID;
+		ntf.have_card_num = 0;//not need
+		ntf.card_id = CardPositionCtr.CurSelect.CardID;
+		TcpClientHelper.Instance.SendData<use_card_ntf>(NET_CMD.USE_CARD_NTF_CMD, ntf);
+		m_owner.CardCtr.DestroyCurSelectCard();
+	}
+	private int targetUseCardPlayer=-1;
+	void DoPointerEnterHeadBar(object[] p){
+		if(!m_owner.CardCtr.IsReadyUse){
+			return;
+		}
+		int player_id = (int)p[0];
+		targetUseCardPlayer = player_id;
+		PlayerHeadUI ui = GetHeadUI(player_id);
+		ui.ShowHighlight(true);
+	}
+	void DoPointerExitHeadBar(object[] p){
+		targetUseCardPlayer = -1;
+		int player_id = (int)p[0];
+		PlayerHeadUI ui = GetHeadUI(player_id);
+		ui.ShowHighlight(false);
 	}
 	void DoHeadBarClick(object[] p){
 		int player_id = (int)p[0];
@@ -141,6 +184,7 @@ public class GameStateRound : IStateBase {
 	void DoRollDice()
 	{
 		if(m_isMovingOver){
+			m_isDoRollDice = true;
 			m_diceCtr.IsKinematic = false;
 			m_diceCtr.Roll(15000);
 			m_isMovingOver = false;
@@ -149,6 +193,8 @@ public class GameStateRound : IStateBase {
 	}
 	void DoMovingOver(object[] p)
 	{
+		if(!m_isDoRollDice)
+			return;
 		m_roundUICtr.RollDiceBtn.interactable = false;
 		m_isMovingOver = true;
 		m_isSyncDice = false;
@@ -332,7 +378,10 @@ public class GameStateRound : IStateBase {
 	
 		m_messageUICtr.ShowNotify ("轮到"+msg+"投掷骰子", (x)=>{
 			if(ntf.player_id == m_localPlayer.PlayerID)
+			{
 				m_roundUICtr.RollDiceBtn.interactable = true;
+				m_isDoRollDice = false;
+			}
 			//
 			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
 			uiCtr.ShowDiceImage(true);
@@ -353,6 +402,44 @@ public class GameStateRound : IStateBase {
 			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
 			m_headUIList.Remove(uiCtr);
 			GameObject.Destroy(uiCtr.gameObject);
+		}
+	}
+	void UseCardNtf(byte[] data){
+		Debug.Log("GameStateRound::UseCardNtf:");
+		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
+		string usePlayerName = PlayerName (ntf.use_player_id);
+		string targetPlayerName = PlayerName(ntf.target_player_id);
+
+		CardEffect ce = GameGlobalData.CardList[ntf.card_id];
+		string msg;
+		if(ntf.use_player_id == ntf.target_player_id){
+			msg = usePlayerName + "对自己" + "使用了卡牌<"+ce.name+">";
+		}else{
+			msg = usePlayerName + "对" + targetPlayerName + "使用了卡牌<"+ce.name+">";
+		}
+		object[] p = new object[2];
+		p [0] = (object)ntf.target_player_id;
+		p [1] = (object)ce.effect_value;
+		switch (ce.effect) {
+		case CARD_EFFECT.DOUBLE_DICE_NUM:
+			
+			break;
+		case CARD_EFFECT.BACK:
+			m_messageUICtr.ShowNotify (targetPlayerName + "后退"+ce.effect_value+"步", (x)=>{
+				MovePlayerCellNum ((int)x [0], -(int)x [1]);
+			}, p, 1);
+			break;
+		case CARD_EFFECT.FORWARD:
+			m_messageUICtr.ShowNotify (targetPlayerName + "前进"+ce.effect_value+"步", (x)=>{
+				MovePlayerCellNum ((int)x [0], (int)x [1]);
+			}, p, 1);
+			break;
+		case CARD_EFFECT.PAUSE:
+			m_messageUICtr.ShowNotify (targetPlayerName + "暂停"+ce.effect_value+"回合", (x)=>{SendServerRoundEnd();}, null, 1);
+			break;
+		case CARD_EFFECT.GOD_TIME:
+			
+			break;
 		}
 	}
 	#endregion

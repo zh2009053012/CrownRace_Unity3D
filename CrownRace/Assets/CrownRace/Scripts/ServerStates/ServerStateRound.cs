@@ -36,6 +36,7 @@ public class ServerStateRound : IStateBase {
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_ACK_CMD, CellEffectAck, "CellEffectAck");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, MoveToEndNtf, "MoveToEndNtf");
 		TcpListenerHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_REQ_CMD, RollCardReq, "RollCardReq");
+		TcpListenerHelper.Instance.RegisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf, "UseCardNtf");
 		GameGlobalData.ResetPlayerRoundEnd ();
 		NotifyNextRoundPlayer ();
 	}
@@ -55,6 +56,7 @@ public class ServerStateRound : IStateBase {
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.CELL_EFFECT_ACK_CMD, CellEffectAck);
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, MoveToEndNtf);
 		TcpListenerHelper.Instance.UnregisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardReq);
+		TcpListenerHelper.Instance.UnregisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf);
 		GameGlobalData.ResetPlayerRoundEnd ();
 	}
 
@@ -204,6 +206,32 @@ public class ServerStateRound : IStateBase {
 
 			ntf.have_card_num = playerData.card_list.Count;
 			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<roll_card_ntf>(NET_CMD.ROLL_CARD_NTF_CMD, ntf);
+		}
+	}
+	void UseCardNtf(int player_id, byte[] data){
+		Debug.Log("ServerStateRound::UseCardNtf:"+player_id);
+		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
+		if(player_id == ntf.use_player_id){
+			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(player_id);
+			CardEffect ce = playerData.GetCardEffect(ntf.card_id);
+			playerData.RemoveCardEffect(ntf.card_id);
+			ntf.have_card_num = playerData.card_list.Count;
+			//
+			switch(ce.effect){
+			case CARD_EFFECT.FORWARD:
+				break;
+			case CARD_EFFECT.BACK:
+				break;
+			case CARD_EFFECT.DOUBLE_DICE_NUM:
+				break;
+			case CARD_EFFECT.GOD_TIME:
+				break;
+			case CARD_EFFECT.PAUSE:
+				playerData.PauseNum += ce.effect_value;
+				break;
+			}
+			//
+			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<use_card_ntf>( NET_CMD.USE_CARD_NTF_CMD, ntf);
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class CameraFollow : MonoBehaviour {
 	public Transform FollowTarget;
@@ -22,33 +24,38 @@ public class CameraFollow : MonoBehaviour {
 	{
 		if (null == FollowTarget)
 			return;
-		if(!m_isGlobalView && Input.GetMouseButtonDown(0))
+		if(!m_isGlobalView && !EventSystem.current.IsPointerOverGameObject() &&
+			!CardPositionCtr.IsSelectCard)
 		{
-			m_preMousePos = Input.mousePosition;
-		}else if(!m_isGlobalView && Input.GetMouseButton(0))
-		{
-			float dirX = Input.mousePosition.x - m_preMousePos.x;
-			float dirY = Input.mousePosition.y - m_preMousePos.y;
-			m_preMousePos = Input.mousePosition;
-			this.transform.RotateAround(FollowTarget.position, Vector3.up, 
-				RotateSpeed*dirX*Time.deltaTime);
-			if((dirY > 0 && transform.forward.y > -0.15f) ||
-				(dirY < 0 && transform.forward.y < -0.85f))
-			{}
-			else
+			if(Input.GetMouseButtonDown(0) )
 			{
-				transform.RotateAround(FollowTarget.position, transform.right,
-					-RotateSpeed*dirY*Time.deltaTime);
-			}
-			Offset = transform.position - FollowTarget.position;
-		}else if(!m_isGlobalView && Mathf.Abs(Input.GetAxis("Mouse ScrollWheel"))>0){
-			float scaleOffset = Input.GetAxis ("Mouse ScrollWheel");
-			float dist = Offset.magnitude;
+				m_preMousePos = Input.mousePosition;
+			}else if(Input.GetMouseButton(0))
+			{
+				float dirX = Input.mousePosition.x - m_preMousePos.x;
+				float dirY = Input.mousePosition.y - m_preMousePos.y;
+				m_preMousePos = Input.mousePosition;
+				this.transform.RotateAround(FollowTarget.position, Vector3.up, 
+					RotateSpeed*dirX*Time.deltaTime);
+				if((dirY > 0 && transform.forward.y > -0.15f) ||
+					(dirY < 0 && transform.forward.y < -0.85f))
+				{}
+				else
+				{
+					transform.RotateAround(FollowTarget.position, transform.right,
+						-RotateSpeed*dirY*Time.deltaTime);
+				}
+				Offset = transform.position - FollowTarget.position;
+			}else if(Mathf.Abs(Input.GetAxis("Mouse ScrollWheel"))>0){
+				float scaleOffset = Input.GetAxis ("Mouse ScrollWheel");
+				float dist = Offset.magnitude;
 
-			if ((dist > 10 && scaleOffset < 0) || (dist < 200 && scaleOffset > 0)) {
-				Offset = (transform.position - FollowTarget.position).normalized * (dist + scaleOffset * Time.deltaTime * 1000);
+				if ((dist > 10 && scaleOffset < 0) || (dist < 200 && scaleOffset > 0)) {
+					Offset = (transform.position - FollowTarget.position).normalized * (dist + scaleOffset * Time.deltaTime * 1000);
+				}
 			}
-		}else if(Input.GetKeyDown(KeyCode.P))
+		}
+		if(Input.GetKeyDown(KeyCode.P))
 		{
 			m_isGlobalView = !m_isGlobalView;
 			if(m_isGlobalView)
