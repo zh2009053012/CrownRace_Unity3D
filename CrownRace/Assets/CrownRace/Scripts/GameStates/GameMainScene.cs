@@ -12,6 +12,16 @@ public class GameMainScene : GameStateBase {
 	public CameraFollow CameraCtr{
 		get{return m_cameraCtr;}
 	}
+	[SerializeField]
+	private CardPositionCtr m_cardCtr;
+	public CardPositionCtr CardCtr {
+		get{return m_cardCtr;}
+	}
+	[SerializeField]
+	private TransmitionEffect m_transEffect;
+	public TransmitionEffect TransEffect{
+		get{return m_transEffect;}
+	}
 	// Use this for initialization
 	void Start () {
 		FSM = new StateMachine (this);

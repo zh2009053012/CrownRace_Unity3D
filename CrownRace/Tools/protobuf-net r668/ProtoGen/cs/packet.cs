@@ -84,7 +84,16 @@ namespace com.crownrace.msg
       MOVE_TO_END_NTF_CMD = 15,
             
       [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_PAUSE_NTF_CMD", Value=16)]
-      PLAYER_PAUSE_NTF_CMD = 16
+      PLAYER_PAUSE_NTF_CMD = 16,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_CARD_REQ_CMD", Value=17)]
+      ROLL_CARD_REQ_CMD = 17,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_CARD_NTF_CMD", Value=18)]
+      ROLL_CARD_NTF_CMD = 18,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_NTF_CMD", Value=19)]
+      USE_CARD_NTF_CMD = 19
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]

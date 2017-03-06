@@ -1,0 +1,1101 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"card",
+				"card_id\tint { get; set; }"
+			],
+			[
+				"GetSer",
+				"GetServerPlayerData(int player_id)\tPlayerRoundData"
+			],
+			[
+				"Range",
+				"Range(int min, int max)\tint"
+			],
+			[
+				"eff",
+				"effect_value\tint"
+			],
+			[
+				"effe",
+				"effect_value\tint"
+			],
+			[
+				"m_eff",
+				"m_effectValue\tint"
+			],
+			[
+				"easeOut",
+				"easeOutExpo\tEaseType"
+			],
+			[
+				"Ve",
+				"Vector3()\tVector3()"
+			],
+			[
+				"RectTr",
+				"RectTransformUtility\tRectTransformUtility"
+			],
+			[
+				"Add",
+				"AddCardTo(GameObject go, Vector2 screenPos, VoidEvent callback)\tvoid"
+			],
+			[
+				"Util",
+				"RectTransformUtility\tRectTransformUtility"
+			],
+			[
+				"Send",
+				"SendToClient<T>(int player_id, NET_CMD cmd, T msg)\tbool"
+			],
+			[
+				"TcpLis",
+				"TcpListenerHelper\tTcpListenerHelper"
+			],
+			[
+				"car",
+				"have_card_num\tint { get; set; }"
+			],
+			[
+				"roll_car",
+				"roll_card_ntf\troll_card_ntf"
+			],
+			[
+				"ROLL",
+				"ROLL_CARD_NTF_CMD\tNET_CMD"
+			],
+			[
+				"TcpCli",
+				"TcpClientHelper\tTcpClientHelper"
+			],
+			[
+				"Screen",
+				"ScreenToWorldPoint(Vector3 position)\tVector3"
+			],
+			[
+				"m_card",
+				"m_cardBackSpacePos\tTransform"
+			],
+			[
+				"LOGOUT",
+				"MB_LOGOUT_REQ_CMD\tint"
+			],
+			[
+				"service_",
+				"service_login\tservice_login"
+			],
+			[
+				"servie",
+				"service_login\tservice_login"
+			],
+			[
+				"SIGN_OUT",
+				"GP_SIGN_OUT_REQ_CMD\tint"
+			],
+			[
+				"SHO",
+				"GP_SHOP_INFO_ACK\tGP_SHOP_INFO_ACK"
+			],
+			[
+				"SHOP",
+				"GP_SHOP_INFO_REQ_CMD\tint"
+			],
+			[
+				"FISH_",
+				"GP_FISH_STATE_NTF\tGP_FISH_STATE_NTF"
+			],
+			[
+				"LEAVE",
+				"GP_LEAVE_TABLE_ACK\tGP_LEAVE_TABLE_ACK"
+			],
+			[
+				"GP_LEAVE",
+				"GP_LEAVE_TABLE_ACK_CMD\tint"
+			],
+			[
+				"MDM",
+				"MDM_GP_GAME_FISH3D_CMD\tint"
+			],
+			[
+				"SIGN",
+				"GP_SIGN_IN_ACK\tGP_SIGN_IN_ACK"
+			],
+			[
+				"SIGNIN",
+				"GP_SIGN_IN_REQ_CMD\tint"
+			],
+			[
+				"MB_LOGON",
+				"MB_LOGON_ACK\tMB_LOGON_ACK"
+			],
+			[
+				"MB_LO",
+				"MB_LOGON_ACK\tMB_LOGON_ACK"
+			],
+			[
+				"MB_LOGON_",
+				"MB_LOGON_REQ\tMB_LOGON_REQ"
+			],
+			[
+				"MB",
+				"MB_LOGON_REQ\tMB_LOGON_REQ"
+			],
+			[
+				"MDM_GP",
+				"MDM_GP_GAME_FISH3D\tint"
+			],
+			[
+				"s",
+				"szSessionID\tstring"
+			],
+			[
+				"SUB_GP_SIGN",
+				"SUB_GP_SIGN_IN_FAILURE_ACK\tint"
+			],
+			[
+				"SUB_GP_SUCCESS",
+				"SUB_GP_SIGN_IN_SUCCESS_ACK\tint"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Assets/CrownRace/Scripts/RollTheDice.cs",
+			"settings":
+			{
+				"buffer_size": 2648,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "1、走到抽卡格子\n2、抽卡，播放抽卡动画\n3、播放完毕后，结束当前回合\n4、回合开始时，可以使用卡牌，播放使用卡牌动画，播放完毕后，发送（使用玩家，目标玩家，卡牌）给服务器\n5、服务器收到后，按卡牌效果做处理\n\n卡牌效果：\n目标前进n格\n目标后退n格\n目标暂停n回合\n移除身上暂停的负面效果\n投掷的点数加倍\n格子效果加倍\n无敌光环n回合\n目标冲锋直到遇到暂停格子\n丢弃所有玩家手中的卡牌\n卡牌点数满格\n平等，目标玩家移动到使用者同一位置\n\n\n投掷到5或者6点积累一个点\n每个卡牌消耗的点数不一样\n点数上限为10\n玩家最多持有6张卡牌",
+			"settings":
+			{
+				"buffer_size": 266,
+				"line_ending": "Windows",
+				"name": "1、走到抽卡格子"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/GameStates/GameStateRound.cs",
+			"settings":
+			{
+				"buffer_size": 15205,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/Common/CardPositionCtr.cs",
+			"settings":
+			{
+				"buffer_size": 5774,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/Common/CardEffectCtr.cs",
+			"settings":
+			{
+				"buffer_size": 336,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateRound.cs",
+			"settings":
+			{
+				"buffer_size": 8351,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "using UnityEngine;\nusing System.Collections;\nusing UnityEngine.UI;\n\npublic class CardEffectCtr : MonoBehaviour {\n\tprotected CardEffect m_card;\n\tpublic CardEffect Card{\n\t\tget{return m_card;}\n\t}\n\t[SerializeField]\n\tprotected Text m_cardNameText;\n\t[SerializeField]\n\tprotected Text m_cardDescText;\n\n\tpublic void SetCardInfo(int id){\n\t\t\n\t}\n}\n",
+			"file": "Assets/CrownRace/Scripts/Common/CardEffectBase.cs",
+			"file_size": 339,
+			"file_write_time": 131332637278770912,
+			"settings":
+			{
+				"buffer_size": 336,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/GameGlobalData.cs",
+			"settings":
+			{
+				"buffer_size": 7029,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/UI/GameRoundUI.cs",
+			"settings":
+			{
+				"buffer_size": 871,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/GameStates/GameMainScene.cs",
+			"settings":
+			{
+				"buffer_size": 1045,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Effects/Transmition/Scripts/TransmitionEffect.cs",
+			"settings":
+			{
+				"buffer_size": 1499,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 151.0,
+		"last_filter": "Install",
+		"selected_items":
+		[
+			[
+				"Install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 648.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Effects",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Effects/Transmition",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Effects/Transmition/Scripts",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/GameStates",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Map",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Net",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/ServerStates",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/UI"
+	],
+	"file_history":
+	[
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardEffectCtr.cs",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Net/protocol.cs",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/descriptor.proto",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/proto/protocol.proto",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardBase.cs",
+		"/C/Users/csfc/Documents/Tencent Files/584917502/FileRecv/MyLightMap.shader",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardPositionCtr.cs",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/proto/packet.proto",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Net/packet.cs",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/iTween.cs",
+		"/C/Users/csfc/Desktop/Nydus_SimpleDialer/000.连接须知.txt",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/ServerStates/ServerStateEndGame.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Shaders/ParticleScale/Particle Add.shader",
+		"/D/workSpace/Unity3DPrj/UnderwaterCaustic/Assets/UnderwaterCaustic/Shaders/mesh.shader",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/CrownRace.txt",
+		"/D/workSpace/Unity3DPrj/SimpleWaterSurface/Assets/SimpleWater_ZM/read me.txt",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Network/HttpManager.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/StateMachine/IStateBase.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/StateMachine/GameStateManager.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameHomeScene.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Common/GlobalDefine.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/PollManager/GamePollManager.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameStateSystemSettingUI.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Protocal/service_game.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Protocal/service_login.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Network/HttpServer.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameFightGlobalState.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameStateSitDown.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Common/GameGlobalData.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameLoginState.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameStateShopUI.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameStatePlayerInfoUI.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameStateAccountManagerUI.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/PollManager/GameFightPollManager.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/FishBehavior/FishManager.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameHomeGlobalState.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/Protocal/http_protocal.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/TransitionScene/TransitionSceneCtr.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/StateMachine/GameStateBase.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/Assets/3DFishing/Scripts/GameStates/GameLoginScene.cs",
+		"/D/workSpace/3DFishing/trunk/3DFishing_5.3.6/3DFishing_5.3.6.txt",
+		"/C/Users/csfc/AppData/Roaming/Sublime Text 3/Packages/User/OmniSharpSublime.sublime-settings"
+	],
+	"find":
+	{
+		"height": 50.0
+	},
+	"find_in_files":
+	{
+		"height": 138.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"RollCardReq",
+			"CELL_EFFECT",
+			"EaseType",
+			"MoveTo",
+			"LoopType",
+			"looptype",
+			"RollCardReq",
+			"CardMoveOver",
+			"CardMoveToNear",
+			"AddCard",
+			"m_anim",
+			"_Position",
+			"GameGlobalData.PlayerData",
+			"CMD_GP_SIGN_OUT_REQ_PROTO",
+			"m_signInData",
+			"create",
+			"hitFishResult",
+			"Fish3D_Player_Data",
+			"SUB_GP_SIGN_IN_REQ",
+			"Game_Fish3D_Config",
+			"SUB_GP_GAME_FISH3D_FISH_FORCE_QUIT",
+			"UnregisterNetMsg",
+			"Game_Fish3D_Config",
+			"start",
+			"sit_success",
+			"GamePollManager",
+			"Sit",
+			"CMD_GP_SignInSuccess",
+			"Sign",
+			"CMD_GP_SERVICE_SIT_REQ",
+			"DoEnterIsland",
+			"SetLogDefine",
+			"OnSignInSuccessAck"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": true,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Assets/CrownRace/Scripts/RollTheDice.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2168,
+								2168
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2001.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 266,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								219,
+								219
+							]
+						],
+						"settings":
+						{
+							"auto_name": "1、走到抽卡格子",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Assets/CrownRace/Scripts/GameStates/GameStateRound.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15205,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8379,
+								8379
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"10092,10105": "Use 'var' keyword",
+								"104,109": "Using directive is not used by code and can be removed safely.",
+								"10808,10828": "Use 'var' keyword",
+								"11076,11094": "Use 'var' keyword",
+								"11577,11578": "Redundant lambda signature parentheses",
+								"11578,11579": "Redundant lambda signature parentheses",
+								"11587,11604": "Can be converted to expression",
+								"11908,11909": "Redundant lambda signature parentheses",
+								"11909,11910": "Redundant lambda signature parentheses",
+								"11918,11920": "Convert to '|=' expresssion",
+								"122,127": "Using directive is not used by code and can be removed safely.",
+								"12600,12610": "Static method invoked via derived type",
+								"12730,12740": "Static method invoked via derived type",
+								"12887,12897": "Use 'var' keyword",
+								"13005,13015": "Use 'var' keyword",
+								"13086,13096": "Use 'var' keyword",
+								"13102,13112": "Static method invoked via derived type",
+								"13234,13236": "Using member of null value will cause a NullReferenceException",
+								"13568,13578": "Static method invoked via derived type",
+								"13812,13813": "Argument value is redundant",
+								"14404,14408": "Use 'var' keyword",
+								"148,153": "Using directive is not used by code and can be removed safely.",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"2429,2439": "Use 'var' keyword",
+								"2537,2547": "Static method invoked via derived type",
+								"2671,2681": "Use 'var' keyword",
+								"2781,2791": "Static method invoked via derived type",
+								"2934,2944": "Use 'var' keyword",
+								"3022,3032": "Static method invoked via derived type",
+								"4372,4382": "Static method invoked via derived type",
+								"4457,4467": "Static method invoked via derived type",
+								"4537,4547": "Static method invoked via derived type",
+								"4960,4966": "Parameter can be declared with base type",
+								"4969,4970": "Parameter can be IList",
+								"5237,5238": "Parameter 'p' is never used",
+								"5470,5471": "Assignment is redundant",
+								"5814,5815": "Redundant lambda signature parentheses",
+								"5815,5816": "Redundant lambda signature parentheses",
+								"5826,5844": "Can be converted to expression",
+								"5892,5912": "Use 'var' keyword",
+								"6128,6143": "Use 'var' keyword",
+								"6626,6632": "Use 'var' keyword",
+								"6819,6820": "Redundant lambda signature parentheses",
+								"6820,6821": "Redundant lambda signature parentheses",
+								"6825,6843": "Can be converted to expression",
+								"7041,7042": "Redundant lambda signature parentheses",
+								"7042,7043": "Redundant lambda signature parentheses",
+								"7052,7069": "Can be converted to expression",
+								"7209,7210": "Redundant lambda signature parentheses",
+								"7210,7211": "Redundant lambda signature parentheses",
+								"7220,7237": "Can be converted to expression",
+								"7375,7376": "Redundant lambda signature parentheses",
+								"7376,7377": "Redundant lambda signature parentheses",
+								"7381,7399": "Can be converted to expression",
+								"746,751": "Initializing field by default value is redundant",
+								"7501,7502": "Redundant lambda signature parentheses",
+								"7502,7503": "Redundant lambda signature parentheses",
+								"7685,7686": "Redundant lambda signature parentheses",
+								"7686,7687": "Redundant lambda signature parentheses",
+								"7696,7698": "Convert to '|=' expresssion",
+								"7910,7923": "Use 'var' keyword",
+								"8332,8342": "Use 'var' keyword",
+								"8411,8421": "Use 'var' keyword",
+								"8427,8437": "Static method invoked via derived type",
+								"8457,8459": "Type cast is redundant",
+								"8513,8531": "Can be converted to expression",
+								"8776,8786": "Use 'var' keyword",
+								"8850,8860": "Use 'var' keyword",
+								"8866,8876": "Static method invoked via derived type",
+								"8896,8898": "Type cast is redundant",
+								"9153,9168": "Use 'var' keyword",
+								"9539,9540": "Redundant lambda signature parentheses",
+								"9540,9541": "Redundant lambda signature parentheses",
+								"9551,9569": "Can be converted to expression",
+								"9791,9798": "Use 'var' keyword",
+								"9854,9864": "Use 'var' keyword"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6574.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Assets/CrownRace/Scripts/Common/CardPositionCtr.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5774,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								442,
+								442
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"2297,2298": "Cannot convert from [UnknownType CardEffectCtr] to UnityEngine.GameObject",
+								"2306,2307": "Invocation error: ArgumentTypeMismatch",
+								"2412,2413": "Cannot convert from [UnknownType CardEffectCtr] to UnityEngine.GameObject",
+								"2431,2432": "Invocation error: ArgumentTypeMismatch",
+								"332,345": "'CardEffectCtr' is not a known identifier",
+								"365,378": "'CardEffectCtr' is not a known identifier",
+								"381,382": "Cannot convert from System.Collections.Generic.List`1[[?]] to System.Collections.Generic.List`1[[?]]"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Assets/CrownRace/Scripts/Common/CardEffectCtr.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								260,
+								260
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"135,141": "Name should have prefix '_'. (Rule 'Fields').",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"227,241": "Name should have prefix '_'. (Rule 'Fields').",
+								"277,291": "Name should have prefix '_'. (Rule 'Fields').",
+								"323,325": "Parameter 'id' is never used"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateRound.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8351,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7960,
+								7960
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"104,109": "Using directive is not used by code and can be removed safely.",
+								"122,127": "Using directive is not used by code and can be removed safely.",
+								"148,153": "Using directive is not used by code and can be removed safely.",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"2594,2600": "Parameter can be declared with base type",
+								"2603,2604": "Parameter can be IList",
+								"3964,3979": "Use 'var' keyword",
+								"4380,4396": "Use 'var' keyword",
+								"45,50": "Using directive is not used by code and can be removed safely.",
+								"4660,4680": "Use 'var' keyword",
+								"6284,6299": "Use 'var' keyword",
+								"7061,7076": "Use 'var' keyword",
+								"7890,7903": "Use 'var' keyword"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5046.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "Assets/CrownRace/Scripts/Common/CardEffectBase.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								293,
+								293
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"135,141": "Name should have prefix '_'. (Rule 'Fields').",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"227,241": "Name should have prefix '_'. (Rule 'Fields').",
+								"277,291": "Name should have prefix '_'. (Rule 'Fields').",
+								"323,325": "Parameter 'id' is never used"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Assets/CrownRace/Scripts/GameGlobalData.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7029,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								787,
+								787
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Using directive is not used by code and can be removed safely.",
+								"1436,1450": "This class is recommended to be defined as static",
+								"1473,1481": "'PlayerID' should start with a lower case letter. (Rule 'Fields')",
+								"1508,1521": "'PlayerResName' should start with a lower case letter. (Rule 'Fields')",
+								"1575,1589": "'LoginSceneName' should start with a lower case letter. (Rule 'Fields')",
+								"1628,1641": "'GameSceneName' should start with a lower case letter. (Rule 'Fields')",
+								"1679,1692": "'LoadSceneName' should start with a lower case letter. (Rule 'Fields')",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"1911,1915": "Use 'var' keyword",
+								"234,236": "Name should have prefix '_'. (Rule 'Fields').",
+								"258,264": "Name should have prefix '_'. (Rule 'Fields').",
+								"2623,2625": "Convert to 'return' statement",
+								"278,290": "Name should have prefix '_'. (Rule 'Fields').",
+								"307,311": "Name should have prefix '_'. (Rule 'Fields').",
+								"328,332": "Name should have prefix '_'. (Rule 'Fields').",
+								"3928,3946": "Convert to readonly",
+								"4004,4005": "Initializing field by default value is redundant",
+								"4155,4159": "Use 'var' keyword",
+								"5272,5279": "Parameter can be IComparable",
+								"5812,5824": "Parameter can be IComparable",
+								"6430,6438": "'CardList' should start with a lower case letter. (Rule 'Fields')",
+								"6441,6444": "Redundant array creation expression",
+								"6445,6455": "Redundant explicit array type specification",
+								"697,706": "Name should have prefix '_'. (Rule 'Fields').",
+								"723,731": "Name should have prefix '_'. (Rule 'Fields').",
+								"746,759": "Name should have prefix '_'. (Rule 'Fields').",
+								"774,786": "Name should have prefix '_'. (Rule 'Fields').",
+								"79,84": "Using directive is not used by code and can be removed safely.",
+								"813,822": "Name should have prefix '_'. (Rule 'Fields').",
+								"885,893": "Convert to auto property"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 696.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "Assets/CrownRace/Scripts/UI/GameRoundUI.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 871,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								420,
+								420
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"126,137": "'RollDiceBtn' should start with a lower case letter. (Rule 'Fields')",
+								"157,168": "'HeadContent' should start with a lower case letter. (Rule 'Fields')",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"211,230": "The private field 'm_rootRectTransform' is never assigned",
+								"409,415": "Method 'Update' has the same with 'Start'",
+								"439,457": "Method 'OnRollDiceBtnClick' can be made static."
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "Assets/CrownRace/Scripts/GameStates/GameMainScene.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1045,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								422,
+								422
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"122,127": "The private field 'm_map' is never assigned",
+								"19,24": "Using directive is not used by code and can be removed safely.",
+								"214,225": "The private field 'm_cameraCtr' is never assigned",
+								"332,341": "The private field 'm_cardCtr' is never assigned",
+								"450,463": "The private field 'm_transEffect' is never assigned"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "Assets/CrownRace/Effects/Transmition/Scripts/TransmitionEffect.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1499,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								984,
+								984
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"112,120": "Name should have prefix '_'. (Rule 'Fields').",
+								"136,149": "Name should have prefix '_'. (Rule 'Fields').",
+								"175,185": "Name should have prefix '_'. (Rule 'Fields')."
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 609.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 37.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 184.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.variable_get":
+	{
+		"height": 172.0
+	},
+	"pinned_build_system": "",
+	"project": "CrownRace.sublime-project",
+	"replace":
+	{
+		"height": 70.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"cardeff",
+				"CrownRace\\Scripts\\Common\\CardEffectCtr.cs"
+			],
+			[
+				"carde",
+				"CrownRace\\Scripts\\Common\\CardEffectCtr.cs"
+			],
+			[
+				"cardpo",
+				"CrownRace\\Scripts\\Common\\CardPositionCtr.cs"
+			],
+			[
+				"gameglo",
+				"CrownRace\\Scripts\\GameGlobalData.cs"
+			],
+			[
+				"cardbase",
+				"CrownRace\\Scripts\\Common\\CardBase.cs"
+			],
+			[
+				"itw",
+				"CrownRace\\Scripts\\iTween.cs"
+			],
+			[
+				"roundui",
+				"CrownRace\\Scripts\\UI\\GameRoundUI.cs"
+			],
+			[
+				"gamemain",
+				"CrownRace\\Scripts\\GameStates\\GameMainScene.cs"
+			],
+			[
+				"rollt",
+				"CrownRace\\Scripts\\RollTheDice.cs"
+			],
+			[
+				"httpmana",
+				"3DFishing\\Scripts\\Network\\HttpManager.cs"
+			],
+			[
+				"gamefightgl",
+				"3DFishing\\Scripts\\GameStates\\GameFightGlobalState.cs"
+			],
+			[
+				"gamefi",
+				"3DFishing\\Scripts\\GameStates\\GameFight.cs"
+			],
+			[
+				"global",
+				"3DFishing\\Scripts\\Common\\GlobalDefine.cs"
+			],
+			[
+				"fightglo",
+				"3DFishing\\Scripts\\GameStates\\GameFightGlobalState.cs"
+			],
+			[
+				"fishmana",
+				"3DFishing\\Scripts\\FishBehavior\\FishManager.cs"
+			],
+			[
+				"service_lo",
+				"3DFishing\\Scripts\\Protocal\\service_login.cs"
+			],
+			[
+				"service_game",
+				"3DFishing\\Scripts\\Protocal\\service_game.cs"
+			],
+			[
+				"http_pro",
+				"3DFishing\\Scripts\\Protocal\\http_protocal.cs"
+			],
+			[
+				"service",
+				"3DFishing\\Scripts\\Protocal\\service_game.cs"
+			],
+			[
+				"globale",
+				"3DFishing\\Scripts\\Common\\GlobalDefine.cs"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 454.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -398,4 +398,90 @@ namespace com.crownrace.msg
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
   
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"roll_card_req")]
+  public partial class roll_card_req : global::ProtoBuf.IExtensible
+  {
+    public roll_card_req() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"roll_card_ntf")]
+  public partial class roll_card_ntf : global::ProtoBuf.IExtensible
+  {
+    public roll_card_ntf() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private int _card_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"card_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int card_id
+    {
+      get { return _card_id; }
+      set { _card_id = value; }
+    }
+    private int _have_card_num;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"have_card_num", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int have_card_num
+    {
+      get { return _have_card_num; }
+      set { _have_card_num = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"use_card_ntf")]
+  public partial class use_card_ntf : global::ProtoBuf.IExtensible
+  {
+    public use_card_ntf() {}
+    
+    private int _use_player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"use_player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int use_player_id
+    {
+      get { return _use_player_id; }
+      set { _use_player_id = value; }
+    }
+    private int _card_id;
+    [global::ProtoBuf.ProtoMember(3, IsRequired = true, Name=@"card_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int card_id
+    {
+      get { return _card_id; }
+      set { _card_id = value; }
+    }
+    private int _target_player_id;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"target_player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int target_player_id
+    {
+      get { return _target_player_id; }
+      set { _target_player_id = value; }
+    }
+    private int _have_card_num;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"have_card_num", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int have_card_num
+    {
+      get { return _have_card_num; }
+      set { _have_card_num = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
 }

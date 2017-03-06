@@ -68,6 +68,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf, "CellEffectNtf");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer, "ReceiveMoveToEndFromServer");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf, "PlayerPauseNtf");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf, "RollCardNtf");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -108,6 +109,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf);
 		//
 		//
 		if (null != m_messageUICtr) {
@@ -212,7 +214,10 @@ public class GameStateRound : IStateBase {
 			m_messageUICtr.ShowNotify (msg + "暂停"+ntf.effect_num+"回合", (x)=>{SendServerRoundEnd();}, null, 1);
 			break;
 		case CELL_EFFECT.ROLL_CARD:
-			m_messageUICtr.ShowNotify (msg + "获得抽卡机会", 1);
+			m_messageUICtr.ShowNotify (msg + "获得抽卡机会", (x)=>{
+				if(ntf.player_id == m_localPlayer.PlayerID)
+					RollTheCard();
+				}, null, 1);
 			break;
 		case CELL_EFFECT.ROLL_DICE:
 			m_messageUICtr.ShowNotify (msg + "获得额外投掷骰子的机会",  (x)=>{
@@ -225,6 +230,32 @@ public class GameStateRound : IStateBase {
 			break;
 		}
 	}
+	void RollTheCard(){
+		roll_card_req req = new roll_card_req();
+		req.player_id = GameGlobalData.PlayerID;
+		TcpClientHelper.Instance.SendData<roll_card_req>(NET_CMD.ROLL_CARD_REQ_CMD, req);
+	}
+	void RollCardNtf(byte[] data){
+
+		roll_card_ntf ntf = NetUtils.Deserialize<roll_card_ntf>(data);
+		Debug.Log("RollCardNtf:"+ntf.player_id+","+GameGlobalData.PlayerID);
+		if(ntf.player_id == GameGlobalData.PlayerID){
+			m_owner.TransEffect.Play();
+			m_owner.CardCtr.AddCard(ntf.card_id, ()=>{
+				SendServerRoundEnd();
+			});
+		}else{
+			PlayerHeadUI ui = GetHeadUI(ntf.player_id);
+			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
+			Debug.Log("RollCardNtf:screen pos:"+screenPos);
+			m_owner.TransEffect.Play();
+			m_owner.CardCtr.AddCardTo(ntf.card_id, new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), null);
+		}
+		//
+		PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+		uiCtr.SetCardNum(ntf.have_card_num);
+	}
+
 	void SendMoveToEndToServer()
 	{
 		move_to_end_ntf ntf = new move_to_end_ntf ();

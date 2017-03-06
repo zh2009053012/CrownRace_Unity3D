@@ -35,6 +35,7 @@ public class ServerStateRound : IStateBase {
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_MOVE_OVER_NTF_CMD, PlayerMoveOver, "PlayerMoveOver");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_ACK_CMD, CellEffectAck, "CellEffectAck");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, MoveToEndNtf, "MoveToEndNtf");
+		TcpListenerHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_REQ_CMD, RollCardReq, "RollCardReq");
 		GameGlobalData.ResetPlayerRoundEnd ();
 		NotifyNextRoundPlayer ();
 	}
@@ -53,6 +54,7 @@ public class ServerStateRound : IStateBase {
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.PLAYER_MOVE_OVER_NTF_CMD, PlayerMoveOver);
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.CELL_EFFECT_ACK_CMD, CellEffectAck);
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, MoveToEndNtf);
+		TcpListenerHelper.Instance.UnregisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardReq);
 		GameGlobalData.ResetPlayerRoundEnd ();
 	}
 
@@ -187,6 +189,21 @@ public class ServerStateRound : IStateBase {
 		if (player_id == ntf.player_id) {
 			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateEndGame.Instance());
 			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<move_to_end_ntf> (NET_CMD.MOVE_TO_END_NTF_CMD, ntf);
+		}
+	}
+	void RollCardReq(int player_id, byte[] data){
+		roll_card_req req = NetUtils.Deserialize<roll_card_req>(data);
+		Debug.Log("RollCardReq:"+player_id+","+req.player_id);
+		if(player_id == req.player_id){
+			roll_card_ntf ntf = new roll_card_ntf();
+			ntf.player_id = player_id;
+			ntf.card_id = Random.Range(0, GameGlobalData.CardList.Length);
+			//
+			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(player_id);
+			playerData.card_list.Add(GameGlobalData.CardList[ntf.card_id]);
+
+			ntf.have_card_num = playerData.card_list.Count;
+			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<roll_card_ntf>(NET_CMD.ROLL_CARD_NTF_CMD, ntf);
 		}
 	}
 }

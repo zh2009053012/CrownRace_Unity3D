@@ -8,16 +8,12 @@ public class TransmitionEffect : MonoBehaviour {
 	private ParticleSystem m_ps;
 	private Camera m_camera;
 	private RenderTexture m_rt;
-	[SerializeField]
-	private Animation m_anim;
+
 	// Use this for initialization
 	void Start () {
 		m_ps = GetComponent<ParticleSystem> ();
 		m_camera = GetComponentInChildren<Camera> ();
 		CopyCamera ();
-
-		if(null == m_anim)
-			m_anim = GetComponentInChildren<Animation> ();
 
 		m_rt = new RenderTexture (m_camera.pixelWidth, m_camera.pixelHeight, 24);
 		m_camera.targetTexture = m_rt;
@@ -43,7 +39,6 @@ public class TransmitionEffect : MonoBehaviour {
 	public void Play(){
 		if (!m_ps.isPlaying) {
 			m_ps.Play ();
-			//m_anim.Play ();
 			StartCoroutine (StopParticleSystem(m_ps.duration));
 	
 		}

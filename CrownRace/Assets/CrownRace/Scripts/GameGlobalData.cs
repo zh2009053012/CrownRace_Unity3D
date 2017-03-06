@@ -3,11 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using com.crownrace.msg;
 
+public enum CARD_EFFECT{
+	FORWARD=1,
+	BACK=2,
+	PAUSE=3,
+	GOD_TIME=4,
+	DOUBLE_DICE_NUM=5,
+}
+
+public class CardEffect{
+	public int id;
+	public CARD_EFFECT effect;
+	public int effect_value;
+	public string name;
+	public string desc;
+	public CardEffect(){
+		id=0;
+		effect = CARD_EFFECT.FORWARD;
+		effect_value = 0;
+		name="";
+		desc="";
+	}
+	public CardEffect(int id, CARD_EFFECT effect, int effect_value, string name, string desc){
+		this.id = id;
+		this.effect = effect;
+		this.effect_value = effect_value;
+		this.name = name;
+		this.desc = desc;
+	}
+}
+
 public class PlayerRoundData{
 	public int player_id;
 	public string res_name;
 	public bool is_round_over;
 	public bool is_move_over;
+	public List<CardEffect> card_list = new List<CardEffect>();
 	private int pause_num;
 	public int PauseNum{
 		get{ return pause_num;}
@@ -220,4 +251,16 @@ public class GameGlobalData {
 		return true;
 	}
 	#endregion
+	//int id, CARD_EFFECT effect, int effect_value, int round_num, string name, string desc
+	public static CardEffect[] CardList = new CardEffect[]{
+		new CardEffect(0, CARD_EFFECT.FORWARD, 1, "前进", "使目标角色前进1格"),
+		new CardEffect(1, CARD_EFFECT.FORWARD, 2, "前进", "使目标角色前进2格"),
+		new CardEffect(2, CARD_EFFECT.FORWARD, 3, "前进", "使目标角色前进3格"),
+		new CardEffect(3, CARD_EFFECT.BACK, 1, "后退", "使目标角色后退1格"),
+		new CardEffect(4, CARD_EFFECT.BACK, 2, "后退", "使目标角色后退2格"),
+		new CardEffect(5, CARD_EFFECT.BACK, 3, "后退", "使目标角色后退3格"),
+		new CardEffect(6, CARD_EFFECT.PAUSE, 1, "暂停", "使目标角色暂停1回合"),
+		new CardEffect(7, CARD_EFFECT.PAUSE, 2, "暂停", "使目标角色暂停2回合"),
+		new CardEffect(8, CARD_EFFECT.PAUSE, 3, "暂停", "使目标角色暂停3回合"),
+	};
 }
