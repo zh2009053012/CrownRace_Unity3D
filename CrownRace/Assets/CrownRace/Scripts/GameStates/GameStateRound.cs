@@ -31,6 +31,7 @@ public class GameStateRound : IStateBase {
 	private RollTheDice m_diceCtr;
 	private bool m_isMovingOver = true;
 	private bool m_isSyncDice = false;
+	private int m_curRoundPlayer=-1;
 
 	private List<Player> m_playerList = new List<Player> ();
 	private Player m_localPlayer;
@@ -87,7 +88,7 @@ public class GameStateRound : IStateBase {
 		m_diceCtr.RegisterRollOverNotify (RollCallback);
 		//
 		InitPlayers();
-		SendServerRoundEnd ();
+		SendServerRoundEnd ("",1);
 	}
 
 	public void Execute(GameStateBase owner)
@@ -129,7 +130,7 @@ public class GameStateRound : IStateBase {
 		}
 	}
 	#region message func
-	private bool m_isDoRollDice = false;
+	private bool m_isDoRollDice = true;
 	public void Message(string message, object[] parameters)
 	{
 		Debug.Log("GameStateMainScene::Message:"+message);
@@ -193,9 +194,8 @@ public class GameStateRound : IStateBase {
 	}
 	void DoMovingOver(object[] p)
 	{
-		if(!m_isDoRollDice)
-			return;
-		m_roundUICtr.RollDiceBtn.interactable = false;
+		if(m_isDoRollDice)
+			m_roundUICtr.RollDiceBtn.interactable = false;
 		m_isMovingOver = true;
 		m_isSyncDice = false;
 		SendMoveOver ();
@@ -215,9 +215,7 @@ public class GameStateRound : IStateBase {
 	void PlayerPauseNtf(byte[] data)
 	{
 		player_pause_ntf ntf = NetUtils.Deserialize<player_pause_ntf> (data);
-		m_messageUICtr.ShowNotify (PlayerName(ntf.player_id) + "本回合无法投掷骰子", (x) => {
-			SendServerRoundEnd();
-		}, null, 1);
+		SendServerRoundEnd (PlayerName(ntf.player_id) + "本回合无法投掷骰子", 1);
 	}
 	void SendMoveOver()
 	{
@@ -241,10 +239,7 @@ public class GameStateRound : IStateBase {
 		p [1] = (object)ntf.effect_num;
 		switch (ntf.cell_effect) {
 		case CELL_EFFECT.NONE:
-			m_messageUICtr.ShowNotify (msg + "回合结束", (x)=>{SendServerRoundEnd();}, null,2);
-			//
-			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
-			uiCtr.ShowDiceImage(false);
+			SendServerRoundEnd(msg + "回合结束", 1);
 			break;
 		case CELL_EFFECT.BACK:
 			m_messageUICtr.ShowNotify (msg + "后退"+ntf.effect_num+"步", (x)=>{
@@ -257,7 +252,7 @@ public class GameStateRound : IStateBase {
 			}, p, 1);
 			break;
 		case CELL_EFFECT.PAUSE:
-			m_messageUICtr.ShowNotify (msg + "暂停"+ntf.effect_num+"回合", (x)=>{SendServerRoundEnd();}, null, 1);
+			SendServerRoundEnd (msg + "暂停" + ntf.effect_num + "回合", 1);
 			break;
 		case CELL_EFFECT.ROLL_CARD:
 			m_messageUICtr.ShowNotify (msg + "获得抽卡机会", (x)=>{
@@ -288,14 +283,16 @@ public class GameStateRound : IStateBase {
 		if(ntf.player_id == GameGlobalData.PlayerID){
 			m_owner.TransEffect.Play();
 			m_owner.CardCtr.AddCard(ntf.card_id, ()=>{
-				SendServerRoundEnd();
+				SendServerRoundEnd("回合结束", 1);
 			});
 		}else{
 			PlayerHeadUI ui = GetHeadUI(ntf.player_id);
 			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
 			Debug.Log("RollCardNtf:screen pos:"+screenPos);
 			m_owner.TransEffect.Play();
-			m_owner.CardCtr.AddCardTo(ntf.card_id, new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), null);
+			m_owner.CardCtr.AddCardTo(ntf.card_id, new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), ()=>{
+				SendServerRoundEnd("", 1);
+			});
 		}
 		//
 		PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
@@ -313,9 +310,7 @@ public class GameStateRound : IStateBase {
 		move_to_end_ntf ntf = NetUtils.Deserialize<move_to_end_ntf> (data);
 		string msg = PlayerName (ntf.player_id);
 
-		m_messageUICtr.ShowMessage (msg+"获得了胜利", (x) => {
-			SendServerRoundEnd ();
-		}, null, 5);
+		SendServerRoundEnd (msg+"获得了胜利", 5);
 	}
 		
 	void SyncDicePosRotationFromServer(byte[] data)
@@ -344,13 +339,16 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.SendData<dice_sync_ntf> (NET_CMD.DICE_SYNC_NTF_CMD, ntf);
 	}
 
-	void SendServerRoundEnd()
+	void SendServerRoundEnd(string msg, float second)
 	{
-		Debug.Log ("SendServerRoundEnd"+ GameGlobalData.PlayerID+","+m_localPlayer.PlayerID);
-		player_round_end_req req = new player_round_end_req ();
-		req.player_id = GameGlobalData.PlayerID;
-		TcpClientHelper.Instance.SendData<player_round_end_req> (NET_CMD.PLAYER_ROUND_END_REQ_CMD, req);
-
+		if(m_curRoundPlayer==GameGlobalData.PlayerID && !m_isDoRollDice)
+			return;
+		m_messageUICtr.ShowNotify (msg, (x) => {
+			Debug.Log ("SendServerRoundEnd"+ GameGlobalData.PlayerID+","+m_localPlayer.PlayerID);
+			player_round_end_req req = new player_round_end_req ();
+			req.player_id = GameGlobalData.PlayerID;
+			TcpClientHelper.Instance.SendData<player_round_end_req> (NET_CMD.PLAYER_ROUND_END_REQ_CMD, req);
+		}, null, second);
 	}
 	void RollCallback(uint num){
 		Debug.Log("rollcallback:"+num);
@@ -369,7 +367,6 @@ public class GameStateRound : IStateBase {
 			MovePlayerCellNum (ntf.player_id, ntf.dice_num);
 		}, null, 1);
 	}
-
 	void PlayerRollDiceNtf(byte[] data)
 	{
 		Debug.Log ("client:PlayerRollDiceNtf");
@@ -382,6 +379,11 @@ public class GameStateRound : IStateBase {
 				m_roundUICtr.RollDiceBtn.interactable = true;
 				m_isDoRollDice = false;
 			}
+			if(m_curRoundPlayer >= 0){
+				PlayerHeadUI ui = GetHeadUI(m_curRoundPlayer);
+				ui.ShowDiceImage(false);
+			}
+			m_curRoundPlayer = ntf.player_id;
 			//
 			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
 			uiCtr.ShowDiceImage(true);
@@ -409,6 +411,8 @@ public class GameStateRound : IStateBase {
 		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
 		string usePlayerName = PlayerName (ntf.use_player_id);
 		string targetPlayerName = PlayerName(ntf.target_player_id);
+		PlayerHeadUI ui = GetHeadUI(ntf.use_player_id);
+		ui.SetCardNum(ntf.have_card_num);
 
 		CardEffect ce = GameGlobalData.CardList[ntf.card_id];
 		string msg;
@@ -435,7 +439,8 @@ public class GameStateRound : IStateBase {
 			}, p, 1);
 			break;
 		case CARD_EFFECT.PAUSE:
-			m_messageUICtr.ShowNotify (targetPlayerName + "暂停"+ce.effect_value+"回合", (x)=>{SendServerRoundEnd();}, null, 1);
+			
+			SendServerRoundEnd (targetPlayerName + "暂停" + ce.effect_value + "回合", 1);
 			break;
 		case CARD_EFFECT.GOD_TIME:
 			

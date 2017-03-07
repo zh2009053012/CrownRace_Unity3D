@@ -212,7 +212,7 @@ public class ServerStateRound : IStateBase {
 		Debug.Log("ServerStateRound::UseCardNtf:"+player_id);
 		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
 		if(player_id == ntf.use_player_id){
-			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(player_id);
+			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(ntf.target_player_id);
 			CardEffect ce = playerData.GetCardEffect(ntf.card_id);
 			playerData.RemoveCardEffect(ntf.card_id);
 			ntf.have_card_num = playerData.card_list.Count;

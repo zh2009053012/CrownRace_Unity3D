@@ -5,7 +5,39 @@
 		[
 			[
 				"card",
-				"card_id\tint { get; set; }"
+				"have_card_num\tint { get; set; }"
+			],
+			[
+				"HeadUI",
+				"PlayerHeadUI\tPlayerHeadUI"
+			],
+			[
+				"loc",
+				"localScale\tVector3 { get; set; }"
+			],
+			[
+				"Vec",
+				"Vector3()\tVector3()"
+			],
+			[
+				"near",
+				"nearClipPlane\tfloat { get; set; }"
+			],
+			[
+				"Vector",
+				"Vector3\tVector3"
+			],
+			[
+				"ScreenTo",
+				"ScreenToWorldPoint(Vector3 position)\tVector3"
+			],
+			[
+				"GetMouse",
+				"GetMouseButtonUp(int button)\tbool"
+			],
+			[
+				"m_card",
+				"m_card_id\tint"
 			],
 			[
 				"GetSer",
@@ -74,10 +106,6 @@
 			[
 				"Screen",
 				"ScreenToWorldPoint(Vector3 position)\tVector3"
-			],
-			[
-				"m_card",
-				"m_cardBackSpacePos\tTransform"
 			],
 			[
 				"LOGOUT",
@@ -185,7 +213,7 @@
 			"file": "Assets/CrownRace/Scripts/GameStates/GameStateRound.cs",
 			"settings":
 			{
-				"buffer_size": 15205,
+				"buffer_size": 18031,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -194,46 +222,25 @@
 			"file": "Assets/CrownRace/Scripts/Common/CardPositionCtr.cs",
 			"settings":
 			{
-				"buffer_size": 5774,
+				"buffer_size": 7870,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Assets/CrownRace/Scripts/Common/CardEffectCtr.cs",
-			"settings":
-			{
-				"buffer_size": 336,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
 			}
 		},
 		{
 			"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateRound.cs",
 			"settings":
 			{
-				"buffer_size": 8351,
+				"buffer_size": 9384,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "using UnityEngine;\nusing System.Collections;\nusing UnityEngine.UI;\n\npublic class CardEffectCtr : MonoBehaviour {\n\tprotected CardEffect m_card;\n\tpublic CardEffect Card{\n\t\tget{return m_card;}\n\t}\n\t[SerializeField]\n\tprotected Text m_cardNameText;\n\t[SerializeField]\n\tprotected Text m_cardDescText;\n\n\tpublic void SetCardInfo(int id){\n\t\t\n\t}\n}\n",
-			"file": "Assets/CrownRace/Scripts/Common/CardEffectBase.cs",
-			"file_size": 339,
-			"file_write_time": 131332637278770912,
-			"settings":
-			{
-				"buffer_size": 336,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
 			}
 		},
 		{
 			"file": "Assets/CrownRace/Scripts/GameGlobalData.cs",
 			"settings":
 			{
-				"buffer_size": 7029,
+				"buffer_size": 7318,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -243,6 +250,15 @@
 			"settings":
 			{
 				"buffer_size": 871,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/UI/PlayerHeadUI.cs",
+			"settings":
+			{
+				"buffer_size": 1659,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -319,13 +335,14 @@
 	[
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardEffectCtr.cs",
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Net/protocol.cs",
-		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/descriptor.proto",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Net/packet.cs",
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/proto/protocol.proto",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/proto/packet.proto",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardEffectBase.cs",
+		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/descriptor.proto",
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardBase.cs",
 		"/C/Users/csfc/Documents/Tencent Files/584917502/FileRecv/MyLightMap.shader",
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Common/CardPositionCtr.cs",
-		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Tools/protobuf-net r668/ProtoGen/proto/packet.proto",
-		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/Net/packet.cs",
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/iTween.cs",
 		"/C/Users/csfc/Desktop/Nydus_SimpleDialer/000.连接须知.txt",
 		"/D/workSpace/GitProject/CrownRace_Unity3D/CrownRace/Assets/CrownRace/Scripts/ServerStates/ServerStateEndGame.cs",
@@ -374,9 +391,23 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			"useCardNtf",
+			"SendServerRoundEnd",
+			"DoMovingOver",
+			"MovePlayerCellNum",
+			"RollTheCard",
+			"inter",
+			"m_isDoRollDice",
+			"SendServerRoundEnd",
+			"m_isDoRollDice",
+			"is",
+			"isDo",
+			"Random",
+			"Random.Range",
+			"MovePlayerCellNum",
 			"RollCardReq",
 			"CELL_EFFECT",
 			"EaseType",
@@ -421,13 +452,13 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": true,
+		"whole_word": false,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -456,7 +487,7 @@
 						"translation.y": 2001.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
@@ -471,8 +502,8 @@
 						"selection":
 						[
 							[
-								219,
-								219
+								104,
+								104
 							]
 						],
 						"settings":
@@ -484,7 +515,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -493,106 +524,103 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15205,
+						"buffer_size": 18031,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8379,
-								8379
+								15073,
+								15073
 							]
 						],
 						"settings":
 						{
 							"oops":
 							{
-								"10092,10105": "Use 'var' keyword",
+								"10198,10216": "Can be converted to expression",
+								"10368,10383": "Use 'var' keyword",
 								"104,109": "Using directive is not used by code and can be removed safely.",
-								"10808,10828": "Use 'var' keyword",
-								"11076,11094": "Use 'var' keyword",
-								"11577,11578": "Redundant lambda signature parentheses",
-								"11578,11579": "Redundant lambda signature parentheses",
-								"11587,11604": "Can be converted to expression",
-								"11908,11909": "Redundant lambda signature parentheses",
-								"11909,11910": "Redundant lambda signature parentheses",
-								"11918,11920": "Convert to '|=' expresssion",
+								"10952,10959": "Use 'var' keyword",
+								"11015,11025": "Use 'var' keyword",
+								"11253,11266": "Use 'var' keyword",
+								"12015,12016": "Redundant lambda signature parentheses",
+								"12016,12017": "Redundant lambda signature parentheses",
+								"12116,12136": "Use 'var' keyword",
 								"122,127": "Using directive is not used by code and can be removed safely.",
-								"12600,12610": "Static method invoked via derived type",
-								"12730,12740": "Static method invoked via derived type",
-								"12887,12897": "Use 'var' keyword",
-								"13005,13015": "Use 'var' keyword",
-								"13086,13096": "Use 'var' keyword",
-								"13102,13112": "Static method invoked via derived type",
-								"13234,13236": "Using member of null value will cause a NullReferenceException",
-								"13568,13578": "Static method invoked via derived type",
-								"13812,13813": "Argument value is redundant",
-								"14404,14408": "Use 'var' keyword",
+								"12405,12423": "Use 'var' keyword",
+								"12906,12907": "Redundant lambda signature parentheses",
+								"12907,12908": "Redundant lambda signature parentheses",
+								"12916,12933": "Can be converted to expression",
+								"13236,13237": "Redundant lambda signature parentheses",
+								"13237,13238": "Redundant lambda signature parentheses",
+								"14118,14128": "Static method invoked via derived type",
+								"14248,14258": "Static method invoked via derived type",
+								"14759,14762": "Assignment is redundant",
 								"148,153": "Using directive is not used by code and can be removed safely.",
+								"14823,14826": "Assignment is redundant",
+								"14898,14904": "Use 'var' keyword",
+								"15174,15175": "Redundant lambda signature parentheses",
+								"15175,15176": "Redundant lambda signature parentheses",
+								"15185,15202": "Can be converted to expression",
+								"15356,15357": "Redundant lambda signature parentheses",
+								"15357,15358": "Redundant lambda signature parentheses",
+								"15367,15384": "Can be converted to expression",
+								"15713,15723": "Use 'var' keyword",
+								"15831,15841": "Use 'var' keyword",
+								"15912,15922": "Use 'var' keyword",
+								"15928,15938": "Static method invoked via derived type",
+								"16060,16062": "Using member of null value will cause a NullReferenceException",
+								"16394,16404": "Static method invoked via derived type",
+								"16638,16639": "Argument value is redundant",
+								"17230,17234": "Use 'var' keyword",
 								"19,24": "Using directive is not used by code and can be removed safely.",
-								"2429,2439": "Use 'var' keyword",
-								"2537,2547": "Static method invoked via derived type",
-								"2671,2681": "Use 'var' keyword",
-								"2781,2791": "Static method invoked via derived type",
-								"2934,2944": "Use 'var' keyword",
-								"3022,3032": "Static method invoked via derived type",
-								"4372,4382": "Static method invoked via derived type",
-								"4457,4467": "Static method invoked via derived type",
-								"4537,4547": "Static method invoked via derived type",
-								"4960,4966": "Parameter can be declared with base type",
-								"4969,4970": "Parameter can be IList",
-								"5237,5238": "Parameter 'p' is never used",
-								"5470,5471": "Assignment is redundant",
-								"5814,5815": "Redundant lambda signature parentheses",
-								"5815,5816": "Redundant lambda signature parentheses",
-								"5826,5844": "Can be converted to expression",
-								"5892,5912": "Use 'var' keyword",
-								"6128,6143": "Use 'var' keyword",
-								"6626,6632": "Use 'var' keyword",
-								"6819,6820": "Redundant lambda signature parentheses",
-								"6820,6821": "Redundant lambda signature parentheses",
-								"6825,6843": "Can be converted to expression",
-								"7041,7042": "Redundant lambda signature parentheses",
-								"7042,7043": "Redundant lambda signature parentheses",
-								"7052,7069": "Can be converted to expression",
-								"7209,7210": "Redundant lambda signature parentheses",
-								"7210,7211": "Redundant lambda signature parentheses",
-								"7220,7237": "Can be converted to expression",
-								"7375,7376": "Redundant lambda signature parentheses",
-								"7376,7377": "Redundant lambda signature parentheses",
-								"7381,7399": "Can be converted to expression",
+								"2558,2568": "Use 'var' keyword",
+								"2666,2676": "Static method invoked via derived type",
+								"2800,2810": "Use 'var' keyword",
+								"2910,2920": "Static method invoked via derived type",
+								"3063,3073": "Use 'var' keyword",
+								"3151,3161": "Static method invoked via derived type",
+								"4710,4720": "Static method invoked via derived type",
+								"4795,4805": "Static method invoked via derived type",
+								"4875,4885": "Static method invoked via derived type",
+								"5782,5794": "Use 'var' keyword",
+								"6177,6183": "Parameter can be declared with base type",
+								"6186,6187": "Parameter can be IList",
+								"6402,6408": "Parameter can be declared with base type",
+								"6411,6412": "Parameter can be IList",
+								"6565,6571": "Parameter can be declared with base type",
+								"6574,6575": "Parameter can be IList",
+								"6868,6869": "Parameter 'p' is never used",
+								"6876,6878": "Convert to '&=' expresssion",
+								"7123,7124": "Assignment is redundant",
 								"746,751": "Initializing field by default value is redundant",
-								"7501,7502": "Redundant lambda signature parentheses",
-								"7502,7503": "Redundant lambda signature parentheses",
-								"7685,7686": "Redundant lambda signature parentheses",
-								"7686,7687": "Redundant lambda signature parentheses",
-								"7696,7698": "Convert to '|=' expresssion",
-								"7910,7923": "Use 'var' keyword",
-								"8332,8342": "Use 'var' keyword",
-								"8411,8421": "Use 'var' keyword",
-								"8427,8437": "Static method invoked via derived type",
-								"8457,8459": "Type cast is redundant",
-								"8513,8531": "Can be converted to expression",
-								"8776,8786": "Use 'var' keyword",
-								"8850,8860": "Use 'var' keyword",
-								"8866,8876": "Static method invoked via derived type",
-								"8896,8898": "Type cast is redundant",
-								"9153,9168": "Use 'var' keyword",
-								"9539,9540": "Redundant lambda signature parentheses",
-								"9540,9541": "Redundant lambda signature parentheses",
-								"9551,9569": "Can be converted to expression",
-								"9791,9798": "Use 'var' keyword",
-								"9854,9864": "Use 'var' keyword"
+								"7493,7513": "Use 'var' keyword",
+								"7729,7744": "Use 'var' keyword",
+								"8227,8233": "Use 'var' keyword",
+								"8512,8513": "Redundant lambda signature parentheses",
+								"8513,8514": "Redundant lambda signature parentheses",
+								"8523,8540": "Can be converted to expression",
+								"8680,8681": "Redundant lambda signature parentheses",
+								"8681,8682": "Redundant lambda signature parentheses",
+								"8691,8708": "Can be converted to expression",
+								"8933,8934": "Redundant lambda signature parentheses",
+								"8934,8935": "Redundant lambda signature parentheses",
+								"9117,9118": "Redundant lambda signature parentheses",
+								"9118,9119": "Redundant lambda signature parentheses",
+								"9128,9130": "Convert to '|=' expresssion",
+								"9342,9355": "Use 'var' keyword",
+								"9811,9829": "Can be converted to expression"
 							},
 							"syntax": "Packages/C#/C#.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 6574.0,
+						"translation.y": 11876.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -601,91 +629,70 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5774,
+						"buffer_size": 7870,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								442,
-								442
+								1196,
+								1214
 							]
 						],
 						"settings":
 						{
 							"oops":
 							{
-								"2297,2298": "Cannot convert from [UnknownType CardEffectCtr] to UnityEngine.GameObject",
-								"2306,2307": "Invocation error: ArgumentTypeMismatch",
-								"2412,2413": "Cannot convert from [UnknownType CardEffectCtr] to UnityEngine.GameObject",
-								"2431,2432": "Invocation error: ArgumentTypeMismatch",
+								"2599,2612": "'CardEffectCtr' is not a known identifier",
+								"2820,2830": "Cannot convert from ? to UnityEngine.GameObject",
+								"2839,2840": "Invocation error: ArgumentTypeMismatch",
+								"2856,2866": "Cannot convert from ? to UnityEngine.GameObject",
+								"2947,2948": "Invocation error: ArgumentTypeMismatch",
+								"3125,3134": "'CardEffectCtr' does not contain a definition for 'transform'",
+								"3135,3142": "'?' does not contain a definition for 'forward'",
+								"3186,3187": "Error: Single",
+								"3189,3191": "Invocation error: ArgumentTypeMismatch",
+								"3213,3223": "Cannot convert from ? to UnityEngine.GameObject",
+								"3232,3233": "Invocation error: ArgumentTypeMismatch",
 								"332,345": "'CardEffectCtr' is not a known identifier",
+								"3339,3349": "Cannot convert from ? to UnityEngine.GameObject",
+								"3368,3369": "Invocation error: ArgumentTypeMismatch",
 								"365,378": "'CardEffectCtr' is not a known identifier",
-								"381,382": "Cannot convert from System.Collections.Generic.List`1[[?]] to System.Collections.Generic.List`1[[?]]"
+								"381,382": "Cannot convert from System.Collections.Generic.List`1[[?]] to System.Collections.Generic.List`1[[?]]",
+								"5529,5542": "'CardEffectCtr' is not a known identifier",
+								"5565,5578": "'CardEffectCtr' is not a known identifier",
+								"5582,5583": "Invocation error: MethodConstraintsNotSatisfied",
+								"5590,5601": "'?' does not contain a definition for 'SetCardInfo'",
+								"5606,5607": "'?' does not contain a definition for 'SetCardInfo'",
+								"5929,5932": "Cannot convert from ? to System.Object",
+								"5933,5934": "Invocation error: ArgumentTypeMismatch"
 							},
 							"syntax": "Packages/C#/C#.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1914.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "Assets/CrownRace/Scripts/Common/CardEffectCtr.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 336,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								260,
-								260
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"135,141": "Name should have prefix '_'. (Rule 'Fields').",
-								"19,24": "Using directive is not used by code and can be removed safely.",
-								"227,241": "Name should have prefix '_'. (Rule 'Fields').",
-								"277,291": "Name should have prefix '_'. (Rule 'Fields').",
-								"323,325": "Parameter 'id' is never used"
-							},
-							"syntax": "Packages/C#/C#.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
 					"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateRound.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8351,
+						"buffer_size": 9384,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7960,
-								7960
+								8537,
+								8547
 							]
 						],
 						"settings":
@@ -696,78 +703,41 @@
 								"122,127": "Using directive is not used by code and can be removed safely.",
 								"148,153": "Using directive is not used by code and can be removed safely.",
 								"19,24": "Using directive is not used by code and can be removed safely.",
-								"2594,2600": "Parameter can be declared with base type",
-								"2603,2604": "Parameter can be IList",
-								"3964,3979": "Use 'var' keyword",
-								"4380,4396": "Use 'var' keyword",
+								"2776,2782": "Parameter can be declared with base type",
+								"2785,2786": "Parameter can be IList",
+								"4146,4161": "Use 'var' keyword",
 								"45,50": "Using directive is not used by code and can be removed safely.",
-								"4660,4680": "Use 'var' keyword",
-								"6284,6299": "Use 'var' keyword",
-								"7061,7076": "Use 'var' keyword",
-								"7890,7903": "Use 'var' keyword"
+								"4562,4578": "Use 'var' keyword",
+								"4842,4862": "Use 'var' keyword",
+								"6466,6481": "Use 'var' keyword",
+								"7243,7258": "Use 'var' keyword",
+								"8072,8085": "Use 'var' keyword"
 							},
 							"syntax": "Packages/C#/C#.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5046.0,
+						"translation.y": 5873.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "Assets/CrownRace/Scripts/Common/CardEffectBase.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 336,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								293,
-								293
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"135,141": "Name should have prefix '_'. (Rule 'Fields').",
-								"19,24": "Using directive is not used by code and can be removed safely.",
-								"227,241": "Name should have prefix '_'. (Rule 'Fields').",
-								"277,291": "Name should have prefix '_'. (Rule 'Fields').",
-								"323,325": "Parameter 'id' is never used"
-							},
-							"syntax": "Packages/C#/C#.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
+					"buffer": 5,
 					"file": "Assets/CrownRace/Scripts/GameGlobalData.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7029,
+						"buffer_size": 7318,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								787,
-								787
+								0,
+								0
 							]
 						],
 						"settings":
@@ -812,11 +782,11 @@
 						"translation.y": 696.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 6,
 					"file": "Assets/CrownRace/Scripts/UI/GameRoundUI.cs",
 					"semi_transient": false,
 					"settings":
@@ -850,11 +820,40 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 7,
+					"file": "Assets/CrownRace/Scripts/UI/PlayerHeadUI.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1659,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								727,
+								740
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
 					"file": "Assets/CrownRace/Scripts/GameStates/GameMainScene.cs",
 					"semi_transient": false,
 					"settings":
@@ -887,11 +886,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 9,
 					"file": "Assets/CrownRace/Effects/Transmition/Scripts/TransmitionEffect.cs",
 					"semi_transient": false,
 					"settings":
@@ -922,7 +921,7 @@
 						"translation.y": 609.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 8,
 					"type": "text"
 				}
 			]
@@ -969,7 +968,7 @@
 	},
 	"output.variable_get":
 	{
-		"height": 172.0
+		"height": 229.0
 	},
 	"pinned_build_system": "",
 	"project": "CrownRace.sublime-project",
@@ -984,6 +983,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"playerhead",
+				"CrownRace\\Scripts\\UI\\PlayerHeadUI.cs"
+			],
 			[
 				"cardeff",
 				"CrownRace\\Scripts\\Common\\CardEffectCtr.cs"
