@@ -12,20 +12,24 @@ public enum CARD_EFFECT{
 }
 
 public class CardEffect{
-	public int id;
+	private static int id=0;
+	public static int ID{
+		get{return id++;}
+	}
+	public int instance_id;
 	public CARD_EFFECT effect;
 	public int effect_value;
 	public string name;
 	public string desc;
 	public CardEffect(){
-		id=0;
+		instance_id=0;
 		effect = CARD_EFFECT.FORWARD;
 		effect_value = 0;
 		name="";
 		desc="";
 	}
 	public CardEffect(int id, CARD_EFFECT effect, int effect_value, string name, string desc){
-		this.id = id;
+		this.instance_id = id;
 		this.effect = effect;
 		this.effect_value = effect_value;
 		this.name = name;
@@ -41,7 +45,7 @@ public class PlayerRoundData{
 	public List<CardEffect> card_list = new List<CardEffect>();
 	public CardEffect GetCardEffect(int id){
 		foreach(CardEffect ce in card_list){
-			if (ce.id == id){
+			if (ce.instance_id == id){
 				return ce;
 			}
 		}
@@ -268,14 +272,12 @@ public class GameGlobalData {
 	#endregion
 	//int id, CARD_EFFECT effect, int effect_value, int round_num, string name, string desc
 	public static CardEffect[] CardList = new CardEffect[]{
-		new CardEffect(0, CARD_EFFECT.FORWARD, 1, "前进", "使目标角色前进1格"),
-		new CardEffect(1, CARD_EFFECT.FORWARD, 2, "前进", "使目标角色前进2格"),
-		new CardEffect(2, CARD_EFFECT.FORWARD, 3, "前进", "使目标角色前进3格"),
-		new CardEffect(3, CARD_EFFECT.BACK, 1, "后退", "使目标角色后退1格"),
-		new CardEffect(4, CARD_EFFECT.BACK, 2, "后退", "使目标角色后退2格"),
-		new CardEffect(5, CARD_EFFECT.BACK, 3, "后退", "使目标角色后退3格"),
-		new CardEffect(6, CARD_EFFECT.PAUSE, 1, "暂停", "使目标角色暂停1回合"),
-		new CardEffect(7, CARD_EFFECT.PAUSE, 2, "暂停", "使目标角色暂停2回合"),
-		new CardEffect(8, CARD_EFFECT.PAUSE, 3, "暂停", "使目标角色暂停3回合"),
+		new CardEffect(0, CARD_EFFECT.FORWARD, 1, "前进1", "使目标角色前进1格"),
+		new CardEffect(0, CARD_EFFECT.FORWARD, 2, "前进2", "使目标角色前进2格"),
+		new CardEffect(0, CARD_EFFECT.FORWARD, 3, "前进3", "使目标角色前进3格"),
+		new CardEffect(0, CARD_EFFECT.BACK, 1, "后退1", "使目标角色后退1格"),
+		new CardEffect(0, CARD_EFFECT.BACK, 2, "后退2", "使目标角色后退2格"),
+		new CardEffect(0, CARD_EFFECT.BACK, 3, "后退3", "使目标角色后退3格"),
+		new CardEffect(0, CARD_EFFECT.PAUSE, 1, "暂停", "使目标角色暂停1回合"),
 	};
 }

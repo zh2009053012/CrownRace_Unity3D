@@ -36,6 +36,7 @@ message player_round_end_req{
 
 message player_move_over_ntf{
 	required int32 player_id=1;
+	required int32 move_player_id=2;
 }
 
 message cell_effect_req{
@@ -87,13 +88,15 @@ message roll_card_req{
 
 message roll_card_ntf{
 	required int32 player_id=1;
-	required int32 card_id=2;
-	required int32 have_card_num=3;
+	required int32 card_instance_id=2;
+	required int32 card_config_id=3;
+	required int32 have_card_num=4;
 }
 
 message use_card_ntf{
 	required int32 use_player_id=1;
-	required int32 card_id=3;
 	required int32 target_player_id=2;
-	required int32 have_card_num=4;
+	required int32 card_instance_id=3;
+	required int32 card_config_id=4;
+	required int32 have_card_num=5;
 }

@@ -146,10 +146,10 @@ public class CardPositionCtr : MonoBehaviour {
 		}
 	}
 	private VoidEvent m_backCardMoveOverEvent=null;
-	public void AddCardTo(int id, Vector3 screenPos, VoidEvent callback){
+	public void AddCardTo(int instance_id, int config_id, Vector3 screenPos, VoidEvent callback){
 		m_backCardMoveOverEvent = callback;
 
-		GameObject prefab = Resources.Load("Cards/card_"+id)as GameObject;
+		GameObject prefab = Resources.Load("Cards/card_"+config_id)as GameObject;
 		GameObject go = GameObject.Instantiate(prefab)as GameObject;
 
 		go.GetComponentInChildren<BoxCollider> ().enabled = false;
@@ -189,12 +189,12 @@ public class CardPositionCtr : MonoBehaviour {
 		}
 		GameObject.Destroy(go);
 	}
-	public void AddCard(int id, VoidEvent callback){
+	public void AddCard(int instance_id, int config_id, VoidEvent callback){
 		m_cardMoveOverEvent = callback;
 		m_isReadyUse = false;
 		BackCurSelectPos ();
 
-		GameObject prefab = Resources.Load("Cards/card_"+id)as GameObject;
+		GameObject prefab = Resources.Load("Cards/card_"+config_id)as GameObject;
 		GameObject go = GameObject.Instantiate(prefab)as GameObject;
 
 		go.GetComponentInChildren<BoxCollider> ().enabled = false;
@@ -202,7 +202,7 @@ public class CardPositionCtr : MonoBehaviour {
 		go.transform.position = m_cardSpacePos.position;
 		go.transform.rotation = m_cardSpacePos.rotation;
 		CardEffectCtr ctr = go.GetComponent<CardEffectCtr> ();
-		ctr.SetCardInfo (id);
+		ctr.SetCardInfo (instance_id, config_id);
 
 		Hashtable args = new Hashtable();
 		args.Add("easeType", iTween.EaseType.linear);

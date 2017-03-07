@@ -154,7 +154,7 @@ public class ServerStateRound : IStateBase {
 			GameGlobalData.SetPlayerMoveMove (player_id, true);
 			if (GameGlobalData.IsAllPlayerMoveOver ()) {
 				cell_effect_req req = new cell_effect_req ();
-				TcpListenerHelper.Instance.clientsContainer.SendToClient<cell_effect_req> (m_curRoundPlayer.player_id, NET_CMD.CELL_EFFECT_REQ_CMD, req);
+				TcpListenerHelper.Instance.clientsContainer.SendToClient<cell_effect_req> (ntf.move_player_id, NET_CMD.CELL_EFFECT_REQ_CMD, req);
 			}
 		}
 	}
@@ -172,11 +172,14 @@ public class ServerStateRound : IStateBase {
 		case CELL_EFFECT.FORWARD:
 			break;
 		case CELL_EFFECT.PAUSE:
-			m_curRoundPlayer.PauseNum = ack.effect_num;
+			PlayerRoundData movePlayerData = GameGlobalData.GetServerPlayerData(ack.player_id);
+			movePlayerData.PauseNum += ack.effect_num;
 			break;
 		case CELL_EFFECT.ROLL_CARD:
 			break;
 		case CELL_EFFECT.ROLL_DICE:
+			if(ack.player_id != m_curRoundPlayer.player_id)
+				ack.cell_effect = CELL_EFFECT.NONE;
 			break;
 		}
 		cell_effect_ntf ntf = new cell_effect_ntf ();
@@ -199,10 +202,13 @@ public class ServerStateRound : IStateBase {
 		if(player_id == req.player_id){
 			roll_card_ntf ntf = new roll_card_ntf();
 			ntf.player_id = player_id;
-			ntf.card_id = Random.Range(0, GameGlobalData.CardList.Length);
+			ntf.card_config_id = Random.Range(0, GameGlobalData.CardList.Length);
+			ntf.card_instance_id = CardEffect.ID;
 			//
 			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(player_id);
-			playerData.card_list.Add(GameGlobalData.CardList[ntf.card_id]);
+			CardEffect config = GameGlobalData.CardList[ntf.card_config_id];
+			CardEffect instance = new CardEffect(ntf.card_instance_id, config.effect, config.effect_value, config.name, config.desc);
+			playerData.card_list.Add(instance);
 
 			ntf.have_card_num = playerData.card_list.Count;
 			TcpListenerHelper.Instance.clientsContainer.SendToAllClient<roll_card_ntf>(NET_CMD.ROLL_CARD_NTF_CMD, ntf);
@@ -212,10 +218,11 @@ public class ServerStateRound : IStateBase {
 		Debug.Log("ServerStateRound::UseCardNtf:"+player_id);
 		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
 		if(player_id == ntf.use_player_id){
-			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(ntf.target_player_id);
-			CardEffect ce = playerData.GetCardEffect(ntf.card_id);
-			playerData.RemoveCardEffect(ntf.card_id);
-			ntf.have_card_num = playerData.card_list.Count;
+			PlayerRoundData usePlayerData = GameGlobalData.GetServerPlayerData(ntf.use_player_id);
+			PlayerRoundData targetPlayerData = GameGlobalData.GetServerPlayerData(ntf.target_player_id);
+			CardEffect ce = usePlayerData.GetCardEffect(ntf.card_instance_id);
+			usePlayerData.RemoveCardEffect(ntf.card_instance_id);
+			ntf.have_card_num = usePlayerData.card_list.Count;
 			//
 			switch(ce.effect){
 			case CARD_EFFECT.FORWARD:
@@ -227,7 +234,7 @@ public class ServerStateRound : IStateBase {
 			case CARD_EFFECT.GOD_TIME:
 				break;
 			case CARD_EFFECT.PAUSE:
-				playerData.PauseNum += ce.effect_value;
+				targetPlayerData.PauseNum += ce.effect_value;
 				break;
 			}
 			//

@@ -158,7 +158,8 @@ public class GameStateRound : IStateBase {
 		ntf.use_player_id = GameGlobalData.PlayerID;
 		ntf.target_player_id = ui.ID;
 		ntf.have_card_num = 0;//not need
-		ntf.card_id = CardPositionCtr.CurSelect.CardID;
+		ntf.card_config_id = CardPositionCtr.CurSelect.CardConfigID;
+		ntf.card_instance_id = CardPositionCtr.CurSelect.CardInstanceID;
 		TcpClientHelper.Instance.SendData<use_card_ntf>(NET_CMD.USE_CARD_NTF_CMD, ntf);
 		m_owner.CardCtr.DestroyCurSelectCard();
 	}
@@ -194,11 +195,12 @@ public class GameStateRound : IStateBase {
 	}
 	void DoMovingOver(object[] p)
 	{
+		int move_player_id = (int)p[0];
 		if(m_isDoRollDice)
 			m_roundUICtr.RollDiceBtn.interactable = false;
 		m_isMovingOver = true;
 		m_isSyncDice = false;
-		SendMoveOver ();
+		SendMoveOver (move_player_id);
 	}
 	#endregion
 
@@ -217,10 +219,11 @@ public class GameStateRound : IStateBase {
 		player_pause_ntf ntf = NetUtils.Deserialize<player_pause_ntf> (data);
 		SendServerRoundEnd (PlayerName(ntf.player_id) + "本回合无法投掷骰子", 1);
 	}
-	void SendMoveOver()
+	void SendMoveOver(int move_player_id)
 	{
 		player_move_over_ntf ntf = new player_move_over_ntf ();
 		ntf.player_id = m_localPlayer.PlayerID;
+		ntf.move_player_id = move_player_id;
 		TcpClientHelper.Instance.SendData<player_move_over_ntf> (NET_CMD.PLAYER_MOVE_OVER_NTF_CMD, ntf);
 	}
 	void CellEffectReq(byte[] data){
@@ -282,7 +285,7 @@ public class GameStateRound : IStateBase {
 		Debug.Log("RollCardNtf:"+ntf.player_id+","+GameGlobalData.PlayerID);
 		if(ntf.player_id == GameGlobalData.PlayerID){
 			m_owner.TransEffect.Play();
-			m_owner.CardCtr.AddCard(ntf.card_id, ()=>{
+			m_owner.CardCtr.AddCard(ntf.card_instance_id, ntf.card_config_id, ()=>{
 				SendServerRoundEnd("回合结束", 1);
 			});
 		}else{
@@ -290,7 +293,7 @@ public class GameStateRound : IStateBase {
 			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
 			Debug.Log("RollCardNtf:screen pos:"+screenPos);
 			m_owner.TransEffect.Play();
-			m_owner.CardCtr.AddCardTo(ntf.card_id, new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), ()=>{
+			m_owner.CardCtr.AddCardTo(ntf.card_instance_id, ntf.card_config_id, new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), ()=>{
 				SendServerRoundEnd("", 1);
 			});
 		}
@@ -414,12 +417,12 @@ public class GameStateRound : IStateBase {
 		PlayerHeadUI ui = GetHeadUI(ntf.use_player_id);
 		ui.SetCardNum(ntf.have_card_num);
 
-		CardEffect ce = GameGlobalData.CardList[ntf.card_id];
+		CardEffect ce = GameGlobalData.CardList[ntf.card_config_id];
 		string msg;
 		if(ntf.use_player_id == ntf.target_player_id){
 			msg = usePlayerName + "对自己" + "使用了卡牌<"+ce.name+">";
 		}else{
-			msg = usePlayerName + "对" + targetPlayerName + "使用了卡牌<"+ce.name+">";
+			msg = usePlayerName + "对" + targetPlayerName + "使用了卡牌<"+ce.name+"> ";
 		}
 		object[] p = new object[2];
 		p [0] = (object)ntf.target_player_id;
@@ -429,18 +432,18 @@ public class GameStateRound : IStateBase {
 			
 			break;
 		case CARD_EFFECT.BACK:
-			m_messageUICtr.ShowNotify (targetPlayerName + "后退"+ce.effect_value+"步", (x)=>{
+			m_messageUICtr.ShowNotify (msg + targetPlayerName + "后退"+ce.effect_value+"步", (x)=>{
 				MovePlayerCellNum ((int)x [0], -(int)x [1]);
-			}, p, 1);
+			}, p, 3);
 			break;
 		case CARD_EFFECT.FORWARD:
-			m_messageUICtr.ShowNotify (targetPlayerName + "前进"+ce.effect_value+"步", (x)=>{
+			m_messageUICtr.ShowNotify (msg + targetPlayerName + "前进"+ce.effect_value+"步", (x)=>{
 				MovePlayerCellNum ((int)x [0], (int)x [1]);
-			}, p, 1);
+			}, p, 3);
 			break;
 		case CARD_EFFECT.PAUSE:
 			
-			SendServerRoundEnd (targetPlayerName + "暂停" + ce.effect_value + "回合", 1);
+			SendServerRoundEnd (msg + targetPlayerName + "暂停" + ce.effect_value + "回合", 3);
 			break;
 		case CARD_EFFECT.GOD_TIME:
 			
