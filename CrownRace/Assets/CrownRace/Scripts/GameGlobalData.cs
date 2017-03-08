@@ -94,6 +94,7 @@ public class GameGlobalData {
 	public static string LoginSceneName = "LoginScene";
 	public static string GameSceneName = "GameScene";
 	public static string LoadSceneName = "LoadScene";
+	public static string ShowCardSceneName = "ShowCardScene";
 	#endregion
 
 	#region client player data list

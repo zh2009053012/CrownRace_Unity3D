@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameStartUI : MonoBehaviour {
 
@@ -15,5 +16,9 @@ public class GameStartUI : MonoBehaviour {
 	public void OnExitBtnClick()
 	{
 		Application.Quit ();
+	}
+	public void OnShowCardBtnClick(){
+		SceneLoading.LoadSceneName = GameGlobalData.ShowCardSceneName;
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
 	}
 }
