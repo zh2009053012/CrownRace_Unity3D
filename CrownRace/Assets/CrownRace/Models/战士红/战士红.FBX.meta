@@ -1,0 +1,110 @@
+fileFormatVersion: 2
+guid: 1136bcdce1cb1fe46a6e7b90b2daa551
+timeCreated: 1493003877
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Group01
+    100002: Object99
+    100004: objmale_gunboy02_face
+    100006: objmale_gunboy02_hair
+    100008: objmale_gunboy_arm
+    100010: objmale_gunboy_clothes
+    100012: objmale_gunboy_clothes02
+    100014: "\u5BF9\u8C6101"
+    100016: //RootNode
+    400000: Group01
+    400002: Object99
+    400004: objmale_gunboy02_face
+    400006: objmale_gunboy02_hair
+    400008: objmale_gunboy_arm
+    400010: objmale_gunboy_clothes
+    400012: objmale_gunboy_clothes02
+    400014: "\u5BF9\u8C6101"
+    400016: //RootNode
+    2300000: Object99
+    2300002: objmale_gunboy02_face
+    2300004: objmale_gunboy02_hair
+    2300006: objmale_gunboy_arm
+    2300008: objmale_gunboy_clothes
+    2300010: objmale_gunboy_clothes02
+    2300012: "\u5BF9\u8C6101"
+    3300000: Object99
+    3300002: objmale_gunboy02_face
+    3300004: objmale_gunboy02_hair
+    3300006: objmale_gunboy_arm
+    3300008: objmale_gunboy_clothes
+    3300010: objmale_gunboy_clothes02
+    3300012: "\u5BF9\u8C6101"
+    4300000: objmale_gunboy_arm
+    4300002: "\u5BF9\u8C6101"
+    4300004: objmale_gunboy_clothes
+    4300006: objmale_gunboy_clothes02
+    4300008: objmale_gunboy02_hair
+    4300010: objmale_gunboy02_face
+    4300012: Object99
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
