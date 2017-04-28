@@ -167,8 +167,8 @@ public class GameStateServerWait : IStateBase {
 		go.transform.localScale = Vector3.one;
 		PlayerItemUI playerItemUI = go.GetComponent<PlayerItemUI> ();
 		string[] ep = client_ip.Split (':');
-		//playerItemUI.SetInfo (player_id, resource_name, ep.Length>0?ep[0]:"");
-		playerItemUI.SetInfo (player_id, resource_name, client_ip.ToLower());
+		playerItemUI.SetInfo (player_id, resource_name, ep.Length>0?ep[0]:"");
+		//playerItemUI.SetInfo (player_id, resource_name, client_ip.ToLower());
 		playerItemList.Add (playerItemUI);
 
 		PlayerRoundData data = new PlayerRoundData(player_id, resource_name);

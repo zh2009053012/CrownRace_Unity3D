@@ -32,13 +32,13 @@ public class MapGrid : BaseGrid {
 	void Start()
 	{
 		
-		m_renderer = this.GetComponent<Renderer> ();
-		Material mat;
-		if (m_cellEffect == CELL_EFFECT.BACK || m_cellEffect == CELL_EFFECT.FORWARD) {
-			mat = Resources.Load ("HexagonMat/hexagon_" + m_cellEffect + "_" + Mathf.Abs (m_effectKeepRound))as Material;
-		}else {
-			mat = Resources.Load ("HexagonMat/hexagon_" + m_cellEffect)as Material;
-		}
-		m_renderer.sharedMaterial = mat;
+//		m_renderer = this.GetComponent<Renderer> ();
+//		Material mat;
+//		if (m_cellEffect == CELL_EFFECT.BACK || m_cellEffect == CELL_EFFECT.FORWARD) {
+//			mat = Resources.Load ("HexagonMat/hexagon_" + m_cellEffect + "_" + Mathf.Abs (m_effectKeepRound))as Material;
+//		}else {
+//			mat = Resources.Load ("HexagonMat/hexagon_" + m_cellEffect)as Material;
+//		}
+//		m_renderer.sharedMaterial = mat;
 	}
 }

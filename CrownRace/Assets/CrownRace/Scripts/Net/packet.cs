@@ -93,7 +93,43 @@ namespace com.crownrace.msg
       ROLL_CARD_NTF_CMD = 18,
             
       [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_NTF_CMD", Value=19)]
-      USE_CARD_NTF_CMD = 19
+      USE_CARD_NTF_CMD = 19,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MESSAGE_NTF", Value=20)]
+      MESSAGE_NTF = 20,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_DICE_BTN_STATE_NTF", Value=21)]
+      SET_DICE_BTN_STATE_NTF = 21,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_REQ", Value=22)]
+      USE_CARD_REQ = 22,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"REMOVE_PLAYER_CARD_NTF", Value=23)]
+      REMOVE_PLAYER_CARD_NTF = 23,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ADD_PLAYER_CARD_NTF", Value=24)]
+      ADD_PLAYER_CARD_NTF = 24,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"MOVE_PLAYER_NTF", Value=25)]
+      MOVE_PLAYER_NTF = 25,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SYNC_DICE_NTF", Value=26)]
+      SYNC_DICE_NTF = 26,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_PLAYER_STATE_NTF", Value=27)]
+      SET_PLAYER_STATE_NTF = 27,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE_REQ", Value=28)]
+      ROLL_DICE_REQ = 28,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"END_ROUND_REQ", Value=29)]
+      END_ROUND_REQ = 29,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"GAME_LOAD_OVER_REQ", Value=30)]
+      GAME_LOAD_OVER_REQ = 30,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_USE_CARD_STATE_NTF", Value=31)]
+      SET_USE_CARD_STATE_NTF = 31
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]
@@ -123,6 +159,23 @@ namespace com.crownrace.msg
             
       [global::ProtoBuf.ProtoEnum(Name=@"END", Value=8)]
       END = 8
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"PLAYER_STATE")]
+    public enum PLAYER_STATE
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_PAUSE", Value=1)]
+      PLAYER_PAUSE = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"BOUNCE_CARD_EFFECT", Value=2)]
+      BOUNCE_CARD_EFFECT = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"STOP_CARD_EFFECT", Value=3)]
+      STOP_CARD_EFFECT = 3,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"STOP_CELL_EFFECT", Value=4)]
+      STOP_CELL_EFFECT = 4
     }
   
 }

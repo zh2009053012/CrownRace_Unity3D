@@ -39,8 +39,24 @@ public class Player : MonoBehaviour {
 //		}
 		Debug.Log ("GotoMapGrid:"+m_targetList[0].ID);
 		m_agentCtr.SetDestination (m_targetList [0].PlayerPos (ResName));
+
+		#if UNITY_EDITOR
+		NavMeshPath path = new NavMeshPath();
+		m_agentCtr.CalculatePath (m_targetList [0].PlayerPos (ResName), path);
+		points.Clear();
+		points.AddRange(path.corners);
+		#endif
 		m_targetList.RemoveAt (0);
 		return true;
+	}
+	private List<Vector3> points = new List<Vector3>();
+	void OnDrawGizmos(){
+		#if UNITY_EDITOR
+		Gizmos.color = Color.red;
+		for (int i = 0; i < points.Count - 1; i++) {
+			Gizmos.DrawLine (points [i], points [i + 1]);
+		}
+		#endif
 	}
 	// Use this for initialization
 	void Start () {

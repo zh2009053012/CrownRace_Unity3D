@@ -32,6 +32,7 @@ public class GameStateRound : IStateBase {
 	private bool m_isMovingOver = true;
 	private bool m_isSyncDice = false;
 	private int m_curRoundPlayer=-1;
+	private bool m_canUseCard = false;
 
 	private List<Player> m_playerList = new List<Player> ();
 	private Player m_localPlayer;
@@ -61,16 +62,25 @@ public class GameStateRound : IStateBase {
 		m_owner = (GameMainScene)owner;
 		m_playerList.Clear ();
 		//
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, PlayerRollDiceNtf, "PlayerRollDiceNtf");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFromServer, "SyncDicePosRotationFromServer");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_OVER_NTF_CMD, RollDiceOverNtfFromServer, "RollDiceOverNtfFromServer");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.LEAVE_GAME_NTF_CMD, PlayerLeaveNtf, "PlayerLeaveNtf");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_REQ_CMD, CellEffectReq, "CellEffectReq");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf, "CellEffectNtf");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer, "ReceiveMoveToEndFromServer");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf, "PlayerPauseNtf");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf, "RollCardNtf");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf, "UseCardNtf");
+//		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, PlayerRollDiceNtf, "PlayerRollDiceNtf");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFromServer, "SyncDicePosRotationFromServer");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_OVER_NTF_CMD, RollDiceOverNtfFromServer, "RollDiceOverNtfFromServer");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.LEAVE_GAME_NTF_CMD, PlayerLeaveNtf, "PlayerLeaveNtf");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_REQ_CMD, CellEffectReq, "CellEffectReq");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf, "CellEffectNtf");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer, "ReceiveMoveToEndFromServer");
+//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_PAUSE_NTF_CMD, PlayerPauseNtf, "PlayerPauseNtf");
+//		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf, "RollCardNtf");
+//		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf, "UseCardNtf");
+		//
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MESSAGE_NTF, ServerMessageNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_DICE_BTN_STATE_NTF, ServerSetDiceBtnStateNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF, ServerSetUseCardStateNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.REMOVE_PLAYER_CARD_NTF, ServerRemovePlayerCardNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ADD_PLAYER_CARD_NTF, ServerAddPlayerCardNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MOVE_PLAYER_NTF, ServerMovePlayerNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SYNC_DICE_NTF, ServerSyncDiceNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF, ServerSetPlayerStateNtf, "");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -82,13 +92,16 @@ public class GameStateRound : IStateBase {
 		m_roundUICtr = roundUIGO.GetComponent<GameRoundUI> ();
 		m_roundUICtr.RollDiceBtn.interactable = false;
 		//
-		GameObject dicePrefab = Resources.Load ("RollDice")as GameObject;
-		GameObject diceGO = GameObject.Instantiate (dicePrefab);
-		m_diceCtr = diceGO.GetComponent<RollTheDice> ();
-		m_diceCtr.RegisterRollOverNotify (RollCallback);
+		if (!GameGlobalData.IsServer) {
+			GameObject dicePrefab = Resources.Load ("RollDice")as GameObject;
+			GameObject diceGO = GameObject.Instantiate (dicePrefab);
+			m_diceCtr = diceGO.GetComponent<RollTheDice> ();
+		}
+		//m_diceCtr.RegisterRollOverNotify (RollCallback);
 		//
 		InitPlayers();
-		SendServerRoundEnd ("",1);
+		//SendServerRoundEnd ("",1);
+		ClientGameLoadOverReq(GameGlobalData.PlayerID);
 	}
 
 	public void Execute(GameStateBase owner)
@@ -118,6 +131,14 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf);
 		//
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.MESSAGE_NTF, ServerMessageNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_DICE_BTN_STATE_NTF, ServerSetDiceBtnStateNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.REMOVE_PLAYER_CARD_NTF, ServerRemovePlayerCardNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ADD_PLAYER_CARD_NTF, ServerAddPlayerCardNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.MOVE_PLAYER_NTF, ServerMovePlayerNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SYNC_DICE_NTF, ServerSyncDiceNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF, ServerSetPlayerStateNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF, ServerSetUseCardStateNtf);
 		//
 		if (null != m_messageUICtr) {
 			GameObject.Destroy (m_messageUICtr.gameObject);
@@ -129,6 +150,72 @@ public class GameStateRound : IStateBase {
 			GameObject.Destroy (m_diceCtr.gameObject);
 		}
 	}
+
+	#region server ack/ntf & client req
+	void ServerMessageNtf(byte[] data){
+		message_ntf ntf = NetUtils.Deserialize<message_ntf> (data);
+		m_messageUICtr.ShowNotify (ntf.msg, 3);
+	}
+	void ServerSetDiceBtnStateNtf(byte[] data){
+		set_dice_btn_state_ntf ntf = NetUtils.Deserialize<set_dice_btn_state_ntf> (data);
+		m_roundUICtr.RollDiceBtn.interactable = ntf.can_press;
+	}
+	void ServerSetUseCardStateNtf(byte[] data){
+		set_use_card_state_ntf ntf = NetUtils.Deserialize<set_use_card_state_ntf> (data);
+		m_canUseCard = ntf.can_use_card;
+	}
+	void ServerRemovePlayerCardNtf(byte[] data){
+		remove_player_card_ntf ntf = NetUtils.Deserialize<remove_player_card_ntf> (data);
+	}
+	void ServerAddPlayerCardNtf(byte[] data){
+		add_player_card_ntf ntf = NetUtils.Deserialize<add_player_card_ntf> (data);
+	}
+	void ServerMovePlayerNtf(byte[] data){
+		move_player_ntf ntf = NetUtils.Deserialize<move_player_ntf> (data);
+		Player player = GetPlayer (ntf.player_id);
+		Vector3 position = new Vector3 (ntf.pos_x, ntf.pos_y, ntf.pos_z);
+		player.transform.LookAt (position);
+		player.transform.position = position;
+
+	}
+	void ServerSyncDiceNtf(byte[] data){
+		sync_dice_ntf ntf = NetUtils.Deserialize<sync_dice_ntf> (data);
+		if (m_diceCtr != null) {
+			m_diceCtr.IsKinematic = true;
+			m_diceCtr.Dice.SetActive (ntf.is_active);
+			Vector3 pos = new Vector3 (ntf.pos_x, ntf.pos_y, ntf.pos_z);
+			Quaternion rotation = new Quaternion (ntf.rotation_x, ntf.rotation_y, ntf.rotation_z, ntf.rotation_w);
+			m_diceCtr.Dice.transform.position = pos;
+			m_diceCtr.Dice.transform.rotation = rotation;
+		}
+	}
+	void ServerSetPlayerStateNtf(byte[] data){
+		set_player_state_ntf ntf = NetUtils.Deserialize<set_player_state_ntf> (data);
+	}
+	void ClientRollDiceReq(int playerId){
+		roll_dice_req req = new roll_dice_req ();
+		req.player_id = playerId;
+		TcpClientHelper.Instance.SendData<roll_dice_req> (NET_CMD.ROLL_DICE_REQ, req);
+	}
+	void ClientEndRoundReq(int playerId){
+		end_round_req req = new end_round_req ();
+		req.player_id = playerId;
+		TcpClientHelper.Instance.SendData<end_round_req> (NET_CMD.END_ROUND_REQ, req);
+	}
+	void ClientUseCardReq(int usePlayerId, int cardInstanceId, int targetPlayerId){
+		use_card_req req = new use_card_req ();
+		req.use_player_id = usePlayerId;
+		req.card_instance_id = cardInstanceId;
+		req.target_player_id = targetPlayerId;
+		TcpClientHelper.Instance.SendData<use_card_req>(NET_CMD.USE_CARD_REQ, req);
+	}
+	void ClientGameLoadOverReq(int playerId){
+		game_load_over_req req = new game_load_over_req ();
+		req.player_id = playerId;
+		TcpClientHelper.Instance.SendData<game_load_over_req> (NET_CMD.GAME_LOAD_OVER_REQ, req);
+	}
+	#endregion
+
 	#region message func
 	private bool m_isDoRollDice = true;
 	public void Message(string message, object[] parameters)
@@ -185,13 +272,15 @@ public class GameStateRound : IStateBase {
 	}
 	void DoRollDice()
 	{
-		if(m_isMovingOver){
-			m_isDoRollDice = true;
-			m_diceCtr.IsKinematic = false;
-			m_diceCtr.Roll(15000);
-			m_isMovingOver = false;
-			m_isSyncDice = true;
-		}
+		ClientRollDiceReq (GameGlobalData.PlayerID);
+		m_roundUICtr.RollDiceBtn.interactable = false;
+//		if(m_isMovingOver){
+//			m_isDoRollDice = true;
+//			m_diceCtr.IsKinematic = false;
+//			m_diceCtr.Roll(15000);
+//			m_isMovingOver = false;
+//			m_isSyncDice = true;
+//		}
 	}
 	void DoMovingOver(object[] p)
 	{

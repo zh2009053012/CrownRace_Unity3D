@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Map : MonoBehaviour {
+public class Map : UnitySingleton<Map> {
 	[SerializeField]
 	private MapGrid m_start;
 	public MapGrid StartGrid{
@@ -13,14 +13,5 @@ public class Map : MonoBehaviour {
 	public MapGrid EndGrid{
 		get{return m_end;}
 	}
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+		
 }

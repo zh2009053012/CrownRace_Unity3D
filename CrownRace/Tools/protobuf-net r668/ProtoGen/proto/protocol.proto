@@ -30,6 +30,78 @@ message all_player_data_ntf{
 	repeated player_data all_player=1;
 }
 
+message message_ntf{
+	required string msg=1;
+}
+
+message set_dice_btn_state_ntf{
+	required int32 player_id=1;
+	required bool can_press=2;
+}
+
+message set_use_card_state_ntf{
+	required bool can_use_card=1;
+}
+
+message use_card_req{
+	required int32 use_player_id=1;
+	required int32 card_instance_id=2;
+	required int32 target_player_id=3;
+}
+
+message remove_player_card_ntf{
+	required int32 player_id=1;
+	repeated int32 card_instance_id=2;
+}
+
+message add_player_card_ntf{
+	required int32 player_id=1;
+	repeated int32 card_instance_id=2;
+}
+
+message move_player_ntf{
+	required int32 player_id=1;
+	required float pos_x=2;
+	required float pos_y=3;
+	required float pos_z=4;
+	required float rotation_x=5;
+	required float rotation_y=6;
+	required float rotation_z=7;
+	required float rotation_w=8;
+}
+
+message sync_dice_ntf{
+	required bool is_active=1;
+	required float pos_x=2;
+	required float pos_y=3;
+	required float pos_z=4;
+	required float rotation_x=5;
+	required float rotation_y=6;
+	required float rotation_z=7;
+	required float rotation_w=8;
+}
+
+message set_player_state_ntf{
+	required int32 player_id=1;
+	required PLAYER_STATE player_state=2;
+	required int32 state_round_left=3;
+}
+
+message roll_dice_req{
+	required int32 player_id=1;
+}
+
+message end_round_req{
+	required int32 player_id=1;
+}
+
+message game_load_over_req{
+	required int32 player_id=1;
+}
+
+
+
+
 message player_round_end_req{
 	required int32 player_id=1;
 }

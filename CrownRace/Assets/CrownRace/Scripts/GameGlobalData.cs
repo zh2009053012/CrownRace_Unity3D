@@ -42,6 +42,9 @@ public class PlayerRoundData{
 	public string res_name;
 	public bool is_round_over;
 	public bool is_move_over;
+	public bool is_load_game_over;
+	public MapGrid stay_grid;
+	public Vector3 position;
 	public List<CardEffect> card_list = new List<CardEffect>();
 	public CardEffect GetCardEffect(int id){
 		foreach(CardEffect ce in card_list){
@@ -173,12 +176,37 @@ public class GameGlobalData {
 	}
 	#endregion
 	#region server player data
+	public static bool IsServer = false;
 	private static List<PlayerRoundData> m_serverPlayerList = new List<PlayerRoundData>();
 	private static int index=0;
 	public static void ClearServerPlayerData()
 	{
 		m_serverPlayerList.Clear ();
 	}
+	public static void ResetPlayerLoadGameOverData(){
+		foreach (PlayerRoundData data in m_serverPlayerList) {
+			data.is_load_game_over = false;
+		}
+	}
+	public static bool SetPlayerLoadGameOver(int player_id, bool is_over)
+	{
+		PlayerRoundData data = GetServerPlayerData (player_id);
+		if (data != null) {
+			data.is_load_game_over = is_over;
+			return true;
+		}
+		return false;
+	}
+	public static bool IsAllPlayerLoadGameOver()
+	{
+		foreach (PlayerRoundData data in m_serverPlayerList) {
+			if (!data.is_load_game_over) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static List<PlayerRoundData> GetServerAllPlayerData()
 	{
 		List<PlayerRoundData> list = new List<PlayerRoundData> ();

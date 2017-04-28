@@ -26,8 +26,11 @@ public class ServerStateStartGame : IStateBase {
 	public void Enter(GameStateBase owner)
 	{
 		Debug.Log ("enter ServerStateStart");
-		GameGlobalData.ResetPlayerRoundEnd ();
-		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_ROUND_END_REQ_CMD, PlayerRoundEnd, "PlayerRoundEnd");
+		//GameGlobalData.ResetPlayerRoundEnd ();
+		//TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.PLAYER_ROUND_END_REQ_CMD, PlayerRoundEnd, "PlayerRoundEnd");
+		GameGlobalData.ResetPlayerLoadGameOverData();
+		GameGlobalData.IsServer = true;
+		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.GAME_LOAD_OVER_REQ, ClientGameLoadOverReq, "");
 		NotifyClientPlayerData ();
 		TcpListenerHelper.Instance.IsStopListen = true;
 	}
@@ -39,7 +42,8 @@ public class ServerStateStartGame : IStateBase {
 
 	public void Exit(GameStateBase owner)
 	{
-		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.PLAYER_ROUND_END_REQ_CMD, PlayerRoundEnd);
+		//TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.PLAYER_ROUND_END_REQ_CMD, PlayerRoundEnd);
+		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.GAME_LOAD_OVER_REQ, ClientGameLoadOverReq);
 	}
 
 	public void Message(string message, object[] parameters)
@@ -58,6 +62,14 @@ public class ServerStateStartGame : IStateBase {
 			ntf.all_player.Add (item);
 		}
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<all_player_data_ntf> (NET_CMD.ALL_PLAYER_DATA_NTF_CMD, ntf);
+	}
+	void ClientGameLoadOverReq(int playerId, byte[] data){
+		game_load_over_req req = NetUtils.Deserialize<game_load_over_req> (data);
+		Debug.Log("ClientGameLoadOverReq:"+playerId+","+req.player_id);
+		GameGlobalData.SetPlayerLoadGameOver (req.player_id, true);
+		if (GameGlobalData.IsAllPlayerLoadGameOver ()) {
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());
+		}
 	}
 	void PlayerRoundEnd(int player_id, byte[] data)
 	{

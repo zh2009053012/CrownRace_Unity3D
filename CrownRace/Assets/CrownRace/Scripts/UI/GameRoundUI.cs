@@ -6,6 +6,10 @@ public class GameRoundUI : MonoBehaviour {
 	public Button RollDiceBtn;
 	public Transform HeadContent;
 	[SerializeField]
+	private Image m_head;
+	[SerializeField]
+	private Image m_crow;
+	[SerializeField]
 	private RectTransform m_rootRectTransform;
 	public RectTransform RootRectTransform{
 		get{return m_rootRectTransform;}
@@ -29,5 +33,20 @@ public class GameRoundUI : MonoBehaviour {
 		p = new Vector2(p.x/m_rootRectTransform.rect.width, p.y/m_rootRectTransform.rect.height);
 		p = new Vector2(p.x*Screen.width, p.y*Screen.height);
 		return p;
+	}
+	public void OnEndGroundBtnClick(){
+		
+	}
+	public void OnPauseBtnClick(){
+	
+	}
+	public void OnCardBtnClick(){
+	
+	}
+	public void OnQuitBtnClick(){
+	
+	}
+	public void OnSettingBtnClick(){
+	
 	}
 }

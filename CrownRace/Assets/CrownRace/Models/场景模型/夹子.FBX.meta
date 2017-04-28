@@ -1,0 +1,152 @@
+fileFormatVersion: 2
+guid: 4e61c65b18716d940833b1a647e7498f
+timeCreated: 1493176214
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Box001
+    100002: Circle001
+    100004: Cylinder001
+    100006: Hedra001
+    100008: Hedra002
+    100010: Hedra003
+    100012: Hedra004
+    100014: Hedra005
+    100016: Hedra008
+    100018: Hedra009
+    100020: Hedra010
+    100022: Hedra011
+    100024: Hedra012
+    100026: Tube002
+    100028: Tube003
+    100030: //RootNode
+    100032: "\u5BF9\u8C61002"
+    100034: "\u7EC4001"
+    400000: Box001
+    400002: Circle001
+    400004: Cylinder001
+    400006: Hedra001
+    400008: Hedra002
+    400010: Hedra003
+    400012: Hedra004
+    400014: Hedra005
+    400016: Hedra008
+    400018: Hedra009
+    400020: Hedra010
+    400022: Hedra011
+    400024: Hedra012
+    400026: Tube002
+    400028: Tube003
+    400030: //RootNode
+    400032: "\u5BF9\u8C61002"
+    400034: "\u7EC4001"
+    2300000: Box001
+    2300002: Cylinder001
+    2300004: Hedra001
+    2300006: Hedra002
+    2300008: Hedra003
+    2300010: Hedra004
+    2300012: Hedra005
+    2300014: Hedra008
+    2300016: Hedra009
+    2300018: Hedra010
+    2300020: Hedra011
+    2300022: Hedra012
+    2300024: Tube002
+    2300026: Tube003
+    2300028: "\u5BF9\u8C61002"
+    3300000: Box001
+    3300002: Cylinder001
+    3300004: Hedra001
+    3300006: Hedra002
+    3300008: Hedra003
+    3300010: Hedra004
+    3300012: Hedra005
+    3300014: Hedra008
+    3300016: Hedra009
+    3300018: Hedra010
+    3300020: Hedra011
+    3300022: Hedra012
+    3300024: Tube002
+    3300026: Tube003
+    3300028: "\u5BF9\u8C61002"
+    4300000: Cylinder001
+    4300002: "\u5BF9\u8C61002"
+    4300004: Hedra001
+    4300006: Hedra002
+    4300008: Hedra003
+    4300010: Hedra004
+    4300012: Hedra005
+    4300014: Tube002
+    4300016: Hedra008
+    4300018: Hedra009
+    4300020: Hedra010
+    4300022: Hedra011
+    4300024: Hedra012
+    4300026: Box001
+    4300028: Tube003
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

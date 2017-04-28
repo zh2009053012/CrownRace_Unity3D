@@ -1,0 +1,136 @@
+fileFormatVersion: 2
+guid: 5d0d3c84d26aab942a9f8a8a58d86237
+timeCreated: 1493176214
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Box003
+    100002: Box004
+    100004: default087
+    100006: //RootNode
+    100008: Box001
+    100010: Cylinder001
+    100012: Group004
+    100014: Hedra001
+    100016: Hedra002
+    100018: Line001
+    100020: Object254
+    100022: Slider02
+    100024: "\u7EC4001"
+    100026: Box002
+    100028: default086
+    400000: Box003
+    400002: Box004
+    400004: default087
+    400006: //RootNode
+    400008: Box001
+    400010: Cylinder001
+    400012: Group004
+    400014: Hedra001
+    400016: Hedra002
+    400018: Line001
+    400020: Object254
+    400022: Slider02
+    400024: "\u7EC4001"
+    400026: Box002
+    400028: default086
+    2300000: Box003
+    2300002: Box004
+    2300004: default087
+    2300006: Box001
+    2300008: Cylinder001
+    2300010: Hedra001
+    2300012: Hedra002
+    2300014: Line001
+    2300016: Object254
+    2300018: Box002
+    2300020: default086
+    2300022: //RootNode
+    3300000: Box003
+    3300002: Box004
+    3300004: default087
+    3300006: Box001
+    3300008: Cylinder001
+    3300010: Hedra001
+    3300012: Hedra002
+    3300014: Line001
+    3300016: Object254
+    3300018: Box002
+    3300020: default086
+    3300022: //RootNode
+    4300000: Box003
+    4300002: Box004
+    4300004: default087
+    4300006: Box001
+    4300008: Hedra002
+    4300010: Hedra001
+    4300012: Cylinder001
+    4300014: Line001
+    4300016: Object254
+    4300018: default086
+    4300020: Box002
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
