@@ -51,6 +51,7 @@ message use_card_req{
 	required int32 use_player_id=1;
 	required int32 card_instance_id=2;
 	required int32 target_player_id=3;
+	required int32 target_player2_id=4;
 }
 
 message remove_player_card_ntf{

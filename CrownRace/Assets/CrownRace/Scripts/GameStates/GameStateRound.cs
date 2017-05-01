@@ -114,7 +114,7 @@ public class GameStateRound : IStateBase {
 		if(Input.GetMouseButtonUp(0)){
 			DoSelectHeadBar(targetUseCardPlayer);
 		}
-		m_owner.CardCtr.MyUpdate(m_isDoRollDice);
+		m_owner.CardCtr.MyUpdate(m_canUseCard);
 		if(Input.GetKeyDown(KeyCode.J)){
 			PlayerHeadUI ui = GetHeadUI(GameGlobalData.PlayerID);
 			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
@@ -561,9 +561,9 @@ public class GameStateRound : IStateBase {
 		p [0] = (object)ntf.target_player_id;
 		p [1] = (object)ce.effect_value;
 		switch (ce.effect) {
-		case CARD_EFFECT.DOUBLE_DICE_NUM:
-			
-			break;
+//		case CARD_EFFECT.DOUBLE_DICE_NUM:
+//			
+//			break;
 		case CARD_EFFECT.BACK:
 			m_messageUICtr.ShowNotify (msg + targetPlayerName + "后退"+ce.effect_value+"步", (x)=>{
 				MovePlayerCellNum ((int)x [0], -(int)x [1]);
@@ -578,9 +578,9 @@ public class GameStateRound : IStateBase {
 			
 			SendServerRoundEnd (msg + targetPlayerName + "暂停" + ce.effect_value + "回合", 3);
 			break;
-		case CARD_EFFECT.GOD_TIME:
-			
-			break;
+//		case CARD_EFFECT.GOD_TIME:
+//			
+//			break;
 		}
 	}
 	#endregion

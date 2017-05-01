@@ -37,7 +37,7 @@ public class CardPositionCtr : MonoBehaviour {
 		}
 	}
 	// Update is called once per frame
-	public void MyUpdate (bool isRollDice) {
+	public void MyUpdate (bool canUseCard) {
 //		if(Input.GetKeyDown(KeyCode.A)){
 //			AddCard(Random.Range(0, GameGlobalData.CardList.Length), null);
 //		}
@@ -58,12 +58,13 @@ public class CardPositionCtr : MonoBehaviour {
 				BackCurSelectPos ();
 			}
 		}else if(Input.GetMouseButtonUp(0)){
-			if(!isRollDice && m_isReadyUse){
+			if(m_isReadyUse){
+
 				m_isReadyUse = false;
 				BackCurSelectPos();
 			}
 		}
-		if(!isRollDice && m_isReadyUse){
+		if(canUseCard && m_isReadyUse){
 			if(m_curSelect != null)
 				FollowCursor(m_curSelect.gameObject);
 		}
@@ -73,7 +74,7 @@ public class CardPositionCtr : MonoBehaviour {
 		float y = Input.mousePosition.y;
 		Vector3 screenPos = new Vector3(x, y, 3);
 		go.transform.position = Camera.main.ScreenToWorldPoint(screenPos);
-		go.transform.localScale = new Vector3(8,8,8);
+		go.transform.localScale = m_cardScale*0.25f;
 	}
 	void SelectCard(GameObject go){
 		m_curSelect = go.GetComponent<CardEffectCtr>();
@@ -138,6 +139,7 @@ public class CardPositionCtr : MonoBehaviour {
 		m_list.Add(ctr);
 	}
 	private VoidEvent m_cardMoveOverEvent = null;
+	private Vector3 m_cardScale = Vector3.one;
 	void CardMoveOver(GameObject go){
 		go.GetComponentInChildren<Collider> ().enabled = true;
 		if(null != m_cardMoveOverEvent){
@@ -156,6 +158,8 @@ public class CardPositionCtr : MonoBehaviour {
 		go.transform.parent = this.transform;
 		go.transform.position = m_cardBackSpacePos.position;
 		go.transform.rotation = m_cardBackSpacePos.rotation;
+		m_cardScale = go.transform.localScale;
+		Debug.Log("record scale:"+go.transform.localScale);
 
 		Vector3 targetPos = Camera.main.ScreenToWorldPoint(screenPos);
 		Debug.Log("AddCardTo:"+targetPos);
@@ -201,6 +205,7 @@ public class CardPositionCtr : MonoBehaviour {
 		go.transform.parent = this.transform;
 		go.transform.position = m_cardSpacePos.position;
 		go.transform.rotation = m_cardSpacePos.rotation;
+		m_cardScale = go.transform.localScale;
 		CardEffectCtr ctr = go.GetComponent<CardEffectCtr> ();
 		ctr.SetCardInfo (instance_id, config_id);
 

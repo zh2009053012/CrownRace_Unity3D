@@ -364,7 +364,8 @@ public class ServerStateRound : IStateBase {
 				CardEffect config = GameGlobalData.CardList[config_id];
 				//
 				pr[3+cardNum+i] = (object)CardEffect.ID;
-				CardEffect instance = new CardEffect(config_id, config.effect, config.effect_value, config.name, config.desc);
+				CardEffect instance = new CardEffect(config_id, config.effect, config.effect_value, 
+					config.effect2, config.effect_value2, config.select_target, config.select_value, config.name, config.desc);
 				m_curRoundPlayer.card_list.Add(instance);
 			}
 			pr[2] = (object)m_curRoundPlayer.card_list.Count;
@@ -652,7 +653,8 @@ public class ServerStateRound : IStateBase {
 			//
 			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(player_id);
 			CardEffect config = GameGlobalData.CardList[ntf.card_config_id];
-			CardEffect instance = new CardEffect(ntf.card_instance_id, config.effect, config.effect_value, config.name, config.desc);
+			CardEffect instance = new CardEffect(ntf.card_instance_id, config.effect, config.effect_value, 
+				config.effect2, config.effect_value2, config.select_target, config.select_value, config.name, config.desc);
 			playerData.card_list.Add(instance);
 
 			ntf.have_card_num = playerData.card_list.Count;
@@ -674,10 +676,10 @@ public class ServerStateRound : IStateBase {
 				break;
 			case CARD_EFFECT.BACK:
 				break;
-			case CARD_EFFECT.DOUBLE_DICE_NUM:
-				break;
-			case CARD_EFFECT.GOD_TIME:
-				break;
+//			case CARD_EFFECT.DOUBLE_DICE_NUM:
+//				break;
+//			case CARD_EFFECT.GOD_TIME:
+//				break;
 			case CARD_EFFECT.PAUSE:
 				targetPlayerData.PauseNum += ce.effect_value;
 				break;
