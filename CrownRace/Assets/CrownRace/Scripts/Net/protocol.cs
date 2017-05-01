@@ -195,6 +195,23 @@ namespace com.crownrace.msg
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
   
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"set_end_round_btn_state_ntf")]
+  public partial class set_end_round_btn_state_ntf : global::ProtoBuf.IExtensible
+  {
+    public set_end_round_btn_state_ntf() {}
+    
+    private bool _can_end_round;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"can_end_round", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public bool can_end_round
+    {
+      get { return _can_end_round; }
+      set { _can_end_round = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"use_card_req")]
   public partial class use_card_req : global::ProtoBuf.IExtensible
   {
@@ -245,6 +262,20 @@ namespace com.crownrace.msg
       get { return _card_instance_id; }
     }
   
+    private readonly global::System.Collections.Generic.List<int> _card_config_id = new global::System.Collections.Generic.List<int>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"card_config_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<int> card_config_id
+    {
+      get { return _card_config_id; }
+    }
+  
+    private int _have_card_num;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"have_card_num", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int have_card_num
+    {
+      get { return _have_card_num; }
+      set { _have_card_num = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
@@ -269,6 +300,20 @@ namespace com.crownrace.msg
       get { return _card_instance_id; }
     }
   
+    private readonly global::System.Collections.Generic.List<int> _card_config_id = new global::System.Collections.Generic.List<int>();
+    [global::ProtoBuf.ProtoMember(3, Name=@"card_config_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<int> card_config_id
+    {
+      get { return _card_config_id; }
+    }
+  
+    private int _have_card_num;
+    [global::ProtoBuf.ProtoMember(4, IsRequired = true, Name=@"have_card_num", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int have_card_num
+    {
+      get { return _have_card_num; }
+      set { _have_card_num = value; }
+    }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }

@@ -129,7 +129,10 @@ namespace com.crownrace.msg
       GAME_LOAD_OVER_REQ = 30,
             
       [global::ProtoBuf.ProtoEnum(Name=@"SET_USE_CARD_STATE_NTF", Value=31)]
-      SET_USE_CARD_STATE_NTF = 31
+      SET_USE_CARD_STATE_NTF = 31,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_END_ROUND_BTN_STATE_NTF", Value=32)]
+      SET_END_ROUND_BTN_STATE_NTF = 32
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]

@@ -11,6 +11,7 @@ public class GameRoundUI : MonoBehaviour {
 	private Image m_crow;
 	[SerializeField]
 	private RectTransform m_rootRectTransform;
+	public Button EndRoundBtn;
 	public RectTransform RootRectTransform{
 		get{return m_rootRectTransform;}
 	}
@@ -34,19 +35,19 @@ public class GameRoundUI : MonoBehaviour {
 		p = new Vector2(p.x*Screen.width, p.y*Screen.height);
 		return p;
 	}
-	public void OnEndGroundBtnClick(){
-		
+	public void OnEndRoundBtnClick(){
+		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickEndRoundBtn", null);
 	}
 	public void OnPauseBtnClick(){
-	
+		
 	}
 	public void OnCardBtnClick(){
-	
+		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickCardBtn", null);
 	}
 	public void OnQuitBtnClick(){
-	
+		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickQuitBtn", null);
 	}
 	public void OnSettingBtnClick(){
-	
+		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickSettingBtn", null);
 	}
 }

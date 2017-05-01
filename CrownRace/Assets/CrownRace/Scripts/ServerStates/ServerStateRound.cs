@@ -59,13 +59,43 @@ public class ServerStateRound : IStateBase {
 	}
 	void RollCallback(uint num){
 		m_isDiceRolling = false;
-		string targetPlayer = GetCurRoundPlayerName ();
-		ServerMessageNtf (targetPlayer+"移动"+num+"格");
+		ServerSyncDiceNtf (false, m_diceCtr.Dice.transform.position, m_diceCtr.Dice.transform.rotation);
+
+		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
+		for(int i=0; i<list.Count; i++){
+			string playerName = GetPlayerName(list[i].player_id, m_curRoundPlayer.player_id);
+			ServerMessageNtf(list[i].player_id, playerName + "移动"+num+"格");
+		}
 		//
 		object[] p = new object[2];
 		p [0] = (object)m_curRoundPlayer.player_id;
 		p [1] = (object)((int)num);
 		CallFuncAfter (3, "MovePlayer", p);
+	}
+	void RollCard(object[] p)
+	{
+		Debug.Log("RollCard");
+		add_player_card_ntf ntf = new add_player_card_ntf();
+
+		int playerId = (int)p[0];
+		int num = (int)p[1];
+		int haveCardNum = (int)p[2];
+		ntf.player_id = playerId;
+		ntf.have_card_num = haveCardNum;
+		for(int i=0; i<num; i++)
+		{
+			ntf.card_config_id.Add((int)p[3+i]);
+		}
+		for(int i=0; i<num; i++){
+			ntf.card_instance_id.Add((int)p[3+num+i]);
+		}
+		ServerAddPlayerCardNtf(ntf);
+	}
+	void EndRoundMsg(object[] p){
+		int playerId = (int)p[0];
+		string targetPlayer = GetPlayerName(playerId, m_curRoundPlayer.player_id);
+		ServerMessageNtf(m_curRoundPlayer.player_id, targetPlayer+"可以选择结束回合或者使用卡牌");
+		ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, true);
 	}
 	void MovePlayer(object[] p){
 		int playerId = (int)p [0];
@@ -119,7 +149,12 @@ public class ServerStateRound : IStateBase {
 		m_pathList.Clear();
 		for(int i=0; i<list.Count; i++){
 			NavMeshPath path = new NavMeshPath ();
-			NavMesh.CalculatePath (player.position, player.stay_grid.PlayerPos (player.res_name), NavMesh.AllAreas, path);
+			Vector3 srcPos = player.position;
+			if(i != 0){
+				srcPos = list[i-1].PlayerPos(player.res_name);
+			}
+			NavMesh.CalculatePath (srcPos, list[i].PlayerPos(player.res_name), NavMesh.AllAreas, path);
+			Debug.Log("path:"+path.corners.Length);
 			m_pathList.AddRange (path.corners);
 		}
 	}
@@ -129,35 +164,46 @@ public class ServerStateRound : IStateBase {
 		Vector3 pos = Map.Instance.StartGrid.PlayerPos (data.res_name);
 		ServerMovePlayerNtf (playerId, pos, Quaternion.identity);
 	}
-	string GetCurRoundPlayerName(){
+	string GetPlayerName(int sendPlayerId, int dstPlayerId){
 		string targetPlayer = "";
-		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
-		for (int i = 0; i < list.Count; i++) {
-			if (list [i].player_id == m_curRoundPlayer.player_id) {
-				targetPlayer = "你";
-			} else {
-				targetPlayer = list [i].res_name;
-			}
+		if(sendPlayerId == dstPlayerId){
+			targetPlayer = "你";
+		}else{
+			targetPlayer = GameGlobalData.GetServerPlayerData(dstPlayerId).res_name;
 		}
+
 		return targetPlayer;
 	}
 	void SelectCurRoundPlayer(){
 
 		m_curRoundPlayer = GameGlobalData.GetServerNextPlayerData ();
 
-		string targetPlayer = GetCurRoundPlayerName ();
+		string targetPlayer = "";
 		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
 
 		if (m_curRoundPlayer.PauseNum > 0) {
 			m_curRoundPlayer.MinusPauseNum ();
 			//
-			ServerMessageNtf (targetPlayer+"暂停"+m_curRoundPlayer.PauseNum+"回合");
-			CallFuncAfter (3, "SelectCurRoundPlayer", null);
-		} else {
-			ServerMessageNtf (targetPlayer+"的回合");
 			for (int i = 0; i < list.Count; i++) {
+				targetPlayer = GetPlayerName (list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"本回合不可投掷骰子");
+			}
+
+			CallFuncAfter(1, "CustomCallback", null, ()=>{
+				ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, true);
+				ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, false);
+				//
+				ServerMessageNtf(m_curRoundPlayer.player_id, targetPlayer+"可以选择结束回合或者使用卡牌");
+				ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, true);
+			});
+		} else {
+			
+			for (int i = 0; i < list.Count; i++) {
+				targetPlayer = GetPlayerName (list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"的回合");
 				ServerSetUseCardStateNtf (list [i].player_id, list [i].player_id == m_curRoundPlayer.player_id);
 				ServerSetDiceBtnStateNtf (list [i].player_id, list [i].player_id == m_curRoundPlayer.player_id);
+				ServerSetEndRoundBtnNtf(list[i].player_id, false);
 			}
 //			player_roll_dice_ntf ntf = new player_roll_dice_ntf ();
 //			ntf.player_id = m_curRoundPlayer.player_id;
@@ -170,16 +216,18 @@ public class ServerStateRound : IStateBase {
 		public float second;
 		public float startTime;
 		public object[] parameters;
-		public FuncData(float startTime, float second, string funcName, object[] p){
+		public VoidEvent callback;
+		public FuncData(float startTime, float second, string funcName, object[] p, VoidEvent callback=null){
 			this.startTime = startTime;
 			this.second = second;
 			this.funcName = funcName;
 			this.parameters = p;
+			this.callback = callback;
 		}
 	}
 	List<FuncData> m_funcList = new List<FuncData>();
-	void CallFuncAfter(float second, string funcName, object[] parameters){
-		FuncData data = new FuncData (Time.time, second, funcName, parameters);
+	void CallFuncAfter(float second, string funcName, object[] parameters, VoidEvent callback=null){
+		FuncData data = new FuncData (Time.time, second, funcName, parameters, callback);
 		m_funcList.Add (data);
 	}
 	private bool m_isDiceRolling = false;
@@ -205,6 +253,7 @@ public class ServerStateRound : IStateBase {
 		if(m_isDiceRolling){
 			ServerSyncDiceNtf (m_diceCtr.Dice.activeSelf, m_diceCtr.Dice.transform.position, m_diceCtr.Dice.transform.rotation);
 		}
+		//do sync player's pos
 		if (m_isMovingPlayer) {
 			PlayerRoundData player = GameGlobalData.GetServerPlayerData (m_movingPlayerId);
 			float step = Time.deltaTime * 10;
@@ -215,6 +264,8 @@ public class ServerStateRound : IStateBase {
 				//goto the end
 				if (m_pathIndex >= m_pathList.Count) {
 					m_isMovingPlayer = false;
+					m_pathIndex = 0;
+					GetPlayerGirdType();
 				}
 			} else {
 				Vector3 dir = m_pathList [m_pathIndex] - player.position;
@@ -224,6 +275,7 @@ public class ServerStateRound : IStateBase {
 
 		}
 	}
+
 	void DoCallFunc(FuncData data){
 		switch (data.funcName) {
 		case "SelectCurRoundPlayer":
@@ -231,6 +283,107 @@ public class ServerStateRound : IStateBase {
 			break;
 		case "MovePlayer":
 			MovePlayer (data.parameters);
+			break;
+		case "CustomCallback":
+			if(null != data.callback){
+				data.callback.Invoke();
+			}
+			break;
+		case "RollCard":
+			RollCard(data.parameters);
+			break;
+		}
+	}
+
+	void GetPlayerGirdType(){
+		PlayerRoundData data = GameGlobalData.GetServerPlayerData(m_curRoundPlayer.player_id);
+		string targetPlayer = GetPlayerName (data.player_id, m_curRoundPlayer.player_id);
+		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
+
+		switch (data.stay_grid.CellEffect) {
+		case CELL_EFFECT.NONE:
+			ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, true);
+			ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, false);
+			ServerMessageNtf(m_curRoundPlayer.player_id, targetPlayer+"可以选择结束回合或者使用卡牌");
+			ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, true);
+			break;
+		case CELL_EFFECT.BACK:
+			
+			for(int i=0; i < list.Count; i++){
+				targetPlayer = GetPlayerName(list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"向后移动"+data.stay_grid.EffectKeepRound+"格");
+			}
+			//
+			object[] pb = new object[2];
+			pb [0] = (object)m_curRoundPlayer.player_id;
+			pb [1] = (object)((int)data.stay_grid.EffectKeepRound);
+			CallFuncAfter (3, "MovePlayer", pb);
+			break;
+		case CELL_EFFECT.FORWARD:
+			
+			for(int i=0; i < list.Count; i++){
+				targetPlayer = GetPlayerName(list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"向前移动"+data.stay_grid.EffectKeepRound+"格");
+			}
+			//
+			object[] pf = new object[2];
+			pf [0] = (object)m_curRoundPlayer.player_id;
+			pf [1] = (object)((int)data.stay_grid.EffectKeepRound);
+			CallFuncAfter (3, "MovePlayer", pf);
+			break;
+		case CELL_EFFECT.PAUSE:
+			data.PauseNum += (int)data.stay_grid.EffectKeepRound;
+			for(int i=0; i < list.Count; i++){
+				targetPlayer = GetPlayerName(list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"暂停"+data.stay_grid.EffectKeepRound+"回合");
+			}
+
+			CallFuncAfter(2, "CustomCallback", null, ()=>{
+				ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, true);
+				ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, false);
+				//
+				ServerMessageNtf(m_curRoundPlayer.player_id, targetPlayer+"可以选择结束回合或者使用卡牌");
+				ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, true);
+			});
+
+			break;
+		case CELL_EFFECT.ROLL_CARD:
+			int cardNum = (int)data.stay_grid.EffectKeepRound;
+			for(int i=0; i < list.Count; i++){
+				targetPlayer = GetPlayerName(list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"抽取"+cardNum+"张卡牌");
+			}
+
+			object[] pr = new object[3+cardNum*2];
+			pr[0] = (object)m_curRoundPlayer.player_id;
+			pr[1] = (object)cardNum;
+
+			for(int i=0; i<cardNum; i++){
+				int config_id = Random.Range(0, GameGlobalData.CardList.Length);
+				pr[3+i] = (object)(config_id);
+				CardEffect config = GameGlobalData.CardList[config_id];
+				//
+				pr[3+cardNum+i] = (object)CardEffect.ID;
+				CardEffect instance = new CardEffect(config_id, config.effect, config.effect_value, config.name, config.desc);
+				m_curRoundPlayer.card_list.Add(instance);
+			}
+			pr[2] = (object)m_curRoundPlayer.card_list.Count;
+
+			CallFuncAfter(2, "RollCard", pr);
+			CallFuncAfter(8, "CustomCallback", null, ()=>{
+				ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, true);
+				ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, false);
+				ServerMessageNtf(m_curRoundPlayer.player_id, targetPlayer+"可以选择结束回合或者使用卡牌");
+				ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, true);
+			});
+
+			break;
+		case CELL_EFFECT.ROLL_DICE:
+			for(int i=0; i < list.Count; i++){
+				targetPlayer = GetPlayerName(list[i].player_id, m_curRoundPlayer.player_id);
+				ServerMessageNtf (list[i].player_id, targetPlayer+"额外投掷一次骰子");
+			}
+			ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, true);
 			break;
 		}
 	}
@@ -289,10 +442,8 @@ public class ServerStateRound : IStateBase {
 		ntf.card_instance_id.AddRange(cardInstanceId);
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<remove_player_card_ntf> (NET_CMD.REMOVE_PLAYER_CARD_NTF, ntf);
 	}
-	void ServerAddPlayerCardNtf(int playerId, int[] cardInstanceId){
-		add_player_card_ntf ntf = new add_player_card_ntf ();
-		ntf.player_id = playerId;
-		ntf.card_instance_id.AddRange(cardInstanceId);
+	void ServerAddPlayerCardNtf(add_player_card_ntf ntf){
+
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<add_player_card_ntf> (NET_CMD.ADD_PLAYER_CARD_NTF, ntf);
 	}
 	void ServerMovePlayerNtf(int playerId, Vector3 position, Quaternion rotation){
@@ -326,6 +477,11 @@ public class ServerStateRound : IStateBase {
 		ntf.state_round_left = stateRoundLeft;
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<set_player_state_ntf> (NET_CMD.SET_PLAYER_STATE_NTF, ntf);
 	}
+	void ServerSetEndRoundBtnNtf(int playerId, bool canEndRound){
+		set_end_round_btn_state_ntf ntf = new set_end_round_btn_state_ntf();
+		ntf.can_end_round = canEndRound;
+		TcpListenerHelper.Instance.clientsContainer.SendToClient<set_end_round_btn_state_ntf>(playerId, NET_CMD.SET_END_ROUND_BTN_STATE_NTF, ntf);
+	}
 	void ClientUseCardReq(int playerId, byte[] data){
 		use_card_req req = NetUtils.Deserialize<use_card_req> (data);
 	}
@@ -338,8 +494,19 @@ public class ServerStateRound : IStateBase {
 		m_isDiceRolling = true;
 
 	}
+	//
 	void ClientEndRoundReq(int playerId,byte[] data){
 		end_round_req req = NetUtils.Deserialize<end_round_req> (data);
+		if(m_curRoundPlayer.player_id == req.player_id){
+
+			List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
+			for(int i=0; i<list.Count; i++){
+				string playerName = GetPlayerName(list[i].player_id, req.player_id);
+				ServerMessageNtf(list[i].player_id, playerName+"结束回合");
+			}
+
+			SelectCurRoundPlayer();
+		}
 	}
 
 	#endregion

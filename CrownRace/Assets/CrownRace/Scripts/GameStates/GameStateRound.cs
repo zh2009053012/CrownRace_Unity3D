@@ -81,6 +81,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MOVE_PLAYER_NTF, ServerMovePlayerNtf, "");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SYNC_DICE_NTF, ServerSyncDiceNtf, "");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF, ServerSetPlayerStateNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF, ServerSetEndRoundBtnNtf, "");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -114,6 +115,16 @@ public class GameStateRound : IStateBase {
 			DoSelectHeadBar(targetUseCardPlayer);
 		}
 		m_owner.CardCtr.MyUpdate(m_isDoRollDice);
+		if(Input.GetKeyDown(KeyCode.J)){
+			PlayerHeadUI ui = GetHeadUI(GameGlobalData.PlayerID);
+			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
+			//Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane));
+
+			m_owner.TransEffect.Play();
+			m_owner.CardCtr.AddCardTo(0, 0, new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), ()=>{
+
+			});
+		}
 	}
 
 	public void Exit(GameStateBase owner)
@@ -139,6 +150,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SYNC_DICE_NTF, ServerSyncDiceNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF, ServerSetPlayerStateNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF, ServerSetUseCardStateNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF, ServerSetEndRoundBtnNtf);
 		//
 		if (null != m_messageUICtr) {
 			GameObject.Destroy (m_messageUICtr.gameObject);
@@ -168,12 +180,33 @@ public class GameStateRound : IStateBase {
 		remove_player_card_ntf ntf = NetUtils.Deserialize<remove_player_card_ntf> (data);
 	}
 	void ServerAddPlayerCardNtf(byte[] data){
+		
 		add_player_card_ntf ntf = NetUtils.Deserialize<add_player_card_ntf> (data);
+		Debug.Log("ServerAddPlayerCardNtf"+ntf.player_id+","+ntf.have_card_num);
+		//
+		if(ntf.player_id == GameGlobalData.PlayerID){
+			m_owner.TransEffect.Play();
+			m_owner.CardCtr.AddCard(ntf.card_instance_id[0], ntf.card_config_id[0], ()=>{
+				
+			});
+		}else{
+			PlayerHeadUI ui = GetHeadUI(ntf.player_id);
+			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
+			//Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane));
+
+			m_owner.TransEffect.Play();
+			m_owner.CardCtr.AddCardTo(ntf.card_instance_id[0], ntf.card_config_id[0], new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), ()=>{
+				
+			});
+		}
+		//
+		PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+		uiCtr.SetCardNum(ntf.have_card_num);
 	}
 	void ServerMovePlayerNtf(byte[] data){
 		move_player_ntf ntf = NetUtils.Deserialize<move_player_ntf> (data);
 		Player player = GetPlayer (ntf.player_id);
-		Vector3 position = new Vector3 (ntf.pos_x, ntf.pos_y, ntf.pos_z);
+		Vector3 position = new Vector3 (ntf.pos_x, player.transform.position.y, ntf.pos_z);
 		player.transform.LookAt (position);
 		player.transform.position = position;
 
@@ -191,6 +224,10 @@ public class GameStateRound : IStateBase {
 	}
 	void ServerSetPlayerStateNtf(byte[] data){
 		set_player_state_ntf ntf = NetUtils.Deserialize<set_player_state_ntf> (data);
+	}
+	void ServerSetEndRoundBtnNtf(byte[] data){
+		set_end_round_btn_state_ntf ntf = NetUtils.Deserialize<set_end_round_btn_state_ntf>(data);
+		m_roundUICtr.EndRoundBtn.interactable = ntf.can_end_round;
 	}
 	void ClientRollDiceReq(int playerId){
 		roll_dice_req req = new roll_dice_req ();
@@ -232,6 +269,13 @@ public class GameStateRound : IStateBase {
 		}else if(message.Equals("OnPointerExit")){
 			DoPointerExitHeadBar(parameters);
 		}else if(message.Equals("OnSelectHeadBar")){
+		}else if(message.Equals("ClickEndRoundBtn")){
+			ClientEndRoundReq(GameGlobalData.PlayerID);
+		}else if(message.Equals("ClickCardBtn")){
+			
+		}else if(message.Equals("ClickQuitBtn")){
+			
+		}else if(message.Equals("ClickSettingBtn")){
 		}
 	}
 	void DoSelectHeadBar(int player_id){

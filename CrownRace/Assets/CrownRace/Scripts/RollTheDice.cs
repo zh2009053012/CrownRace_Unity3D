@@ -77,6 +77,7 @@ public class RollTheDice : MonoBehaviour {
 	}
 	uint GetNumber()
 	{
+		return 3;
 		if (Vector3.Dot (m_rigidbody.transform.up, Vector3.up) > 0.9f) {
 			return 5;
 		}

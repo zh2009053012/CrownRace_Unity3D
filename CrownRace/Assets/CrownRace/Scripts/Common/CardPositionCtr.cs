@@ -139,7 +139,7 @@ public class CardPositionCtr : MonoBehaviour {
 	}
 	private VoidEvent m_cardMoveOverEvent = null;
 	void CardMoveOver(GameObject go){
-		go.GetComponentInChildren<BoxCollider> ().enabled = true;
+		go.GetComponentInChildren<Collider> ().enabled = true;
 		if(null != m_cardMoveOverEvent){
 			m_cardMoveOverEvent.Invoke();
 			m_cardMoveOverEvent = null;
@@ -152,7 +152,7 @@ public class CardPositionCtr : MonoBehaviour {
 		GameObject prefab = Resources.Load("Cards/card_"+config_id)as GameObject;
 		GameObject go = GameObject.Instantiate(prefab)as GameObject;
 
-		go.GetComponentInChildren<BoxCollider> ().enabled = false;
+		go.GetComponentInChildren<Collider> ().enabled = false;
 		go.transform.parent = this.transform;
 		go.transform.position = m_cardBackSpacePos.position;
 		go.transform.rotation = m_cardBackSpacePos.rotation;
@@ -177,7 +177,7 @@ public class CardPositionCtr : MonoBehaviour {
 		args2.Add("time", 3);
 		args2.Add("loopType", "none");
 		args2.Add("delay", 0);
-		args2.Add("scale", new Vector3(1, 1, 1));
+		args2.Add("scale", go.transform.localScale*0.05f);
 		
 		iTween.ScaleTo(go, args2);
 	}
@@ -197,7 +197,7 @@ public class CardPositionCtr : MonoBehaviour {
 		GameObject prefab = Resources.Load("Cards/card_"+config_id)as GameObject;
 		GameObject go = GameObject.Instantiate(prefab)as GameObject;
 
-		go.GetComponentInChildren<BoxCollider> ().enabled = false;
+		go.GetComponentInChildren<Collider> ().enabled = false;
 		go.transform.parent = this.transform;
 		go.transform.position = m_cardSpacePos.position;
 		go.transform.rotation = m_cardSpacePos.rotation;

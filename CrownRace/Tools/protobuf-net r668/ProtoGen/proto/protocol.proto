@@ -43,6 +43,10 @@ message set_use_card_state_ntf{
 	required bool can_use_card=1;
 }
 
+message set_end_round_btn_state_ntf{
+	required bool can_end_round=1;
+}
+
 message use_card_req{
 	required int32 use_player_id=1;
 	required int32 card_instance_id=2;
@@ -52,11 +56,15 @@ message use_card_req{
 message remove_player_card_ntf{
 	required int32 player_id=1;
 	repeated int32 card_instance_id=2;
+	repeated int32 card_config_id=3;
+	required int32 have_card_num=4;
 }
 
 message add_player_card_ntf{
 	required int32 player_id=1;
 	repeated int32 card_instance_id=2;
+	repeated int32 card_config_id=3;
+	required int32 have_card_num=4;
 }
 
 message move_player_ntf{

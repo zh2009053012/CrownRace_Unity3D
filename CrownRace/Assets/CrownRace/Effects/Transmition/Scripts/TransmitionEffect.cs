@@ -49,8 +49,8 @@ public class TransmitionEffect : MonoBehaviour {
 		if (m_ps.isPlaying) {
 			//m_camera.transform.RotateAround (new Vector3 (0, 1, 0), Time.deltaTime*m_rotateSpeed);
 		}
-		if (Input.GetKeyDown (KeyCode.P)) {
-			Play ();
-		}
+		// if (Input.GetKeyDown (KeyCode.P)) {
+		// 	Play ();
+		// }
 	}
 }
