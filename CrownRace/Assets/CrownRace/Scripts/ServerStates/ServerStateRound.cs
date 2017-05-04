@@ -100,6 +100,7 @@ public class ServerStateRound : IStateBase {
 	void MovePlayer(object[] p){
 		int playerId = (int)p [0];
 		int num = (int)p [1];
+		Debug.Log ("MovePlayer:"+playerId+","+num);
 		m_isMovingPlayer = true;
 		m_movingPlayerId = playerId;
 
@@ -131,6 +132,7 @@ public class ServerStateRound : IStateBase {
 		}
 		list.Add (target);
 		//
+		Debug.Log("target grid:"+target.gameObject.name);
 		if (target.CellEffect == CELL_EFFECT.END)
 			Debug.Log ("goto end "+left);
 		if (target.CellEffect == CELL_EFFECT.END && left > 0) {
@@ -316,7 +318,7 @@ public class ServerStateRound : IStateBase {
 			//
 			object[] pb = new object[2];
 			pb [0] = (object)m_curRoundPlayer.player_id;
-			pb [1] = (object)((int)data.stay_grid.EffectKeepRound);
+			pb [1] = (object)((int)data.stay_grid.EffectKeepRound*-1);
 			CallFuncAfter (3, "MovePlayer", pb);
 			break;
 		case CELL_EFFECT.FORWARD:

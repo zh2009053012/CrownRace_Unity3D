@@ -111,9 +111,9 @@ public class GameStateRound : IStateBase {
 		if (m_isSyncDice) {
 			SyncDicePosRotationToServer ();
 		}
-		if(Input.GetMouseButtonUp(0)){
-			DoSelectHeadBar(targetUseCardPlayer);
-		}
+//		if(Input.GetMouseButtonUp(0)){
+//			DoSelectHeadBar(targetUseCardPlayer);
+//		}
 		m_owner.CardCtr.MyUpdate(m_canUseCard);
 		if(Input.GetKeyDown(KeyCode.J)){
 			PlayerHeadUI ui = GetHeadUI(GameGlobalData.PlayerID);
@@ -262,28 +262,34 @@ public class GameStateRound : IStateBase {
 			DoMovingOver (parameters);
 		} else if (message.Equals ("RollDiceBtn")) {
 			DoRollDice ();
-		}else if(message.Equals("HeadBarClick")){
-			DoHeadBarClick(parameters);
-		}else if(message.Equals("OnPointerEnter")){
-			DoPointerEnterHeadBar(parameters);
-		}else if(message.Equals("OnPointerExit")){
-			DoPointerExitHeadBar(parameters);
-		}else if(message.Equals("OnSelectHeadBar")){
-		}else if(message.Equals("ClickEndRoundBtn")){
-			ClientEndRoundReq(GameGlobalData.PlayerID);
-		}else if(message.Equals("ClickCardBtn")){
+		} else if (message.Equals ("HeadBarClick")) {
+			DoHeadBarClick (parameters);
+		} else if (message.Equals ("OnPointerEnter")) {
+			DoPointerEnterHeadBar (parameters);
+		} else if (message.Equals ("OnPointerExit")) {
+			DoPointerExitHeadBar (parameters);
+		} else if (message.Equals ("OnSelectHeadBar")) {
 			
-		}else if(message.Equals("ClickQuitBtn")){
+		} else if (message.Equals ("ClickEndRoundBtn")) {
+			ClientEndRoundReq (GameGlobalData.PlayerID);
+		} else if (message.Equals ("ClickCardBtn")) {
 			
-		}else if(message.Equals("ClickSettingBtn")){
+		} else if (message.Equals ("ClickQuitBtn")) {
+			
+		} else if (message.Equals ("ClickSettingBtn")) {
+		} else if (message.Equals ("TryUseCard")) {
+			DoTryUseCard (parameters);
 		}
 	}
-	void DoSelectHeadBar(int player_id){
-		Debug.Log("DoSelectHeadBar"+player_id+m_owner.CardCtr.IsReadyUse);
+	//检查是否是指向性的卡牌，如果不是则直接使用，如果是则检查是否选中目标
+	void DoTryUseCard(object[] p){
+		int cardInstanceId = (int)p [0];
+
+		Debug.Log("DoSelectHeadBar"+targetUseCardPlayer+m_owner.CardCtr.IsReadyUse);
 		if(!m_owner.CardCtr.IsReadyUse || targetUseCardPlayer < 0){
 			return;
 		}
-		PlayerHeadUI ui = GetHeadUI(player_id);
+		PlayerHeadUI ui = GetHeadUI(targetUseCardPlayer);
 		ui.ShowHighlight(false);
 		use_card_ntf ntf = new use_card_ntf();
 		ntf.use_player_id = GameGlobalData.PlayerID;

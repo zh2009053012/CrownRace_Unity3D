@@ -21,6 +21,8 @@ public class CardPositionCtr : MonoBehaviour {
 	public bool IsReadyUse{
 		get{return m_isReadyUse;}
 	}
+	private bool m_isShowCard = false;
+	private Vector3 m_mouseHitPos = Vector3.zero;
 	public static bool IsSelectCard{
 		get{return m_curSelect!=null;}
 	}
@@ -46,27 +48,34 @@ public class CardPositionCtr : MonoBehaviour {
 			if (go != null) {
 				if (m_curSelect == null) {
 					SelectCard (go);
-				} else {
-					if (m_curSelect.gameObject.Equals (go)) {
-						m_isReadyUse = true;
-					} else {
-						BackCurSelectPos ();
-						SelectCard (go);
-					}
-				}
+					m_isShowCard = true;
+					m_isReadyUse = false;
+					m_mouseHitPos = Input.mousePosition;
+				} 
 			} else {
 				BackCurSelectPos ();
 			}
-		}else if(Input.GetMouseButtonUp(0)){
-			if(m_isReadyUse){
-
+		}
+		if(Input.GetMouseButtonUp(0)){
+			if (m_isShowCard) {
 				m_isReadyUse = false;
-				BackCurSelectPos();
+				BackCurSelectPos ();
+			} else if (m_isReadyUse) {
+				object[] p = new object[1];
+				p [0] = (object)CurSelect.CardInstanceID;
+				GameStateManager.Instance ().FSM.CurrentState.Message ("TryUseCard", p);
+				m_isReadyUse = false;
 			}
 		}
-		if(canUseCard && m_isReadyUse){
-			if(m_curSelect != null)
-				FollowCursor(m_curSelect.gameObject);
+		if(canUseCard && m_isShowCard){
+			//mouse move
+			if (m_curSelect != null && Vector3.Distance (m_mouseHitPos, Input.mousePosition) > 1) {
+				m_isShowCard = false;
+				m_isReadyUse = true;
+			}
+		}
+		if (canUseCard && m_isReadyUse) {
+			FollowCursor (m_curSelect.gameObject);
 		}
 	}
 	void FollowCursor(GameObject go){
