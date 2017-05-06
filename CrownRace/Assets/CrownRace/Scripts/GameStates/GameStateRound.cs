@@ -73,15 +73,16 @@ public class GameStateRound : IStateBase {
 //		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf, "RollCardNtf");
 //		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf, "UseCardNtf");
 		//
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MESSAGE_NTF, ServerMessageNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_DICE_BTN_STATE_NTF, ServerSetDiceBtnStateNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF, ServerSetUseCardStateNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.REMOVE_PLAYER_CARD_NTF, ServerRemovePlayerCardNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ADD_PLAYER_CARD_NTF, ServerAddPlayerCardNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MOVE_PLAYER_NTF, ServerMovePlayerNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SYNC_DICE_NTF, ServerSyncDiceNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF, ServerSetPlayerStateNtf, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF, ServerSetEndRoundBtnNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MESSAGE_NTF_CMD, ServerMessageNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_DICE_BTN_STATE_NTF_CMD, ServerSetDiceBtnStateNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF_CMD, ServerSetUseCardStateNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.REMOVE_PLAYER_CARD_NTF_CMD, ServerRemovePlayerCardNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.ADD_PLAYER_CARD_NTF_CMD, ServerAddPlayerCardNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.MOVE_PLAYER_NTF_CMD, ServerMovePlayerNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SYNC_DICE_NTF_CMD, ServerSyncDiceNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF_CMD, ServerSetPlayerStateNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF_CMD, ServerSetEndRoundBtnNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.USE_CARD_ACK_CMD, UseCardAck, "");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -142,15 +143,16 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ROLL_CARD_NTF_CMD, RollCardNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.USE_CARD_NTF_CMD, UseCardNtf);
 		//
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.MESSAGE_NTF, ServerMessageNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_DICE_BTN_STATE_NTF, ServerSetDiceBtnStateNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.REMOVE_PLAYER_CARD_NTF, ServerRemovePlayerCardNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ADD_PLAYER_CARD_NTF, ServerAddPlayerCardNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.MOVE_PLAYER_NTF, ServerMovePlayerNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SYNC_DICE_NTF, ServerSyncDiceNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF, ServerSetPlayerStateNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF, ServerSetUseCardStateNtf);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF, ServerSetEndRoundBtnNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.MESSAGE_NTF_CMD, ServerMessageNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_DICE_BTN_STATE_NTF_CMD, ServerSetDiceBtnStateNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.REMOVE_PLAYER_CARD_NTF_CMD, ServerRemovePlayerCardNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.ADD_PLAYER_CARD_NTF_CMD, ServerAddPlayerCardNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.MOVE_PLAYER_NTF_CMD, ServerMovePlayerNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SYNC_DICE_NTF_CMD, ServerSyncDiceNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF_CMD, ServerSetPlayerStateNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF_CMD, ServerSetUseCardStateNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF_CMD, ServerSetEndRoundBtnNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.USE_CARD_ACK_CMD, UseCardAck);
 		//
 		if (null != m_messageUICtr) {
 			GameObject.Destroy (m_messageUICtr.gameObject);
@@ -164,6 +166,16 @@ public class GameStateRound : IStateBase {
 	}
 
 	#region server ack/ntf & client req
+	void UseCardAck(byte[] data){
+		use_card_ack ack = NetUtils.Deserialize<use_card_ack> (data);
+		if (ack.is_use_success) {
+			m_owner.CardCtr.DestroyCurSelectCard ();
+			PlayerHeadUI uiCtr = GetHeadUI(ack.use_player_id);
+			uiCtr.SetCardNum(ack.have_card_num);
+		} else {
+			m_owner.CardCtr.BackCurSelectPos ();
+		}
+	}
 	void ServerMessageNtf(byte[] data){
 		message_ntf ntf = NetUtils.Deserialize<message_ntf> (data);
 		m_messageUICtr.ShowNotify (ntf.msg, 3);
@@ -232,24 +244,24 @@ public class GameStateRound : IStateBase {
 	void ClientRollDiceReq(int playerId){
 		roll_dice_req req = new roll_dice_req ();
 		req.player_id = playerId;
-		TcpClientHelper.Instance.SendData<roll_dice_req> (NET_CMD.ROLL_DICE_REQ, req);
+		TcpClientHelper.Instance.SendData<roll_dice_req> (NET_CMD.ROLL_DICE_REQ_CMD, req);
 	}
 	void ClientEndRoundReq(int playerId){
 		end_round_req req = new end_round_req ();
 		req.player_id = playerId;
-		TcpClientHelper.Instance.SendData<end_round_req> (NET_CMD.END_ROUND_REQ, req);
+		TcpClientHelper.Instance.SendData<end_round_req> (NET_CMD.END_ROUND_REQ_CMD, req);
 	}
 	void ClientUseCardReq(int usePlayerId, int cardInstanceId, int targetPlayerId){
 		use_card_req req = new use_card_req ();
 		req.use_player_id = usePlayerId;
 		req.card_instance_id = cardInstanceId;
 		req.target_player_id = targetPlayerId;
-		TcpClientHelper.Instance.SendData<use_card_req>(NET_CMD.USE_CARD_REQ, req);
+		TcpClientHelper.Instance.SendData<use_card_req>(NET_CMD.USE_CARD_REQ_CMD, req);
 	}
 	void ClientGameLoadOverReq(int playerId){
 		game_load_over_req req = new game_load_over_req ();
 		req.player_id = playerId;
-		TcpClientHelper.Instance.SendData<game_load_over_req> (NET_CMD.GAME_LOAD_OVER_REQ, req);
+		TcpClientHelper.Instance.SendData<game_load_over_req> (NET_CMD.GAME_LOAD_OVER_REQ_CMD, req);
 	}
 	#endregion
 
@@ -284,22 +296,25 @@ public class GameStateRound : IStateBase {
 	//检查是否是指向性的卡牌，如果不是则直接使用，如果是则检查是否选中目标
 	void DoTryUseCard(object[] p){
 		int cardInstanceId = (int)p [0];
+		int cardConfigId = (int)p [1];
+		//
+		CardEffect ce = GameGlobalData.CardList[cardConfigId];
+		//指向性
+		if (ce.select_target == SELECT_TARGET.MANUAL) {
+			//没有选中目标
+			if (targetUseCardPlayer < 0) {
+				m_owner.CardCtr.BackCurSelectPos ();
+				return;
+			}
+			PlayerHeadUI ui = GetHeadUI(targetUseCardPlayer);
+			ui.ShowHighlight(false);
 
-		Debug.Log("DoSelectHeadBar"+targetUseCardPlayer+m_owner.CardCtr.IsReadyUse);
-		if(!m_owner.CardCtr.IsReadyUse || targetUseCardPlayer < 0){
-			return;
+			ClientUseCardReq(GameGlobalData.PlayerID, cardInstanceId, targetUseCardPlayer);
+		} else {//非指向性，直接使用
+			ClientUseCardReq(GameGlobalData.PlayerID, cardInstanceId, -1);
 		}
-		PlayerHeadUI ui = GetHeadUI(targetUseCardPlayer);
-		ui.ShowHighlight(false);
-		use_card_ntf ntf = new use_card_ntf();
-		ntf.use_player_id = GameGlobalData.PlayerID;
-		ntf.target_player_id = ui.ID;
-		ntf.have_card_num = 0;//not need
-		ntf.card_config_id = CardPositionCtr.CurSelect.CardConfigID;
-		ntf.card_instance_id = CardPositionCtr.CurSelect.CardInstanceID;
-		TcpClientHelper.Instance.SendData<use_card_ntf>(NET_CMD.USE_CARD_NTF_CMD, ntf);
-		m_owner.CardCtr.DestroyCurSelectCard();
 	}
+
 	private int targetUseCardPlayer=-1;
 	void DoPointerEnterHeadBar(object[] p){
 		if(!m_owner.CardCtr.IsReadyUse){
@@ -550,44 +565,38 @@ public class GameStateRound : IStateBase {
 	}
 	void UseCardNtf(byte[] data){
 		Debug.Log("GameStateRound::UseCardNtf:");
-		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
-		string usePlayerName = PlayerName (ntf.use_player_id);
-		string targetPlayerName = PlayerName(ntf.target_player_id);
-		PlayerHeadUI ui = GetHeadUI(ntf.use_player_id);
-		ui.SetCardNum(ntf.have_card_num);
-
-		CardEffect ce = GameGlobalData.CardList[ntf.card_config_id];
-		string msg;
-		if(ntf.use_player_id == ntf.target_player_id){
-			msg = usePlayerName + "对自己" + "使用了卡牌<"+ce.name+">";
-		}else{
-			msg = usePlayerName + "对" + targetPlayerName + "使用了卡牌<"+ce.name+"> ";
-		}
-		object[] p = new object[2];
-		p [0] = (object)ntf.target_player_id;
-		p [1] = (object)ce.effect_value;
-		switch (ce.effect) {
-//		case CARD_EFFECT.DOUBLE_DICE_NUM:
-//			
+//		use_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);
+//		string usePlayerName = PlayerName (ntf.use_player_id);
+//		string targetPlayerName = PlayerName(ntf.target_player_id);
+//		PlayerHeadUI ui = GetHeadUI(ntf.use_player_id);
+//		ui.SetCardNum(ntf.have_card_num);
+//
+//		CardEffect ce = GameGlobalData.CardList[ntf.card_config_id];
+//		string msg;
+//		if(ntf.use_player_id == ntf.target_player_id){
+//			msg = usePlayerName + "对自己" + "使用了卡牌<"+ce.name+">";
+//		}else{
+//			msg = usePlayerName + "对" + targetPlayerName + "使用了卡牌<"+ce.name+"> ";
+//		}
+//		object[] p = new object[2];
+//		p [0] = (object)ntf.target_player_id;
+//		p [1] = (object)ce.effect_value;
+//		switch (ce.effect) {
+//		case CARD_EFFECT.BACK:
+//			m_messageUICtr.ShowNotify (msg + targetPlayerName + "后退"+ce.effect_value+"步", (x)=>{
+//				MovePlayerCellNum ((int)x [0], -(int)x [1]);
+//			}, p, 3);
 //			break;
-		case CARD_EFFECT.BACK:
-			m_messageUICtr.ShowNotify (msg + targetPlayerName + "后退"+ce.effect_value+"步", (x)=>{
-				MovePlayerCellNum ((int)x [0], -(int)x [1]);
-			}, p, 3);
-			break;
-		case CARD_EFFECT.FORWARD:
-			m_messageUICtr.ShowNotify (msg + targetPlayerName + "前进"+ce.effect_value+"步", (x)=>{
-				MovePlayerCellNum ((int)x [0], (int)x [1]);
-			}, p, 3);
-			break;
-		case CARD_EFFECT.PAUSE:
-			
-			SendServerRoundEnd (msg + targetPlayerName + "暂停" + ce.effect_value + "回合", 3);
-			break;
-//		case CARD_EFFECT.GOD_TIME:
-//			
+//		case CARD_EFFECT.FORWARD:
+//			m_messageUICtr.ShowNotify (msg + targetPlayerName + "前进"+ce.effect_value+"步", (x)=>{
+//				MovePlayerCellNum ((int)x [0], (int)x [1]);
+//			}, p, 3);
 //			break;
-		}
+//		case CARD_EFFECT.PAUSE:
+//			
+//			SendServerRoundEnd (msg + targetPlayerName + "暂停" + ce.effect_value + "回合", 3);
+//			break;
+//		}
 	}
 	#endregion
 

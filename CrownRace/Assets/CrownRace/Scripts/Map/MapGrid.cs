@@ -4,6 +4,7 @@ using com.crownrace.msg;
 
 [ExecuteInEditMode]
 public class MapGrid : BaseGrid {
+	
 	[SerializeField]
 	protected MapGrid m_normalNextGrid;
 	[SerializeField]

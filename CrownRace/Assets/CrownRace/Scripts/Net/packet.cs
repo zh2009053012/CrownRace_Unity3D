@@ -95,44 +95,47 @@ namespace com.crownrace.msg
       [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_NTF_CMD", Value=19)]
       USE_CARD_NTF_CMD = 19,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"MESSAGE_NTF", Value=20)]
-      MESSAGE_NTF = 20,
+      [global::ProtoBuf.ProtoEnum(Name=@"MESSAGE_NTF_CMD", Value=20)]
+      MESSAGE_NTF_CMD = 20,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"SET_DICE_BTN_STATE_NTF", Value=21)]
-      SET_DICE_BTN_STATE_NTF = 21,
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_DICE_BTN_STATE_NTF_CMD", Value=21)]
+      SET_DICE_BTN_STATE_NTF_CMD = 21,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_REQ", Value=22)]
-      USE_CARD_REQ = 22,
+      [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_REQ_CMD", Value=22)]
+      USE_CARD_REQ_CMD = 22,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"REMOVE_PLAYER_CARD_NTF", Value=23)]
-      REMOVE_PLAYER_CARD_NTF = 23,
+      [global::ProtoBuf.ProtoEnum(Name=@"REMOVE_PLAYER_CARD_NTF_CMD", Value=23)]
+      REMOVE_PLAYER_CARD_NTF_CMD = 23,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"ADD_PLAYER_CARD_NTF", Value=24)]
-      ADD_PLAYER_CARD_NTF = 24,
+      [global::ProtoBuf.ProtoEnum(Name=@"ADD_PLAYER_CARD_NTF_CMD", Value=24)]
+      ADD_PLAYER_CARD_NTF_CMD = 24,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"MOVE_PLAYER_NTF", Value=25)]
-      MOVE_PLAYER_NTF = 25,
+      [global::ProtoBuf.ProtoEnum(Name=@"MOVE_PLAYER_NTF_CMD", Value=25)]
+      MOVE_PLAYER_NTF_CMD = 25,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"SYNC_DICE_NTF", Value=26)]
-      SYNC_DICE_NTF = 26,
+      [global::ProtoBuf.ProtoEnum(Name=@"SYNC_DICE_NTF_CMD", Value=26)]
+      SYNC_DICE_NTF_CMD = 26,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"SET_PLAYER_STATE_NTF", Value=27)]
-      SET_PLAYER_STATE_NTF = 27,
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_PLAYER_STATE_NTF_CMD", Value=27)]
+      SET_PLAYER_STATE_NTF_CMD = 27,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE_REQ", Value=28)]
-      ROLL_DICE_REQ = 28,
+      [global::ProtoBuf.ProtoEnum(Name=@"ROLL_DICE_REQ_CMD", Value=28)]
+      ROLL_DICE_REQ_CMD = 28,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"END_ROUND_REQ", Value=29)]
-      END_ROUND_REQ = 29,
+      [global::ProtoBuf.ProtoEnum(Name=@"END_ROUND_REQ_CMD", Value=29)]
+      END_ROUND_REQ_CMD = 29,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"GAME_LOAD_OVER_REQ", Value=30)]
-      GAME_LOAD_OVER_REQ = 30,
+      [global::ProtoBuf.ProtoEnum(Name=@"GAME_LOAD_OVER_REQ_CMD", Value=30)]
+      GAME_LOAD_OVER_REQ_CMD = 30,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"SET_USE_CARD_STATE_NTF", Value=31)]
-      SET_USE_CARD_STATE_NTF = 31,
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_USE_CARD_STATE_NTF_CMD", Value=31)]
+      SET_USE_CARD_STATE_NTF_CMD = 31,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"SET_END_ROUND_BTN_STATE_NTF", Value=32)]
-      SET_END_ROUND_BTN_STATE_NTF = 32
+      [global::ProtoBuf.ProtoEnum(Name=@"SET_END_ROUND_BTN_STATE_NTF_CMD", Value=32)]
+      SET_END_ROUND_BTN_STATE_NTF_CMD = 32,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_ACK_CMD", Value=33)]
+      USE_CARD_ACK_CMD = 33
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]

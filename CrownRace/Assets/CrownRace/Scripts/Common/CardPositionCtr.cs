@@ -61,8 +61,9 @@ public class CardPositionCtr : MonoBehaviour {
 				m_isReadyUse = false;
 				BackCurSelectPos ();
 			} else if (m_isReadyUse) {
-				object[] p = new object[1];
+				object[] p = new object[2];
 				p [0] = (object)CurSelect.CardInstanceID;
+				p [1] = (object)CurSelect.CardConfigID;
 				GameStateManager.Instance ().FSM.CurrentState.Message ("TryUseCard", p);
 				m_isReadyUse = false;
 			}
@@ -94,7 +95,7 @@ public class CardPositionCtr : MonoBehaviour {
 		MoveTo(go, m_cardShowPos.localPosition, 0.1f);
 		RotateTo (go, m_cardShowPos.localRotation.eulerAngles, 0.1f);
 	}
-	void BackCurSelectPos()
+	public void BackCurSelectPos()
 	{
 		if (m_curSelect != null) {
 			m_curSelect.transform.localScale = m_preScale;

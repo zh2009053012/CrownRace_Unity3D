@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"MovePl",
+				"MovePlayerData\tMovePlayerData"
+			],
+			[
 				"card",
 				"have_card_num\tint { get; set; }"
 			],
@@ -213,7 +217,7 @@
 			"file": "Assets/CrownRace/Scripts/GameStates/GameStateRound.cs",
 			"settings":
 			{
-				"buffer_size": 24730,
+				"buffer_size": 25346,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -222,7 +226,7 @@
 			"file": "Assets/CrownRace/Scripts/Common/CardPositionCtr.cs",
 			"settings":
 			{
-				"buffer_size": 8116,
+				"buffer_size": 8575,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -231,7 +235,26 @@
 			"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateRound.cs",
 			"settings":
 			{
-				"buffer_size": 26107,
+				"buffer_size": 26273,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 212 files for \"ServerStateRound\" (case sensitive, whole word)\n\nD:\\workSpace\\GitProject\\CrownRace_Unity3D\\CrownRace\\Assets\\CrownRace\\Scripts\\ServerStates\\ServerGlobalState.cs:\n   73  \t\t\tif (GameStateManager.Instance ().FSM.CurrentState == GameStateServerWait.Instance ()) {\n   74  \t\t\t\tGameStateManager.Instance ().FSM.CurrentState.Message (\"ClientDisconnect\", parameters);\n   75: \t\t\t}else if(TcpListenerHelper.Instance.FSM.CurrentState == ServerStateRound.Instance())\n   76  \t\t\t{\n   77: \t\t\t\tServerStateRound.Instance ().Message (\"ClientDisconnect\", parameters);\n   78  \t\t\t}\n   79  \t\t}\n\nD:\\workSpace\\GitProject\\CrownRace_Unity3D\\CrownRace\\Assets\\CrownRace\\Scripts\\ServerStates\\ServerStateRound.cs:\n    7  using ProtoBuf;\n    8  \n    9: public class ServerStateRound : IStateBase {\n   10  \n   11: \tprivate ServerStateRound()\n   12  \t{}\n   13  \n   14: \tprivate static ServerStateRound m_instance;\n   15  \tprivate static object m_lockHelper = new object();\n   16: \tpublic static ServerStateRound Instance()\n   17  \t{\n   18  \t\tif (null == m_instance) {\n   19  \t\t\tlock (m_lockHelper) {\n   20  \t\t\t\tif (null == m_instance) {\n   21: \t\t\t\t\tm_instance = new ServerStateRound ();\n   22  \t\t\t\t}\n   23  \t\t\t}\n   ..\n   30  \tpublic void Enter(GameStateBase owner)\n   31  \t{\n   32: \t\tDebug.Log(\"enter ServerStateRound\");\n   33  //\t\tTcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFormClient, \"SyncDicePosRotationFormClient\");\n   34  //\t\tTcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_OVER_NTF_CMD, RollDiceOverNtfFromClient, \"RollDiceOverNtfFromClient\");\n   ..\n  394  \tpublic void Exit(GameStateBase owner)\n  395  \t{\n  396: \t\tDebug.Log(\"exit ServerStateRound\");\n  397  //\t\tTcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFormClient);\n  398  //\t\tTcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.ROLL_DICE_OVER_NTF_CMD, RollDiceOverNtfFromClient);\n  ...\n  522  \t\tif (m_curRoundPlayer.player_id == player_id) {\n  523  \t\t\tGameGlobalData.RemoveServerPlayerData (player_id);\n  524: \t\t\tTcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());\n  525  \t\t} else {\n  526  //\t\t\tPlayerRoundData data = GameGlobalData.GetServerPlayerData (player_id);\n  ...\n  537  //\t\t\t}\n  538  //\t\t\tif (isOthersRoundOver && !data.is_round_over) {\n  539: //\t\t\t\tTcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());\n  540  //\t\t\t} else if (isOthersMoveOver && !data.is_move_over) {\n  541  //\t\t\t\tcell_effect_req req = new cell_effect_req ();\n  ...\n  545  \n  546  \t\t\tif (GameGlobalData.IsAllPlayerRoundEnd ()) {\n  547: \t\t\t\tTcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());\n  548  \t\t\t}\n  549  \t\t\telse if (GameGlobalData.IsAllPlayerMoveOver ()) {\n  ...\n  591  \t\t\tGameGlobalData.SetPlayerRoundEnd (player_id, true);\n  592  \t\t\tif (GameGlobalData.IsAllPlayerRoundEnd ()) {\n  593: \t\t\t\tTcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());\n  594  \t\t\t}\n  595  \t\t}\n  ...\n  665  \t}\n  666  \tvoid UseCardNtf(int player_id, byte[] data){\n  667: \t\tDebug.Log(\"ServerStateRound::UseCardNtf:\"+player_id);\n  668  \t\tuse_card_ntf ntf = NetUtils.Deserialize<use_card_ntf>(data);\n  669  \t\tif(player_id == ntf.use_player_id){\n\nD:\\workSpace\\GitProject\\CrownRace_Unity3D\\CrownRace\\Assets\\CrownRace\\Scripts\\ServerStates\\ServerStateStartGame.cs:\n   69  \t\tGameGlobalData.SetPlayerLoadGameOver (req.player_id, true);\n   70  \t\tif (GameGlobalData.IsAllPlayerLoadGameOver ()) {\n   71: \t\t\tTcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());\n   72  \t\t}\n   73  \t}\n   ..\n   79  \t\t\tGameGlobalData.SetPlayerRoundEnd (player_id, true);\n   80  \t\t\tif (GameGlobalData.IsAllPlayerRoundEnd ()) {\n   81: \t\t\t\tTcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound.Instance ());\n   82  \t\t\t}\n   83  \t\t}\n\n16 matches across 3 files\n",
+			"settings":
+			{
+				"buffer_size": 3852,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateStartGame.cs",
+			"settings":
+			{
+				"buffer_size": 2763,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -379,7 +402,7 @@
 	],
 	"find":
 	{
-		"height": 50.0
+		"height": 43.0
 	},
 	"find_in_files":
 	{
@@ -391,9 +414,11 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"ServerStateRound",
+			"MovePlayer",
 			"useCardNtf",
 			"SendServerRoundEnd",
 			"DoMovingOver",
@@ -452,13 +477,13 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 6,
 			"sheets":
 			[
 				{
@@ -487,7 +512,7 @@
 						"translation.y": 2007.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -503,8 +528,8 @@
 						"selection":
 						[
 							[
-								1201,
-								1201
+								1327,
+								1327
 							]
 						],
 						"settings":
@@ -515,7 +540,7 @@
 						"translation.y": 1566.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -524,7 +549,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 24730,
+						"buffer_size": 25346,
 						"regions":
 						{
 						},
@@ -620,7 +645,7 @@
 						"translation.y": 11876.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -629,7 +654,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8116,
+						"buffer_size": 8575,
 						"regions":
 						{
 						},
@@ -675,7 +700,7 @@
 						"translation.y": 1914.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
@@ -684,7 +709,183 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 26107,
+						"buffer_size": 26273,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7523,
+								7523
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"10500,10516": "Cannot convert from ? to System.Int32",
+								"10517,10518": "Invocation error: ArgumentTypeMismatch",
+								"10582,10592": "'m_pathList' is not a known identifier",
+								"10594,10605": "'m_pathIndex' is not a known identifier",
+								"10606,10607": "Cannot convert from ? to UnityEngine.Vector3",
+								"10624,10625": "Invocation error: ArgumentTypeMismatch",
+								"10658,10668": "'m_pathList' is not a known identifier",
+								"10670,10681": "'m_pathIndex' is not a known identifier",
+								"10682,10683": "Cannot convert from ? to UnityEngine.Vector3",
+								"10688,10699": "'m_pathIndex' is not a known identifier",
+								"10701,10702": "Error: ?",
+								"10730,10741": "'m_pathIndex' is not a known identifier",
+								"10745,10755": "'m_pathList' is not a known identifier",
+								"10756,10761": "Error: Boolean",
+								"10801,10812": "'m_pathIndex' is not a known identifier",
+								"10815,10816": "Cannot convert from System.Int32 to ?",
+								"10880,10890": "'m_pathList' is not a known identifier",
+								"10892,10903": "'m_pathIndex' is not a known identifier",
+								"10904,10905": "Cannot convert from ? to UnityEngine.Vector3",
+								"10914,10922": "Invocation error: ArgumentTypeMismatch",
+								"11031,11047": "Cannot convert from ? to System.Int32",
+								"11086,11087": "Invocation error: ArgumentTypeMismatch",
+								"22242,22245": "Error: String",
+								"22361,22364": "Cannot convert from 'None' to 'System.Int32'",
+								"22365,22366": "Cannot convert from 'None' to 'System.Int32'",
+								"2470,2480": "'m_pathList' is not a known identifier",
+								"2482,2493": "'m_pathIndex' is not a known identifier",
+								"2494,2495": "Cannot convert from ? to UnityEngine.Vector3",
+								"2509,2517": "Invocation error: ArgumentTypeMismatch",
+								"7686,7697": "'m_pathIndex' is not a known identifier",
+								"7700,7701": "Cannot convert from System.Int32 to ?",
+								"7736,7752": "'m_movingPlayerId' is not a known identifier",
+								"7753,7756": "'?' does not contain a definition for 'Add'",
+								"7766,7767": "'?' does not contain a definition for 'Add'",
+								"7774,7784": "'m_pathList' is not a known identifier",
+								"7785,7788": "'?' does not contain a definition for 'Add'",
+								"7790,7800": "'pointsList' is not a known identifier",
+								"7801,7802": "'?' does not contain a definition for 'Add'"
+							},
+							"syntax": "Packages/C#/C#.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5177.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3852,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										448,
+										464
+									],
+									[
+										500,
+										516
+									],
+									[
+										757,
+										773
+									],
+									[
+										813,
+										829
+									],
+									[
+										874,
+										890
+									],
+									[
+										984,
+										1000
+									],
+									[
+										1155,
+										1171
+									],
+									[
+										1290,
+										1306
+									],
+									[
+										1686,
+										1702
+									],
+									[
+										2114,
+										2130
+									],
+									[
+										2383,
+										2399
+									],
+									[
+										2662,
+										2678
+									],
+									[
+										2943,
+										2959
+									],
+									[
+										3086,
+										3102
+									],
+									[
+										3541,
+										3557
+									],
+									[
+										3771,
+										3787
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								3330,
+								3330
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1368.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "Assets/CrownRace/Scripts/ServerStates/ServerStateStartGame.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2763,
 						"regions":
 						{
 						},
@@ -697,34 +898,18 @@
 						],
 						"settings":
 						{
-							"oops":
-							{
-								"104,109": "Using directive is not used by code and can be removed safely.",
-								"122,127": "Using directive is not used by code and can be removed safely.",
-								"148,153": "Using directive is not used by code and can be removed safely.",
-								"19,24": "Using directive is not used by code and can be removed safely.",
-								"2776,2782": "Parameter can be declared with base type",
-								"2785,2786": "Parameter can be IList",
-								"4146,4161": "Use 'var' keyword",
-								"45,50": "Using directive is not used by code and can be removed safely.",
-								"4562,4578": "Use 'var' keyword",
-								"4842,4862": "Use 'var' keyword",
-								"6466,6481": "Use 'var' keyword",
-								"7243,7258": "Use 'var' keyword",
-								"8072,8085": "Use 'var' keyword"
-							},
 							"syntax": "Packages/C#/C#.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 0.0,
-						"translation.y": 5873.0,
+						"translation.x": -0.0,
+						"translation.y": 576.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 7,
 					"file": "Assets/CrownRace/Scripts/GameGlobalData.cs",
 					"semi_transient": false,
 					"settings":
@@ -782,11 +967,11 @@
 						"translation.y": 696.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 8,
 					"file": "Assets/CrownRace/Scripts/UI/GameRoundUI.cs",
 					"semi_transient": false,
 					"settings":
@@ -820,11 +1005,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 9,
 					"file": "Assets/CrownRace/Scripts/UI/PlayerHeadUI.cs",
 					"semi_transient": false,
 					"settings":
@@ -849,11 +1034,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 10,
 					"file": "Assets/CrownRace/Scripts/GameStates/GameMainScene.cs",
 					"semi_transient": false,
 					"settings":
@@ -886,11 +1071,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 11,
 					"file": "Assets/CrownRace/Effects/Transmition/Scripts/TransmitionEffect.cs",
 					"semi_transient": false,
 					"settings":
@@ -921,7 +1106,7 @@
 						"translation.y": 609.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 11,
 					"type": "text"
 				}
 			]
