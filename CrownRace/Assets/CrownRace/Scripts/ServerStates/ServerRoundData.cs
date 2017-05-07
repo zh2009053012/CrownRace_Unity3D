@@ -14,14 +14,32 @@ public class ServerRoundData  {
 
 	public static PlayerRoundData CurRoundPlayer;
 	public static RollTheDice DiceCtr;
+	public static bool UseCardTime = false;
+	public static bool RollDiceTime = false;
+	public static bool HasRollDice = false;
 	//client msg
 	public static int PlayerId;
 	public static byte[] Data;
+	//use card data
+	public static int DoCardEffectIndex = 0;
+	public static CardEffect UseCardEffect;
+	//roll card data
+	public static int RollCardPlayerId;
+	public static int RollCardNum;
+
 	//move player data
 	public static List<MovePlayerData> MoveDataList = new List<MovePlayerData>();
 	//现在正在移动的MovePlayerData
 	public static MovePlayerData CurMoveData;
 
+	public static void ServerUseCardAck(int playerId, int haveCardNum, bool isSuccess, int cardInstanceId){
+		use_card_ack ack = new use_card_ack();
+		ack.use_player_id = playerId;
+		ack.is_use_success = isSuccess;
+		ack.have_card_num = haveCardNum;
+		ack.card_instance_id = cardInstanceId;
+		TcpListenerHelper.Instance.clientsContainer.SendToClient<use_card_ack>(playerId, NET_CMD.USE_CARD_ACK_CMD, ack);
+	}
 	public static void ServerSetUseCardStateNtf(int playerId, bool canUseCard){
 		set_use_card_state_ntf ntf = new set_use_card_state_ntf ();
 		ntf.can_use_card = canUseCard;
@@ -43,10 +61,11 @@ public class ServerRoundData  {
 		ntf.can_press = canPressDice;
 		TcpListenerHelper.Instance.clientsContainer.SendToClient<set_dice_btn_state_ntf> (playerId, NET_CMD.SET_DICE_BTN_STATE_NTF_CMD, ntf);
 	}
-	public static void ServerRemovePlayerCardNtf(int playerId, int[] cardInstanceId){
+	public static void ServerRemovePlayerCardNtf(int playerId, int[] cardInstanceId, int haveCardNum){
 		remove_player_card_ntf ntf = new remove_player_card_ntf ();
 		ntf.player_id = playerId;
 		ntf.card_instance_id.AddRange(cardInstanceId);
+		ntf.have_card_num = haveCardNum;
 		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<remove_player_card_ntf> (NET_CMD.REMOVE_PLAYER_CARD_NTF_CMD, ntf);
 	}
 	public static void ServerAddPlayerCardNtf(add_player_card_ntf ntf){

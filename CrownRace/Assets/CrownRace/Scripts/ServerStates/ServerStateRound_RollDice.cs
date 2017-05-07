@@ -17,6 +17,7 @@ public class ServerStateRound_RollDice : Singleton<ServerStateRound_RollDice>, I
 	private int m_diceNum;
 	public void Enter(GameStateBase owner)
 	{
+		Debug.Log("ServerStateRound_RollDice");
 		m_isAfterCall = false;
 
 		req = NetUtils.Deserialize<roll_dice_req> (ServerRoundData.Data);

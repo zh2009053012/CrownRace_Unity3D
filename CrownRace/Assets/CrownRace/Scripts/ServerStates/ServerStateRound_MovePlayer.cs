@@ -14,6 +14,7 @@ public class ServerStateRound_MovePlayer : Singleton<ServerStateRound_MovePlayer
 	private static float moveSpeed = 10;
 	public void Enter(GameStateBase owner)
 	{
+		Debug.Log("ServerStateRound_MovePlayer");
 		path.Clear ();
 		index = 0;
 		if (ServerRoundData.MoveDataList.Count <= 0) {
@@ -67,7 +68,7 @@ public class ServerStateRound_MovePlayer : Singleton<ServerStateRound_MovePlayer
 		}
 		for(int i=0; i < list.Count; i++){
 			targetPlayer = GetPlayerName(list[i].player_id, moveData.playerId);
-			ServerRoundData.ServerMessageNtf (list[i].player_id, targetPlayer+dirStr+moveData.num+"格");
+			ServerRoundData.ServerMessageNtf (list[i].player_id, targetPlayer+dirStr+Mathf.Abs(moveData.num)+"格");
 		}
 	}
 	string GetPlayerName(int sendPlayerId, int dstPlayerId){

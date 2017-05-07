@@ -6,13 +6,13 @@ using System.Net;
 using System.Net.Sockets;
 using ProtoBuf;
 
-public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound_WaitUseCardOrRollDice>, IStateBase {
+public class ServerStateRound_WaitEndRoundOrUseCard : Singleton<ServerStateRound_WaitEndRoundOrUseCard>, IStateBase {
 
 	public void Enter(GameStateBase owner)
 	{
-		Debug.Log("ServerStateRound_WaitUseCardOrRollDice");
-		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_REQ_CMD, ClientRollDiceReq, "");
+		Debug.Log("ServerStateRound_WaitEndRoundOrUseCard");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.USE_CARD_REQ_CMD, ClientUseCardReq, "");
+		TcpListenerHelper.Instance.RegisterNetMsg(NET_CMD.END_ROUND_REQ_CMD, ClientEndRoundReq, "");
 	}
 	public void Execute(GameStateBase owner)
 	{
@@ -20,8 +20,8 @@ public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound
 	}
 	public void Exit(GameStateBase owner)
 	{
-		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.ROLL_DICE_REQ_CMD, ClientRollDiceReq);
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.USE_CARD_REQ_CMD, ClientUseCardReq);
+		TcpListenerHelper.Instance.UnregisterNetMsg(NET_CMD.END_ROUND_REQ_CMD, ClientEndRoundReq);
 	}
 	public void Message(string message, object[] parameters)
 	{
@@ -36,13 +36,9 @@ public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound
 		TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseCard.Instance);
 
 	}
-	void ClientRollDiceReq(int playerId,byte[] data){
-		Debug.Log ("ClientRollDiceReq:"+playerId);
-		ServerRoundData.PlayerId = playerId;
-		ServerRoundData.Data = data;
-		ServerRoundData.UseCardTime = false;
-		ServerRoundData.RollDiceTime = true;
-		ServerRoundData.HasRollDice = true;
-		TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_RollDice.Instance);
+	//
+	void ClientEndRoundReq(int playerId, byte[] data){
+		end_round_req req = NetUtils.Deserialize<end_round_req>(data);
+		TcpListenerHelper.Instance.FSM.ChangeState(ServerStateRound_SelectCurRoundPlayer.Instance);
 	}
 }

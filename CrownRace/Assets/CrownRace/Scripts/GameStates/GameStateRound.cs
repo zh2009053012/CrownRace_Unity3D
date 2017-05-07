@@ -190,6 +190,14 @@ public class GameStateRound : IStateBase {
 	}
 	void ServerRemovePlayerCardNtf(byte[] data){
 		remove_player_card_ntf ntf = NetUtils.Deserialize<remove_player_card_ntf> (data);
+		//自己的，销毁卡牌
+		if(ntf.player_id == GameGlobalData.PlayerID){
+			for(int i=0; i<ntf.card_instance_id.Count; i++){
+				m_owner.CardCtr.DestroyCard(ntf.card_instance_id[i]);
+			}
+		}
+		PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+		uiCtr.SetCardNum(ntf.have_card_num);
 	}
 	void ServerAddPlayerCardNtf(byte[] data){
 		
@@ -295,6 +303,10 @@ public class GameStateRound : IStateBase {
 	}
 	//检查是否是指向性的卡牌，如果不是则直接使用，如果是则检查是否选中目标
 	void DoTryUseCard(object[] p){
+		if(!m_canUseCard){
+			m_owner.CardCtr.BackCurSelectPos ();
+			return;
+		}
 		int cardInstanceId = (int)p [0];
 		int cardConfigId = (int)p [1];
 		//

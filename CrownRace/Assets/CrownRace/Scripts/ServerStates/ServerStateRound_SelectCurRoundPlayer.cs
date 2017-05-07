@@ -16,6 +16,10 @@ public class ServerStateRound_SelectCurRoundPlayer : Singleton<ServerStateRound_
 
 	public void Enter(GameStateBase owner)
 	{
+		ServerRoundData.UseCardTime = false;
+		ServerRoundData.RollDiceTime = false;
+		ServerRoundData.HasRollDice = false;
+		//
 		m_canRollDice = true;
 		m_curRoundPlayer = null;
 

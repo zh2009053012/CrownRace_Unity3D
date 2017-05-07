@@ -30,6 +30,23 @@ public class CardPositionCtr : MonoBehaviour {
 	void Start () {
 		
 	}
+	public void DestroyCard(int instanceId){
+		CardEffectCtr ctr = null;
+		for(int i=0; i<m_list.Count; i++){
+			if(m_list[i].CardInstanceID == instanceId){
+				ctr = m_list[i];
+				break;
+			}
+		}
+		if(null != ctr){
+			if(null != m_curSelect){
+				BackCurSelectPos();
+			}
+			m_list.Remove(ctr);
+			GameObject.Destroy(ctr.gameObject);
+			ResortCardPos();
+		}
+	}
 	public void DestroyCurSelectCard(){
 		if(null != m_curSelect){
 			m_list.Remove(m_curSelect);

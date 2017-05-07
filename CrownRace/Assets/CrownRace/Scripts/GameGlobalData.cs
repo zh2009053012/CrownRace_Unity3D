@@ -82,6 +82,7 @@ public class PlayerRoundData{
 	public Vector3 position;
 	public List<CardEffect> card_list = new List<CardEffect>();
 	public CardEffect GetCardEffect(int id){
+
 		foreach(CardEffect ce in card_list){
 			if (ce.instance_id == id){
 				return ce;
