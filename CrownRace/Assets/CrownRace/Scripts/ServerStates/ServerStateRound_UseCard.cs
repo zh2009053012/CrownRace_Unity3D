@@ -31,13 +31,13 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 		useCard = userRoundData.GetCardEffect(req.card_instance_id);
 		//如果是null，说明卡牌已经被移除，第一个效果已经处理完毕
 		if(null == useCard){
-			useCard = ServerRoundData.UseCardEffect;
+			useCard = ServerRoundData.CardEffectTemp;
 			if(null == useCard){
 				Debug.LogError("no card");
 			}
-			ServerRoundData.UseCardEffect = null;
+			ServerRoundData.CardEffectTemp = null;
 		}else{//否则说明是处理第一个效果,将卡牌存起来,方便第二个效果调用
-			ServerRoundData.UseCardEffect = useCard;
+			ServerRoundData.CardEffectTemp = useCard;
 		}
 		//检查第二个卡牌效果是否为none，若是none则结束
 		if(ServerRoundData.DoCardEffectIndex == 1){
@@ -81,6 +81,7 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 		//筛选目标
 		targets.Clear();
 		targets = TryGetTargets(useCard, userRoundData, req.target_player_id);
+
 	}
 	public void Execute(GameStateBase owner)
 	{
@@ -107,35 +108,50 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 		TcpListenerHelper.Instance.FSM.ChangeState(ServerStateRound_NextStep.Instance);
 	}
 	bool DoCardEffect(List<PlayerRoundData> list, CardEffect ce, PlayerRoundData user){
-
+		//
+		ServerRoundData.TargetList = list;
+		ServerRoundData.UseCardEffect = m_effectType;
+		ServerRoundData.CardEffectValue = m_effectValue;
+		ServerRoundData.UserRoundData = user;
 		switch(m_effectType){
 		case CARD_EFFECT.BACK:
 			DoBackEffect(list, ce, user);
 			break;
 		case CARD_EFFECT.BLOCK_CARD_EFFECT:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseBlockCardEffect.Instance);
 			break;
 		case CARD_EFFECT.BLOCK_GRID_EFFECT:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseBlockGridEffect.Instance);
 			break;
 		case CARD_EFFECT.BOUNCE_CARD_EFFECT:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseBounceCardEffect.Instance);
 			break;
 		case CARD_EFFECT.EXCHANGE_POSITION:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseExchangePosition.Instance);
 			break;
 		case CARD_EFFECT.FORWARD:
 			DoForwardEffect(list, ce, user);
 			break;
 		case CARD_EFFECT.LOST_FIRST_CARD:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseLostFirstCard.Instance);
 			break;
 		case CARD_EFFECT.PAUSE:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UsePause.Instance);
 			break;
 		case CARD_EFFECT.REMOVE_CARD_EFFECT:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRemoveCardEffect.Instance);
 			break;
 		case CARD_EFFECT.ROLL_CARD:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_RollCard.Instance);
 			break;
 		case CARD_EFFECT.ROLL_DICE_BACK:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollDiceBack.Instance);
 			break;
 		case CARD_EFFECT.ROLL_DICE_FORWARD:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_RollDice.Instance);
 			break;
 		case CARD_EFFECT.ROLL_PLAYER_CARD:
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollPlayerCard.Instance);
 			break;
 		}
 		ServerRoundData.DoCardEffectIndex += 1;
@@ -341,8 +357,9 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 	}
 	List<PlayerRoundData> GetBackTargets(CardEffect ce, PlayerRoundData user, List<PlayerRoundData> list){
 		List<PlayerRoundData> result = new List<PlayerRoundData>();
+		
 		for(int i=0; i<list.Count; i++){
-			if(list[i].stay_grid.ID - user.stay_grid.ID < ce.select_value){
+			if(user.stay_grid.ID - list[i].stay_grid.ID > ce.select_value){
 				result.Add(list[i]);
 			}
 		}

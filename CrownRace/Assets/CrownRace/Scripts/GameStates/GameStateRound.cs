@@ -65,7 +65,7 @@ public class GameStateRound : IStateBase {
 //		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, PlayerRollDiceNtf, "PlayerRollDiceNtf");
 //		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFromServer, "SyncDicePosRotationFromServer");
 //		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_OVER_NTF_CMD, RollDiceOverNtfFromServer, "RollDiceOverNtfFromServer");
-//		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.LEAVE_GAME_NTF_CMD, PlayerLeaveNtf, "PlayerLeaveNtf");
+		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.LEAVE_GAME_NTF_CMD, PlayerLeaveNtf, "PlayerLeaveNtf");
 //		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_REQ_CMD, CellEffectReq, "CellEffectReq");
 //		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.CELL_EFFECT_NTF_CMD, CellEffectNtf, "CellEffectNtf");
 //		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.MOVE_TO_END_NTF_CMD, ReceiveMoveToEndFromServer, "ReceiveMoveToEndFromServer");
@@ -93,11 +93,13 @@ public class GameStateRound : IStateBase {
 		GameObject roundUIGO = GameObject.Instantiate (roundUIPrefab);
 		m_roundUICtr = roundUIGO.GetComponent<GameRoundUI> ();
 		m_roundUICtr.RollDiceBtn.interactable = false;
+		m_roundUICtr.Init( GameGlobalData.GetClientPlayerData (GameGlobalData.PlayerID).res_name );
 		//
 		if (!GameGlobalData.IsServer) {
 			GameObject dicePrefab = Resources.Load ("RollDice")as GameObject;
 			GameObject diceGO = GameObject.Instantiate (dicePrefab);
 			m_diceCtr = diceGO.GetComponent<RollTheDice> ();
+			Map.Instance.Init ();
 		}
 		//m_diceCtr.RegisterRollOverNotify (RollCallback);
 		//
@@ -206,18 +208,22 @@ public class GameStateRound : IStateBase {
 		//
 		if(ntf.player_id == GameGlobalData.PlayerID){
 			m_owner.TransEffect.Play();
-			m_owner.CardCtr.AddCard(ntf.card_instance_id[0], ntf.card_config_id[0], ()=>{
+			for (int i = 0; i < ntf.card_instance_id.Count; i++) {
+				m_owner.CardCtr.AddCard (ntf.card_instance_id [i], ntf.card_config_id [i], () => {
 				
-			});
+				});
+			}
 		}else{
 			PlayerHeadUI ui = GetHeadUI(ntf.player_id);
 			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(null, ui.transform.position);
 			//Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane));
 
 			m_owner.TransEffect.Play();
-			m_owner.CardCtr.AddCardTo(ntf.card_instance_id[0], ntf.card_config_id[0], new Vector3(screenPos.x, screenPos.y, Camera.main.nearClipPlane), ()=>{
+			for (int i = 0; i < ntf.card_instance_id.Count; i++) {
+				m_owner.CardCtr.AddCardTo (ntf.card_instance_id [i], ntf.card_config_id [i], new Vector3 (screenPos.x, screenPos.y, Camera.main.nearClipPlane), () => {
 				
-			});
+				});
+			}
 		}
 		//
 		PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
@@ -295,11 +301,29 @@ public class GameStateRound : IStateBase {
 		} else if (message.Equals ("ClickCardBtn")) {
 			
 		} else if (message.Equals ("ClickQuitBtn")) {
-			
+			DoDisconnect ();
 		} else if (message.Equals ("ClickSettingBtn")) {
 		} else if (message.Equals ("TryUseCard")) {
 			DoTryUseCard (parameters);
 		}
+	}
+	void DoDisconnect(){
+		TcpClientHelper.Instance.Close ();
+		TcpListenerHelper.Instance.Close ();
+
+		if (null != TcpListenerHelper.Instance.FSM.CurrentState) {
+			//TcpListenerHelper.Instance.FSM.CurrentState.Exit (null);
+			TcpListenerHelper.Instance.FSM.ChangeState (GameStateNull.Instance ());
+		}
+
+		if (null != TcpListenerHelper.Instance.FSM.GlobalState) {
+			TcpListenerHelper.Instance.FSM.GlobalState.Exit (null);
+			TcpListenerHelper.Instance.FSM.GlobalState = null;
+		}
+		GameStateManager.Instance ().FSM.ChangeState (GameStateNull.Instance ());
+		GameGlobalData.IsServer = false;
+		SceneLoading.LoadSceneName = GameGlobalData.LoginSceneName;
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
 	}
 	//检查是否是指向性的卡牌，如果不是则直接使用，如果是则检查是否选中目标
 	void DoTryUseCard(object[] p){
@@ -560,19 +584,20 @@ public class GameStateRound : IStateBase {
 	}
 	void PlayerLeaveNtf(byte[] data)
 	{
+		Debug.Log ("PlayerLeaveNtf");
 		leave_game_ntf ntf = NetUtils.Deserialize<leave_game_ntf> (data);
 		if (ntf.player_id == m_localPlayer.PlayerID) {
 			m_messageUICtr.ShowMessage ("你已经被服务器强制退出游戏", DoBackToLogin, null);
 		} else {
 			m_messageUICtr.ShowNotify ("玩家" + GameGlobalData.GetClientPlayerData (ntf.player_id).res_name + "退出游戏");
-			Player player = GetPlayer (ntf.player_id);
-			m_playerList.Remove (player);
-			GameGlobalData.RemoveClientPlayerData (ntf.player_id);
-			GameObject.Destroy (player.gameObject);
-			//
-			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
-			m_headUIList.Remove(uiCtr);
-			GameObject.Destroy(uiCtr.gameObject);
+//			Player player = GetPlayer (ntf.player_id);
+//			m_playerList.Remove (player);
+//			GameGlobalData.RemoveClientPlayerData (ntf.player_id);
+//			GameObject.Destroy (player.gameObject);
+//
+//			PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
+//			m_headUIList.Remove(uiCtr);
+//			GameObject.Destroy(uiCtr.gameObject);
 		}
 	}
 	void UseCardNtf(byte[] data){

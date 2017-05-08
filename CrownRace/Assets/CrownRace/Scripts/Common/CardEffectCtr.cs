@@ -41,4 +41,11 @@ public class CardEffectCtr : MonoBehaviour {
 		CardDescText.text = GameGlobalData.CardList[config_id].desc;
 		Debug.Log ("CardEffectCtr::SetCardInfo:"+config_id+","+GameGlobalData.CardList[config_id].name+","+GameGlobalData.CardList[config_id].desc);
 	}
+	public void SetDeveloperCardInfo(int instance_id, int config_id){
+		m_card_instance_id = instance_id;
+		m_card_config_id = config_id;
+		CardNameText.text = GameGlobalData.DeveloperList[config_id].name;
+		CardDescText.text = GameGlobalData.DeveloperList[config_id].desc;
+		Debug.Log ("CardEffectCtr::SetCardInfo:"+config_id+","+GameGlobalData.DeveloperList[config_id].name+","+GameGlobalData.DeveloperList[config_id].desc);
+	}
 }

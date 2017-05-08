@@ -10,6 +10,30 @@
 // Generated from: proto/packet.proto
 namespace com.crownrace.msg
 {
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"buff_data")]
+  public partial class buff_data : global::ProtoBuf.IExtensible
+  {
+    public buff_data() {}
+    
+    private com.crownrace.msg.BUFF_EFFECT _effect_type;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"effect_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public com.crownrace.msg.BUFF_EFFECT effect_type
+    {
+      get { return _effect_type; }
+      set { _effect_type = value; }
+    }
+    private int _keep_round;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"keep_round", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int keep_round
+    {
+      get { return _keep_round; }
+      set { _keep_round = value; }
+    }
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"packet")]
   public partial class packet : global::ProtoBuf.IExtensible
   {
@@ -135,7 +159,24 @@ namespace com.crownrace.msg
       SET_END_ROUND_BTN_STATE_NTF_CMD = 32,
             
       [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_ACK_CMD", Value=33)]
-      USE_CARD_ACK_CMD = 33
+      USE_CARD_ACK_CMD = 33,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"UPDATE_BUFF_DATA_NTF", Value=34)]
+      UPDATE_BUFF_DATA_NTF = 34
+    }
+  
+    [global::ProtoBuf.ProtoContract(Name=@"BUFF_EFFECT")]
+    public enum BUFF_EFFECT
+    {
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"BUFF_BOUNCE_CARD", Value=1)]
+      BUFF_BOUNCE_CARD = 1,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"BUFF_BLOCK_CARD", Value=2)]
+      BUFF_BLOCK_CARD = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"BUFF_BLOCK_GRID", Value=3)]
+      BUFF_BLOCK_GRID = 3
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"CELL_EFFECT")]

@@ -52,6 +52,8 @@ public class ServerGlobalState : IStateBase {
 	{
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.HEARTBEAT_ACK_CMD, DoHeartbeatAck, "DoHeartbeatAck");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.LOGIN_REQ_CMD, DoLoginReq, "DOLoginReq");
+		//
+
 	}
 
 	public void Execute(GameStateBase owner)
@@ -63,6 +65,11 @@ public class ServerGlobalState : IStateBase {
 	{
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.HEARTBEAT_ACK_CMD, DoHeartbeatAck);
 		TcpListenerHelper.Instance.UnregisterNetMsg (NET_CMD.LOGIN_REQ_CMD, DoLoginReq);
+		//
+		if (null != ServerRoundData.DiceCtr) {
+			GameObject.Destroy (ServerRoundData.DiceCtr.gameObject);
+			ServerRoundData.DiceCtr = null;
+		}
 	}
 
 	public void Message(string message, object[] parameters)
@@ -72,9 +79,18 @@ public class ServerGlobalState : IStateBase {
 		} else if (message.Equals ("ClientDisconnect")) {
 			if (GameStateManager.Instance ().FSM.CurrentState == GameStateServerWait.Instance ()) {
 				GameStateManager.Instance ().FSM.CurrentState.Message ("ClientDisconnect", parameters);
-			}else if(TcpListenerHelper.Instance.FSM.CurrentState == ServerStateRound.Instance())
+			}else
 			{
-				ServerStateRound.Instance ().Message ("ClientDisconnect", parameters);
+				//ServerStateRound.Instance ().Message ("ClientDisconnect", parameters);
+				int playerId = (int)parameters[0];
+				if (playerId != GameGlobalData.PlayerID) {
+					PlayerRoundData disconnect = GameGlobalData.GetServerPlayerData (playerId);
+					if (null == disconnect) {
+						return;
+					}
+					disconnect.is_connect = false;
+					TcpListenerHelper.Instance.FSM.CurrentState.Message ("ClientDisconnect", parameters);
+				}
 			}
 		}
 	}

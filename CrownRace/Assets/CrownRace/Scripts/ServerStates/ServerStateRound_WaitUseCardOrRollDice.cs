@@ -13,6 +13,8 @@ public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound
 		Debug.Log("ServerStateRound_WaitUseCardOrRollDice");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_REQ_CMD, ClientRollDiceReq, "");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.USE_CARD_REQ_CMD, ClientUseCardReq, "");
+		//disconnect 
+		CheckConnectState();
 	}
 	public void Execute(GameStateBase owner)
 	{
@@ -25,7 +27,21 @@ public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound
 	}
 	public void Message(string message, object[] parameters)
 	{
+		if (message.Equals ("ClientDisconnect")) {
+			int playerId = (int)parameters [0];
+			if (playerId == ServerRoundData.CurRoundPlayer.player_id) {
+				CheckConnectState ();
+			}
+		}
+	}
+	//
+	void CheckConnectState(){
+		if (!ServerRoundData.CurRoundPlayer.is_connect) {
+			roll_dice_req req = new roll_dice_req ();
+			req.player_id = ServerRoundData.CurRoundPlayer.player_id;
 
+			ClientRollDiceReq (ServerRoundData.CurRoundPlayer.player_id, NetUtils.Serialize (req));
+		}
 	}
 	//
 	void ClientUseCardReq(int playerId, byte[] data){

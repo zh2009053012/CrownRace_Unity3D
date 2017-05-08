@@ -36,7 +36,6 @@ public class ServerStateRound_DoGridType : Singleton<ServerStateRound_DoGridType
 	}
 	public void Message(string message, object[] parameters)
 	{
-
 	}
 	//
 	void DoGridType(){

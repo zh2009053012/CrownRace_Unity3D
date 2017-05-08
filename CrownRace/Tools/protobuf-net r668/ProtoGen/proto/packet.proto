@@ -35,6 +35,18 @@ enum NET_CMD{
 	SET_USE_CARD_STATE_NTF_CMD=31;
 	SET_END_ROUND_BTN_STATE_NTF_CMD=32;
 	USE_CARD_ACK_CMD=33;
+	UPDATE_BUFF_DATA_NTF=34;
+}
+
+enum BUFF_EFFECT{
+	BUFF_BOUNCE_CARD=1;
+	BUFF_BLOCK_CARD=2;
+	BUFF_BLOCK_GRID=3;
+}
+
+message buff_data{
+	required BUFF_EFFECT effect_type=1;
+	required int32 keep_round=2;
 }
 
 enum CELL_EFFECT{

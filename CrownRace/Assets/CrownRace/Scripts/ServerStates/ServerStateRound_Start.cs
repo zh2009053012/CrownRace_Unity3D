@@ -14,7 +14,6 @@ public class ServerStateRound_Start : Singleton<ServerStateRound_Start>, IStateB
 		GameObject dicePrefab = Resources.Load ("RollDice")as GameObject;
 		GameObject diceGO = GameObject.Instantiate (dicePrefab);
 		ServerRoundData.DiceCtr = diceGO.GetComponent<RollTheDice> ();
-		//ServerRoundData.DiceCtr.RegisterRollOverNotify (RollCallback);
 		Map.Instance.Init();
 		//
 		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();

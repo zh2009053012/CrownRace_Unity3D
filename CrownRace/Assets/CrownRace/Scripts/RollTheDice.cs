@@ -15,7 +15,11 @@ public class RollTheDice : MonoBehaviour {
 		}
 	}
 	public GameObject Dice{
-		get{ return m_rigidbody.gameObject;}
+		get{ 
+			if (null == m_rigidbody)
+				return null;
+			return m_rigidbody.gameObject;
+		}
 	}
 	private RollOverEvent m_rollOverCallback;
 	private bool m_isRollOver = true;

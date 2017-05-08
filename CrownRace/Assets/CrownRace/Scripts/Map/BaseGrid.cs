@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class BaseGrid : MonoBehaviour {
-
+	[SerializeField]
 	protected uint m_ID;
 	public uint ID{
 		get{return m_ID;}

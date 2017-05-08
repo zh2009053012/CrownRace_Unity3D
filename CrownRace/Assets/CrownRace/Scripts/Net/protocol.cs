@@ -623,6 +623,30 @@ namespace com.crownrace.msg
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
   
+  [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"update_buff_data_ntf")]
+  public partial class update_buff_data_ntf : global::ProtoBuf.IExtensible
+  {
+    public update_buff_data_ntf() {}
+    
+    private int _player_id;
+    [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public int player_id
+    {
+      get { return _player_id; }
+      set { _player_id = value; }
+    }
+    private readonly global::System.Collections.Generic.List<com.crownrace.msg.buff_data> _data = new global::System.Collections.Generic.List<com.crownrace.msg.buff_data>();
+    [global::ProtoBuf.ProtoMember(2, Name=@"data", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public global::System.Collections.Generic.List<com.crownrace.msg.buff_data> data
+    {
+      get { return _data; }
+    }
+  
+    private global::ProtoBuf.IExtension extensionObject;
+    global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+      { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
+  }
+  
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"player_round_end_req")]
   public partial class player_round_end_req : global::ProtoBuf.IExtensible
   {

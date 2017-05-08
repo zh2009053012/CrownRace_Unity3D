@@ -21,4 +21,8 @@ public class GameStartUI : MonoBehaviour {
 		SceneLoading.LoadSceneName = GameGlobalData.ShowCardSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
 	}
+	public void OnAboutBtnClick(){
+		SceneLoading.LoadSceneName = GameGlobalData.AboutSceneName;
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
+	}
 }

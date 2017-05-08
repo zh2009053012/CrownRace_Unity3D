@@ -24,10 +24,12 @@ public class ServerStateRound_RollDice : Singleton<ServerStateRound_RollDice>, I
 		playerId = req.player_id;
 
 		m_diceCtr = ServerRoundData.DiceCtr;
-		m_diceCtr.RegisterRollOverNotify (RollDiceCallback);
-		//
-		m_diceCtr.IsKinematic = false;
-		m_diceCtr.Roll (15000);
+		if (null != m_diceCtr) {
+			m_diceCtr.RegisterRollOverNotify (RollDiceCallback);
+			//
+			m_diceCtr.IsKinematic = false;
+			m_diceCtr.Roll (15000);
+		}
 	}
 	public void Execute(GameStateBase owner)
 	{
@@ -42,8 +44,10 @@ public class ServerStateRound_RollDice : Singleton<ServerStateRound_RollDice>, I
 				TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_MovePlayer.Instance);
 			}
 		} else {
-			ServerRoundData.ServerSyncDiceNtf (m_diceCtr.Dice.activeSelf, 
-				m_diceCtr.Dice.transform.position, m_diceCtr.Dice.transform.rotation);
+			if (m_diceCtr != null && m_diceCtr.Dice != null) {
+				ServerRoundData.ServerSyncDiceNtf (m_diceCtr.Dice.activeSelf, 
+					m_diceCtr.Dice.transform.position, m_diceCtr.Dice.transform.rotation);
+			}
 		}
 	}
 	public void Exit(GameStateBase owner)

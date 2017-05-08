@@ -23,4 +23,8 @@ public class Map : UnitySingleton<Map> {
 			temp.ID = id++;
 		}
 	}
+	public override void Awake ()
+	{
+		
+	}
 }

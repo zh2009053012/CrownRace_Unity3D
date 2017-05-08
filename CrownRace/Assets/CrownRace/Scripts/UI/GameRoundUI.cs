@@ -9,6 +9,13 @@ public class GameRoundUI : MonoBehaviour {
 	private Image m_head;
 	[SerializeField]
 	private Image m_crow;
+
+	[SerializeField]
+	private GameObject m_settingPanel;
+	[SerializeField]
+	private Button m_fullScreenBtn;
+	[SerializeField]
+	private Button m_noFullScreenBtn;
 	[SerializeField]
 	private RectTransform m_rootRectTransform;
 	public Button EndRoundBtn;
@@ -16,13 +23,31 @@ public class GameRoundUI : MonoBehaviour {
 		get{return m_rootRectTransform;}
 	}
 	// Use this for initialization
-	void Start () {
-	
+	public void Init (string head) {
+		m_head.sprite = Resources.Load ("Heads/" + head+"_Alpha", typeof(Sprite))as Sprite;
+		UpdateFullScreenBtn ();
+		HideSettingPanel ();
+		HideCrown ();
+	}
+	public void ShowCrown(){
+		m_crow.enabled = true;
+	}
+	public void HideCrown(){
+		m_crow.enabled = false;
+	}
+	public void ShowSettingPanel(){
+		m_settingPanel.SetActive (true);
+		UpdateFullScreenBtn ();
+	}
+	public void HideSettingPanel(){
+		m_settingPanel.SetActive (false);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Time.frameCount % 60 == 0) {
+			UpdateFullScreenBtn ();
+		}
 	}
 	public void OnRollDiceBtnClick()
 	{
@@ -48,6 +73,25 @@ public class GameRoundUI : MonoBehaviour {
 		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickQuitBtn", null);
 	}
 	public void OnSettingBtnClick(){
-		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickSettingBtn", null);
+		//GameStateManager.Instance ().FSM.CurrentState.Message ("ClickSettingBtn", null);
+		ShowSettingPanel();
+	}
+	public void OnCloseSettingBtnClick(){
+		HideSettingPanel ();
+	}
+	public void OnChangeMusicVolume(){
+		
+	}
+	public void OnFullScreenBtnClick(){
+		Screen.fullScreen = true;
+		UpdateFullScreenBtn ();
+	}
+	public void OnNoFullScreenBtnClick(){
+		Screen.fullScreen = false;
+		UpdateFullScreenBtn ();
+	}
+	void UpdateFullScreenBtn(){
+		m_fullScreenBtn.gameObject.SetActive(!Screen.fullScreen);
+		m_noFullScreenBtn.gameObject.SetActive(Screen.fullScreen);
 	}
 }

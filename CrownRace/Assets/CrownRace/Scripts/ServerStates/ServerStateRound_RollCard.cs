@@ -40,7 +40,7 @@ public class ServerStateRound_RollCard : Singleton<ServerStateRound_RollCard>, I
 			//
 			int instanceId = CardEffect.ID;
 			pr [3 + rollCardNum + i] = (object)instanceId;
-			CardEffect instance = new CardEffect (instanceId, config.effect, config.effect_value, 
+			CardEffect instance = new CardEffect (instanceId, config_id, config.effect, config.effect_value, 
 				config.effect2, config.effect_value2, config.select_target, config.select_value, config.name, config.desc);
 			roundData.card_list.Add (instance);
 		}

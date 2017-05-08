@@ -22,16 +22,28 @@ public class ServerRoundData  {
 	public static byte[] Data;
 	//use card data
 	public static int DoCardEffectIndex = 0;
-	public static CardEffect UseCardEffect;
+	public static CardEffect CardEffectTemp;
+	public static List<PlayerRoundData> TargetList;
+	public static CARD_EFFECT UseCardEffect;
+	public static int CardEffectValue;
+	public static PlayerRoundData UserRoundData;
 	//roll card data
 	public static int RollCardPlayerId;
 	public static int RollCardNum;
+	//roll player's card  configId
+	public static List<int> RemoveCardList = new List<int>();
 
 	//move player data
 	public static List<MovePlayerData> MoveDataList = new List<MovePlayerData>();
 	//现在正在移动的MovePlayerData
 	public static MovePlayerData CurMoveData;
 
+	public static void ServerUpdateBuffDataNtf(int playerId, List<buff_data> data){
+		update_buff_data_ntf ntf = new update_buff_data_ntf ();
+		ntf.player_id = playerId;
+		ntf.data.AddRange (data.ToArray());
+		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<update_buff_data_ntf> (NET_CMD.UPDATE_BUFF_DATA_NTF, ntf);
+	}
 	public static void ServerUseCardAck(int playerId, int haveCardNum, bool isSuccess, int cardInstanceId){
 		use_card_ack ack = new use_card_ack();
 		ack.use_player_id = playerId;

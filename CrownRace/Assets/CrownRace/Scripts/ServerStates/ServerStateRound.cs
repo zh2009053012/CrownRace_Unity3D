@@ -365,8 +365,9 @@ public class ServerStateRound : IStateBase {
 				pr[3+i] = (object)(config_id);
 				CardEffect config = GameGlobalData.CardList[config_id];
 				//
-				pr[3+cardNum+i] = (object)CardEffect.ID;
-				CardEffect instance = new CardEffect(config_id, config.effect, config.effect_value, 
+				int instanceId = CardEffect.ID;
+				pr[3+cardNum+i] = (object)instanceId;
+				CardEffect instance = new CardEffect(instanceId, config_id, config.effect, config.effect_value, 
 					config.effect2, config.effect_value2, config.select_target, config.select_value, config.name, config.desc);
 				m_curRoundPlayer.card_list.Add(instance);
 			}
@@ -655,7 +656,7 @@ public class ServerStateRound : IStateBase {
 			//
 			PlayerRoundData playerData = GameGlobalData.GetServerPlayerData(player_id);
 			CardEffect config = GameGlobalData.CardList[ntf.card_config_id];
-			CardEffect instance = new CardEffect(ntf.card_instance_id, config.effect, config.effect_value, 
+			CardEffect instance = new CardEffect(ntf.card_instance_id, ntf.card_config_id, config.effect, config.effect_value, 
 				config.effect2, config.effect_value2, config.select_target, config.select_value, config.name, config.desc);
 			playerData.card_list.Add(instance);
 

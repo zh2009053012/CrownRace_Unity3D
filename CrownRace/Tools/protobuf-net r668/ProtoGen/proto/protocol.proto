@@ -123,6 +123,11 @@ message game_load_over_req{
 	required int32 player_id=1;
 }
 
+message update_buff_data_ntf{
+	required int32 player_id=1;
+	repeated buff_data data=2;
+}
+
 
 
 
