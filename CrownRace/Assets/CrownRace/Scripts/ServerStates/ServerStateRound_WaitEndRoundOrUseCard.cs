@@ -50,6 +50,10 @@ public class ServerStateRound_WaitEndRoundOrUseCard : Singleton<ServerStateRound
 	//
 	void ClientEndRoundReq(int playerId, byte[] data){
 		end_round_req req = NetUtils.Deserialize<end_round_req>(data);
+		PlayerRoundData m_curRoundPlayer = ServerRoundData.CurRoundPlayer;
+		ServerRoundData.ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, false);
+		ServerRoundData.ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, false);
+		ServerRoundData.ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, false);
 		TcpListenerHelper.Instance.FSM.ChangeState(ServerStateRound_SelectCurRoundPlayer.Instance);
 	}
 }

@@ -9,7 +9,6 @@ public class GameRoundUI : MonoBehaviour {
 	private Image m_head;
 	[SerializeField]
 	private Image m_crow;
-
 	[SerializeField]
 	private GameObject m_settingPanel;
 	[SerializeField]

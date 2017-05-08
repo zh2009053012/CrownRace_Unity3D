@@ -17,7 +17,15 @@ public class PlayerHeadUI : MonoBehaviour {
 	public int ID{
 		get{return m_id;}
 	}
-
+	[SerializeField]
+	private GameObject m_blockGridBuff;
+	[SerializeField]
+	private GameObject m_blockCardBuff;
+	public void UpdateBuff(bool hasBlockGridBuff, bool hasBlockCardBuff){
+		Debug.Log("UpdateBuff"+hasBlockGridBuff+","+hasBlockCardBuff);
+		m_blockGridBuff.SetActive(hasBlockGridBuff);
+		m_blockCardBuff.SetActive(hasBlockCardBuff);
+	}
 	public void SetInfo(int id, string playerName, int cardNum=0)
 	{
 		m_id = id;

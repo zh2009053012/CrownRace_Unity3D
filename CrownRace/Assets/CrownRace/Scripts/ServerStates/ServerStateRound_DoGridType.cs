@@ -20,7 +20,12 @@ public class ServerStateRound_DoGridType : Singleton<ServerStateRound_DoGridType
 		m_isAfterCall = false;
 		moveData = ServerRoundData.CurMoveData;
 		roundData = GameGlobalData.GetServerPlayerData (moveData.playerId);
-		DoGridType ();
+		buff_data buff = roundData.HasBuff(BUFF_EFFECT.BUFF_BLOCK_GRID);
+		if(null != buff && buff.keep_round > 0){
+			DoMoveOver ();
+		}else{
+			DoGridType ();
+		}
 	}
 	public void Execute(GameStateBase owner)
 	{

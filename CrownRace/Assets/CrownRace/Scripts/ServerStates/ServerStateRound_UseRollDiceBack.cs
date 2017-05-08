@@ -36,10 +36,12 @@ public class ServerStateRound_UseRollDiceBack : Singleton<ServerStateRound_UseRo
 		if (m_isAfterCall) {
 			if (Time.time - m_time > m_waitSecond) {
 				//移动玩家位置 目标玩家
-				ServerRoundData.MovePlayerData data = new ServerRoundData.MovePlayerData();
-				data.playerId = playerId;
-				data.num = m_diceNum;
-				ServerRoundData.MoveDataList.Add (data);
+				for(int i=0; i<ServerRoundData.TargetList.Count; i++){
+					ServerRoundData.MovePlayerData data = new ServerRoundData.MovePlayerData();
+					data.playerId = ServerRoundData.TargetList[i].player_id;
+					data.num = m_diceNum;
+					ServerRoundData.MoveDataList.Add (data);
+				}
 				TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_MovePlayer.Instance);
 			}
 		} else {
@@ -63,8 +65,12 @@ public class ServerStateRound_UseRollDiceBack : Singleton<ServerStateRound_UseRo
 
 		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
 		for(int i=0; i<list.Count; i++){
-			string playerName = GetPlayerName(list[i].player_id, playerId);
-			ServerRoundData.ServerMessageNtf(list[i].player_id, playerName + "移动"+num+"格");
+			string playerName = "";
+			for(int j=0; j<ServerRoundData.TargetList.Count; j++){
+				playerName += GetPlayerName(list[i].player_id, ServerRoundData.TargetList[j].player_id)+" ";
+			}
+
+			ServerRoundData.ServerMessageNtf(list[i].player_id, playerName + "向后移动"+num+"格");
 		}
 		m_isAfterCall = true;
 		m_diceNum = (int)num*-1;

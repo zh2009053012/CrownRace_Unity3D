@@ -34,7 +34,7 @@ public class ServerStateRound_RollCard : Singleton<ServerStateRound_RollCard>, I
 		for (int i = 0; i < rollCardNum; i++) {
 			int config_id = Random.Range (0, GameGlobalData.CardList.Length);
 			//for testing
-			config_id = 1;
+			config_id = 3;
 			pr [3 + i] = (object)(config_id);
 			CardEffect config = GameGlobalData.CardList [config_id];
 			//

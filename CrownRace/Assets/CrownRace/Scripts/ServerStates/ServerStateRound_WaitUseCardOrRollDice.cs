@@ -10,6 +10,11 @@ public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound
 
 	public void Enter(GameStateBase owner)
 	{
+		PlayerRoundData m_curRoundPlayer = ServerRoundData.CurRoundPlayer;
+		ServerRoundData.ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, true);
+		ServerRoundData.ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, true);
+		ServerRoundData.ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, false);
+
 		Debug.Log("ServerStateRound_WaitUseCardOrRollDice");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.ROLL_DICE_REQ_CMD, ClientRollDiceReq, "");
 		TcpListenerHelper.Instance.RegisterNetMsg (NET_CMD.USE_CARD_REQ_CMD, ClientUseCardReq, "");
@@ -49,6 +54,7 @@ public class ServerStateRound_WaitUseCardOrRollDice : Singleton<ServerStateRound
 		ServerRoundData.Data = data;
 		ServerRoundData.UseCardTime = true;
 		ServerRoundData.RollDiceTime = false;
+		//
 		TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseCard.Instance);
 
 	}

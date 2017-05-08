@@ -23,11 +23,12 @@ public class ServerStateRound_SelectCurRoundPlayer : Singleton<ServerStateRound_
 		m_canRollDice = true;
 		m_curRoundPlayer = null;
 
-		if (ServerRoundData.CurRoundPlayer != null) {
-			ServerRoundData.CurRoundPlayer.MinusPauseNum ();
-		}
 		ServerRoundData.CurRoundPlayer = GameGlobalData.GetServerNextPlayerData ();
 		m_curRoundPlayer = ServerRoundData.CurRoundPlayer;
+		m_curRoundPlayer.MinusAllBuffRound();
+
+		//更新当前玩家的buff 数据
+		ServerRoundData.ServerUpdateBuffDataNtf(m_curRoundPlayer.player_id, m_curRoundPlayer.buff);
 
 		string targetPlayer = "";
 		List<PlayerRoundData> list = GameGlobalData.GetServerAllPlayerData();
@@ -38,6 +39,8 @@ public class ServerStateRound_SelectCurRoundPlayer : Singleton<ServerStateRound_
 				targetPlayer = GetPlayerName (list[i].player_id, m_curRoundPlayer.player_id);
 				ServerRoundData.ServerMessageNtf (list[i].player_id, targetPlayer+"本回合不可投掷骰子");
 			}
+			m_curRoundPlayer.MinusPauseNum ();
+	
 			m_canRollDice = false;
 			m_time = Time.time;
 		} else {
@@ -63,6 +66,8 @@ public class ServerStateRound_SelectCurRoundPlayer : Singleton<ServerStateRound_
 				ServerRoundData.ServerMessageNtf(m_curRoundPlayer.player_id, "你可以选择结束回合或者使用卡牌");
 				ServerRoundData.ServerSetEndRoundBtnNtf(m_curRoundPlayer.player_id, true);
 				//wait player UseCard or EndRound
+				m_canRollDice = true;
+				TcpListenerHelper.Instance.FSM.ChangeState(ServerStateRound_WaitEndRoundOrUseCard.Instance);
 			}
 		}
 	}

@@ -148,7 +148,7 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollDiceBack.Instance);
 			break;
 		case CARD_EFFECT.ROLL_DICE_FORWARD:
-			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_RollDice.Instance);
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollDiceForward.Instance);
 			break;
 		case CARD_EFFECT.ROLL_PLAYER_CARD:
 			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollPlayerCard.Instance);

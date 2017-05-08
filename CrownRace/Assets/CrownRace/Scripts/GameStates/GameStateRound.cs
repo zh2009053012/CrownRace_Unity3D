@@ -61,6 +61,7 @@ public class GameStateRound : IStateBase {
 		Debug.Log ("enter GameStateRound");
 		m_owner = (GameMainScene)owner;
 		m_playerList.Clear ();
+		m_headUIList.Clear();
 		//
 //		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.PLAYER_ROLL_DICE_NTF_CMD, PlayerRollDiceNtf, "PlayerRollDiceNtf");
 //		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.DICE_SYNC_NTF_CMD, SyncDicePosRotationFromServer, "SyncDicePosRotationFromServer");
@@ -83,6 +84,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF_CMD, ServerSetPlayerStateNtf, "");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF_CMD, ServerSetEndRoundBtnNtf, "");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.USE_CARD_ACK_CMD, UseCardAck, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.UPDATE_BUFF_DATA_NTF, ServerUpdateBuffDataNtf, "");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -155,6 +157,7 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF_CMD, ServerSetUseCardStateNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF_CMD, ServerSetEndRoundBtnNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.USE_CARD_ACK_CMD, UseCardAck);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.UPDATE_BUFF_DATA_NTF, ServerUpdateBuffDataNtf);
 		//
 		if (null != m_messageUICtr) {
 			GameObject.Destroy (m_messageUICtr.gameObject);
@@ -168,6 +171,33 @@ public class GameStateRound : IStateBase {
 	}
 
 	#region server ack/ntf & client req
+	void ServerUpdateBuffDataNtf(byte[] data){
+		Debug.Log("ServerUpdateBuffDataNtf");
+		update_buff_data_ntf ntf = NetUtils.Deserialize<update_buff_data_ntf>(data);
+		for(int i=0; i<ntf.data.Count; i++){
+			Debug.Log(ntf.data[i].keep_round);
+		}
+		PlayerRoundData playerData = GameGlobalData.GetClientPlayerData (GameGlobalData.PlayerID);
+		playerData.buff = ntf.data;
+		buff_data blockGrid = playerData.HasBuff(BUFF_EFFECT.BUFF_BLOCK_GRID);
+		buff_data blockCard = playerData.HasBuff(BUFF_EFFECT.BUFF_BLOCK_CARD);
+		buff_data bounceCard = playerData.HasBuff(BUFF_EFFECT.BUFF_BOUNCE_CARD);
+		bool hasBlockGridBuff = false;
+		bool hasBlockCardBuff = false;
+		if(null != blockGrid && blockGrid.keep_round > 0){
+			hasBlockGridBuff = true;
+		}
+		if(null != blockCard && blockCard.keep_round > 0){
+			hasBlockCardBuff = true;
+		}
+		if(null != bounceCard && bounceCard.keep_round > 0){
+			hasBlockCardBuff = true;
+		}
+		PlayerHeadUI ui = GetHeadUI(GameGlobalData.PlayerID);
+		if(ui != null){
+			ui.UpdateBuff(hasBlockGridBuff, hasBlockCardBuff);
+		}
+	}
 	void UseCardAck(byte[] data){
 		use_card_ack ack = NetUtils.Deserialize<use_card_ack> (data);
 		if (ack.is_use_success) {
@@ -309,19 +339,25 @@ public class GameStateRound : IStateBase {
 	}
 	void DoDisconnect(){
 		TcpClientHelper.Instance.Close ();
-		TcpListenerHelper.Instance.Close ();
+	
+		if(GameGlobalData.IsServer)
+		{
+			TcpListenerHelper.Instance.Close ();
+			if (null != TcpListenerHelper.Instance.FSM.CurrentState) {
+				//TcpListenerHelper.Instance.FSM.CurrentState.Exit (null);
+				TcpListenerHelper.Instance.FSM.ChangeState (GameStateNull.Instance ());
+			}
 
-		if (null != TcpListenerHelper.Instance.FSM.CurrentState) {
-			//TcpListenerHelper.Instance.FSM.CurrentState.Exit (null);
-			TcpListenerHelper.Instance.FSM.ChangeState (GameStateNull.Instance ());
+			if (null != TcpListenerHelper.Instance.FSM.GlobalState) {
+				TcpListenerHelper.Instance.FSM.GlobalState.Exit (null);
+				TcpListenerHelper.Instance.FSM.GlobalState = null;
+			}
 		}
-
-		if (null != TcpListenerHelper.Instance.FSM.GlobalState) {
-			TcpListenerHelper.Instance.FSM.GlobalState.Exit (null);
-			TcpListenerHelper.Instance.FSM.GlobalState = null;
-		}
+		GameGlobalData.ClearClientPlayerData();
 		GameStateManager.Instance ().FSM.ChangeState (GameStateNull.Instance ());
 		GameGlobalData.IsServer = false;
+		GameGlobalData.PlayerID = -1;
+		GameGlobalData.PlayerResName = "";
 		SceneLoading.LoadSceneName = GameGlobalData.LoginSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
 	}
