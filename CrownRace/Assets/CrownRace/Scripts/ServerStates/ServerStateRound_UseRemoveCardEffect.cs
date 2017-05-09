@@ -29,6 +29,11 @@ public class ServerStateRound_UseRemoveCardEffect : Singleton<ServerStateRound_U
 		for(int i=0; i<targetList.Count; i++){
 			if (targetList [i].PauseNum > 0) {
 				isPaused = true;
+				continue;
+			}
+			if(targetList[i].player_id == ServerRoundData.CurRoundPlayer.player_id && 
+				ServerRoundData.CurRoundPlayer.is_paused){
+				isPaused = true;
 			}
 		}
 		//no targets
@@ -48,6 +53,9 @@ public class ServerStateRound_UseRemoveCardEffect : Singleton<ServerStateRound_U
 			for(int j=0; j<targetList.Count; j++){
 				if (targetList [j].PauseNum > 0) {
 					msg += GetPlayerName (allPlayer [i].player_id, targetList [j].player_id) + " ";
+				}else if(targetList[j].player_id == ServerRoundData.CurRoundPlayer.player_id && 
+					ServerRoundData.CurRoundPlayer.is_paused){
+					msg += GetPlayerName (allPlayer [i].player_id, targetList [j].player_id) + " ";
 				}
 			}
 			ServerRoundData.ServerMessageNtf (allPlayer [i].player_id, msg+"移除暂停效果");
@@ -55,6 +63,11 @@ public class ServerStateRound_UseRemoveCardEffect : Singleton<ServerStateRound_U
 		for(int i=0; i<targetList.Count; i++){
 			if (targetList [i].PauseNum > 0) {
 				targetList [i].PauseNum = 0;
+			}
+			if(targetList[i].player_id == ServerRoundData.CurRoundPlayer.player_id && 
+				ServerRoundData.CurRoundPlayer.is_paused){
+				Debug.Log("++++++++++ remove");
+				ServerRoundData.CurRoundPlayer.is_paused = false;
 			}
 		}
 		isAfterCall = true;

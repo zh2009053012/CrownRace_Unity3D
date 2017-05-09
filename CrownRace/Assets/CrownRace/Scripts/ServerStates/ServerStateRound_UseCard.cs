@@ -39,13 +39,18 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 		}else{//否则说明是处理第一个效果,将卡牌存起来,方便第二个效果调用
 			ServerRoundData.CardEffectTemp = useCard;
 		}
+		Debug.Log("1111111111111111111");
 		//检查第二个卡牌效果是否为none，若是none则结束
 		if(ServerRoundData.DoCardEffectIndex == 1){
 			if(useCard.effect2 == CARD_EFFECT.NONE){
 				EndUseCard();
 				return;
 			}
+		}else if(ServerRoundData.DoCardEffectIndex == 2){
+			EndUseCard();
+			return;
 		}
+		Debug.Log("22222222222222222");
 		//
 		if(ServerRoundData.DoCardEffectIndex == 0){
 			m_effectType = useCard.effect;
@@ -71,7 +76,9 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 		//
 		userRoundData.RemoveCardEffect(req.card_instance_id);
 		//销毁玩家使用的卡牌
+		Debug.Log(ServerRoundData.DoCardEffectIndex);
 		if(ServerRoundData.DoCardEffectIndex == 0){
+			Debug.Log("destroy use card");
 			ServerRoundData.ServerRemovePlayerCardNtf(req.use_player_id, new int[]{useCard.instance_id}, userRoundData.card_list.Count);
 		}
 		//
@@ -142,7 +149,7 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRemoveCardEffect.Instance);
 			break;
 		case CARD_EFFECT.ROLL_CARD:
-			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_RollCard.Instance);
+			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollCard.Instance);
 			break;
 		case CARD_EFFECT.ROLL_DICE_BACK:
 			TcpListenerHelper.Instance.FSM.ChangeState (ServerStateRound_UseRollDiceBack.Instance);
@@ -268,8 +275,8 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 	List<PlayerRoundData> GetPlayerInSpecialGrid(List<PlayerRoundData> list){
 		List<PlayerRoundData> result = new List<PlayerRoundData>();
 		for(int i=0; i<list.Count; i++){
-			if(list[i].stay_grid.CellEffect != CELL_EFFECT.NONE ||
-				list[i].stay_grid.CellEffect != CELL_EFFECT.START || 
+			if(list[i].stay_grid.CellEffect != CELL_EFFECT.NONE &&
+				list[i].stay_grid.CellEffect != CELL_EFFECT.START && 
 				list[i].stay_grid.CellEffect != CELL_EFFECT.END){
 				result.Add(list[i]);
 			}
@@ -349,7 +356,7 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 	List<PlayerRoundData> GetForwardTargets(CardEffect ce, PlayerRoundData user, List<PlayerRoundData> list){
 		List<PlayerRoundData> result = new List<PlayerRoundData>();
 		for(int i=0; i<list.Count; i++){
-			if(list[i].stay_grid.ID - user.stay_grid.ID > ce.select_value){
+			if(list[i].stay_grid.ID - user.stay_grid.ID >= ce.select_value){
 				result.Add(list[i]);
 			}
 		}
@@ -359,7 +366,7 @@ public class ServerStateRound_UseCard : Singleton<ServerStateRound_UseCard>, ISt
 		List<PlayerRoundData> result = new List<PlayerRoundData>();
 		
 		for(int i=0; i<list.Count; i++){
-			if(user.stay_grid.ID - list[i].stay_grid.ID > ce.select_value){
+			if(user.stay_grid.ID - list[i].stay_grid.ID >= ce.select_value){
 				result.Add(list[i]);
 			}
 		}

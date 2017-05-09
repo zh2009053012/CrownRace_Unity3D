@@ -17,7 +17,11 @@ public class ServerStateRound_NextStep : Singleton<ServerStateRound_NextStep>, I
 		} //再判断card effect的第二个效果
 		else if(ServerRoundData.DoCardEffectIndex == 1){
 			TcpListenerHelper.Instance.FSM.ChangeState(ServerStateRound_UseCard.Instance);
-		}else {
+		}//第二个效果也使用完毕了
+		else if(ServerRoundData.DoCardEffectIndex == 2){
+			TcpListenerHelper.Instance.FSM.ChangeState(ServerStateRound_UseCard.Instance);
+		}
+		else {
 			//roll dice time
 			if(ServerRoundData.RollDiceTime){
 				//结束回合或者使用卡牌
@@ -31,7 +35,8 @@ public class ServerStateRound_NextStep : Singleton<ServerStateRound_NextStep>, I
 			}else //if(ServerRoundData.UseCardTime){
 			{
 				//结束回合或者使用卡牌
-				if(ServerRoundData.HasRollDice){
+				Debug.Log("+++++++++++"+ServerRoundData.HasRollDice+","+ServerRoundData.CurRoundPlayer.is_paused);
+				if(ServerRoundData.HasRollDice || ServerRoundData.CurRoundPlayer.is_paused){
 					PlayerRoundData m_curRoundPlayer = ServerRoundData.CurRoundPlayer;
 					ServerRoundData.ServerSetUseCardStateNtf(m_curRoundPlayer.player_id, true);
 					ServerRoundData.ServerSetDiceBtnStateNtf(m_curRoundPlayer.player_id, false);

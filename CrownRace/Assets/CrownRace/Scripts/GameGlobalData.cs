@@ -83,6 +83,7 @@ public class PlayerRoundData{
 	public bool is_connect;
 	public MapGrid stay_grid;
 	public Vector3 position;
+	public bool is_paused;
 	public List<buff_data> buff;
 	public List<CardEffect> card_list = new List<CardEffect>();
 
@@ -150,10 +151,12 @@ public class PlayerRoundData{
 	}
 
 	public PlayerRoundData(){
+		is_paused = false;
 		is_connect = true;
 		buff = new List<buff_data> ();
 	}
 	public PlayerRoundData(int id, string res, bool isRoundOver, bool isMoveOver){
+		is_paused = false;
 		is_connect = true;
 		player_id = id;
 		res_name = res;
@@ -163,6 +166,7 @@ public class PlayerRoundData{
 		buff = new List<buff_data> ();
 	}
 	public PlayerRoundData(int id, string res){
+		is_paused = false;
 		is_connect = true;
 		player_id = id;
 		res_name = res;
@@ -406,15 +410,15 @@ public class GameGlobalData {
 		new CardEffect(9, 9, CARD_EFFECT.FORWARD, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.HAVE_CARD_LESS_EQUAL, 0, "魔法旅行者", "手中没有卡牌的玩家前进一格"),
 		new CardEffect(10, 10, CARD_EFFECT.BACK, 2, CARD_EFFECT.NONE, 0, SELECT_TARGET.HAVE_CARD_LARGER_EQUAL, 2, "魔法仆从的欺骗", "拥有两张以上卡牌的玩家后退一格"),
 		new CardEffect(11, 11, CARD_EFFECT.ROLL_CARD, 2, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "魔法球", "抽取两张卡牌"),
-		new CardEffect(12, 12, CARD_EFFECT.BOUNCE_CARD_EFFECT, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "魔镜", "反弹其他玩家的卡牌效果，持续一回合。"),
+		new CardEffect(12, 12, CARD_EFFECT.BOUNCE_CARD_EFFECT, 2, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "魔镜", "反弹其他玩家的卡牌效果，持续一回合。"),//---------?
 		new CardEffect(13, 13, CARD_EFFECT.BACK, 2, CARD_EFFECT.ROLL_DICE_FORWARD, 1, SELECT_TARGET.SELF, 1, "森林之友", "后退两格并额外投掷一次骰子"),
 		new CardEffect(14, 14, CARD_EFFECT.ROLL_DICE_FORWARD, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "神秘信封", "额外投掷一次骰子"),
 		new CardEffect(15, 15, CARD_EFFECT.PAUSE, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.MANUAL, 1, "树藤", "使目标角色暂停1回合"),
-		new CardEffect(16, 16, CARD_EFFECT.ROLL_PLAYER_CARD, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.RANDOM, 1, "死亡之手", "抽取任意一位玩家手上的第一张牌"),
-		new CardEffect(17, 17, CARD_EFFECT.BACK, 1, CARD_EFFECT.PAUSE, 1, SELECT_TARGET.PLAYER_IN_SPECIAL_GRID, -1, "死亡之瞳", "落在有标记格子的玩家后退一格并暂停一回合"),
+		new CardEffect(16, 16, CARD_EFFECT.LOST_FIRST_CARD, 1, CARD_EFFECT.ROLL_PLAYER_CARD, 0, SELECT_TARGET.RANDOM, 1, "死亡之手", "抽取任意一位玩家手上的第一张牌"),
+		new CardEffect(17, 17, CARD_EFFECT.BACK, 1, CARD_EFFECT.PAUSE, 1, SELECT_TARGET.PLAYER_IN_SPECIAL_GRID, -1, "死亡之瞳", "落在有标记格子的玩家后退一格并暂停一回合"),//------bug
 		new CardEffect(18, 18, CARD_EFFECT.ROLL_DICE_BACK, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.MANUAL, 1, "巫师帽", "投掷一次骰子，投掷点数决定目标角色后退格数"),
-		new CardEffect(19, 19, CARD_EFFECT.REMOVE_CARD_EFFECT, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "武士之剑", "解除身上其他玩家的卡牌效果"),
-		new CardEffect(20, 20, CARD_EFFECT.BLOCK_CARD_EFFECT, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "漩涡", "格挡玩家施放的卡牌效果，持续一回合"),
+		new CardEffect(19, 19, CARD_EFFECT.REMOVE_CARD_EFFECT, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "武士之剑", "解除身上负面效果"),
+		new CardEffect(20, 20, CARD_EFFECT.BLOCK_CARD_EFFECT, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.SELF, 1, "漩涡", "格挡玩家施放的卡牌效果，持续一回合"),//-------?
 		new CardEffect(21, 21, CARD_EFFECT.ROLL_DICE_FORWARD, 1, CARD_EFFECT.BACK, 2, SELECT_TARGET.SELF, 1, "诱惑之石", "投掷一次骰子并后退两格"),
 		new CardEffect(22, 22, CARD_EFFECT.BACK, 2, CARD_EFFECT.ROLL_DICE_FORWARD, 1, SELECT_TARGET.SELF, 1, "鱼人的选择", "后退两格来获取一次额外投掷骰子的机会"),
 		new CardEffect(23, 23, CARD_EFFECT.FORWARD, 1, CARD_EFFECT.NONE, 0, SELECT_TARGET.OTHER, -1, "预见", "其他玩家前进一格"),

@@ -26,8 +26,8 @@ public class ServerStateRound_UseExchangePosition : Singleton<ServerStateRound_U
 		user = ServerRoundData.UserRoundData;
 		allPlayer = GameGlobalData.GetServerAllPlayerData ();
 
-		//如果targetList.Count < 2，则什么都不发生
-		if (targetList.Count < 2) {
+		//如果targetList.Count < 1，则什么都不发生
+		if (targetList.Count < 1) {
 			for (int i = 0; i < allPlayer.Count; i++) {
 				string msg = "什么都没有发生";
 				ServerRoundData.ServerMessageNtf (allPlayer [i].player_id, msg);
@@ -37,25 +37,52 @@ public class ServerStateRound_UseExchangePosition : Singleton<ServerStateRound_U
 			m_time = Time.time;
 			return;
 		}
-		//如果目标玩家中有buff，检查是否反弹或者抵消
-		if(HasBlockBuff()){
-			return;
-		}
-		//
 		string bounceMsg = "";
-		if (HasBounceBuff ()) {
-			//反弹两次，什么都没发生
-			if (targetList [0].player_id == targetList [1].player_id) {
+		//如果目标只有一个，则是和使用者交换位置
+		if(targetList.Count == 1){
+			//如果目标就是使用者，什么都没发生
+			if(user.player_id == targetList[0].player_id){
 				for (int i = 0; i < allPlayer.Count; i++) {
-					string msg = "卡牌效果被反弹了，但什么都没有发生";
+					string msg = "什么都没有发生";
 					ServerRoundData.ServerMessageNtf (allPlayer [i].player_id, msg);
 				}
 				//
 				isAfterCall = true;
 				m_time = Time.time;
 				return;
-			} else {
-				bounceMsg = "卡牌效果被反弹了";
+			}else{
+				//否则检查目标身上是否有抵消buff
+				if(HasBlockBuff()){
+					return;
+				}
+				//是否有反弹buff，有则也抵消
+				if(HasBounceBuff()){
+					return;
+				}
+				//最后添加使用者到list，产生效果
+				targetList.Add(user);
+			}
+		}else{
+			//如果目标玩家中有buff，检查是否反弹或者抵消
+			if(HasBlockBuff()){
+				return;
+			}
+			//
+
+			if (HasBounceBuff ()) {
+				//反弹两次，什么都没发生
+				if (targetList [0].player_id == targetList [1].player_id) {
+					for (int i = 0; i < allPlayer.Count; i++) {
+						string msg = "卡牌效果被反弹了，但什么都没有发生";
+						ServerRoundData.ServerMessageNtf (allPlayer [i].player_id, msg);
+					}
+					//
+					isAfterCall = true;
+					m_time = Time.time;
+					return;
+				} else {
+					bounceMsg = "卡牌效果被反弹了";
+				}
 			}
 		}
 		//卡牌产生效果
@@ -68,7 +95,9 @@ public class ServerStateRound_UseExchangePosition : Singleton<ServerStateRound_U
 		MapGrid AGrid = targetList [0].stay_grid;
 		MapGrid BGrid = targetList [1].stay_grid;
 		targetList [0].stay_grid = BGrid;
+		targetList[0].position = BGrid.PlayerPos(targetList[0].res_name);
 		targetList [1].stay_grid = AGrid;
+		targetList[1].position = AGrid.PlayerPos(targetList[1].res_name);
 		ServerRoundData.ServerMovePlayerNtf (targetList [0].player_id, BGrid.PlayerPos(targetList [0].res_name), Quaternion.identity);
 		ServerRoundData.ServerMovePlayerNtf (targetList [1].player_id, AGrid.PlayerPos(targetList [1].res_name), Quaternion.identity);
 

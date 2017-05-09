@@ -25,6 +25,7 @@ public class ServerStateRound_SelectCurRoundPlayer : Singleton<ServerStateRound_
 
 		ServerRoundData.CurRoundPlayer = GameGlobalData.GetServerNextPlayerData ();
 		m_curRoundPlayer = ServerRoundData.CurRoundPlayer;
+		m_curRoundPlayer.is_paused = false;
 		m_curRoundPlayer.MinusAllBuffRound();
 
 		//更新当前玩家的buff 数据
@@ -40,6 +41,7 @@ public class ServerStateRound_SelectCurRoundPlayer : Singleton<ServerStateRound_
 				ServerRoundData.ServerMessageNtf (list[i].player_id, targetPlayer+"本回合不可投掷骰子");
 			}
 			m_curRoundPlayer.MinusPauseNum ();
+			m_curRoundPlayer.is_paused = true;
 	
 			m_canRollDice = false;
 			m_time = Time.time;

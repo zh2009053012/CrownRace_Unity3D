@@ -40,15 +40,15 @@ public class ServerStateRound_UsePause : Singleton<ServerStateRound_UsePause>, I
 		for (int i = 0; i < allPlayer.Count; i++) {
 			string msg="";
 			for(int j=0; j<targetList.Count; j++){
-				if (targetList [j].card_list.Count > 0) {
-					msg += GetPlayerName (allPlayer [i].player_id, targetList [j].player_id) + " ";
-				}
+				msg += GetPlayerName (allPlayer [i].player_id, targetList [j].player_id) + " ";
 			}
 			ServerRoundData.ServerMessageNtf (allPlayer [i].player_id, msg+"暂停"+effectValue+"回合");
 		}
 		for (int i = 0; i < targetList.Count; i++) {
 			targetList [i].PauseNum += effectValue;
 		}
+		isAfterCall = true;
+		m_time = Time.time;
 	}
 	public void Execute(GameStateBase owner)
 	{

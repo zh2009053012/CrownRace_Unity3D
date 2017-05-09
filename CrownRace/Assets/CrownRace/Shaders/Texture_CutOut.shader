@@ -1,4 +1,4 @@
-﻿Shader "Unlit/Texture_offset"
+﻿Shader "Unlit/Texture_CutOut"
 {
 	Properties
 	{
@@ -47,8 +47,12 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
+				if(col.a <= 0.9f){
+					discard;
+				}
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;
