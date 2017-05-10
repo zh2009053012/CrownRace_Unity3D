@@ -84,7 +84,8 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_PLAYER_STATE_NTF_CMD, ServerSetPlayerStateNtf, "");
 		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF_CMD, ServerSetEndRoundBtnNtf, "");
 		TcpClientHelper.Instance.RegisterNetMsg (NET_CMD.USE_CARD_ACK_CMD, UseCardAck, "");
-		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.UPDATE_BUFF_DATA_NTF, ServerUpdateBuffDataNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.UPDATE_BUFF_DATA_NTF_CMD, ServerUpdateBuffDataNtf, "");
+		TcpClientHelper.Instance.RegisterNetMsg(NET_CMD.VECTORY_NTF_CMD, ServerVectoryNtf, "");
 		//
 		GameObject messageUIPrefab = Resources.Load ("UI/MessageUICanvas")as GameObject;
 		GameObject messageUIGO = GameObject.Instantiate (messageUIPrefab);
@@ -157,7 +158,8 @@ public class GameStateRound : IStateBase {
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.SET_USE_CARD_STATE_NTF_CMD, ServerSetUseCardStateNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.SET_END_ROUND_BTN_STATE_NTF_CMD, ServerSetEndRoundBtnNtf);
 		TcpClientHelper.Instance.UnregisterNetMsg (NET_CMD.USE_CARD_ACK_CMD, UseCardAck);
-		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.UPDATE_BUFF_DATA_NTF, ServerUpdateBuffDataNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.UPDATE_BUFF_DATA_NTF_CMD, ServerUpdateBuffDataNtf);
+		TcpClientHelper.Instance.UnregisterNetMsg(NET_CMD.VECTORY_NTF_CMD, ServerVectoryNtf);
 		//
 		if (null != m_messageUICtr) {
 			GameObject.Destroy (m_messageUICtr.gameObject);
@@ -171,6 +173,14 @@ public class GameStateRound : IStateBase {
 	}
 
 	#region server ack/ntf & client req
+	void ServerVectoryNtf(byte[] data){
+		vectory_ntf ntf = NetUtils.Deserialize<vectory_ntf>(data);
+		m_roundUICtr.SetVectoryPanelInfo(ntf.no1, ntf.no2);
+		m_roundUICtr.ShowVectoryPanel();
+		if(ntf.no1.Equals(GameGlobalData.GetClientPlayerData(GameGlobalData.PlayerID).res_name)){
+			m_roundUICtr.ShowCrown();
+		}
+	}
 	void ServerUpdateBuffDataNtf(byte[] data){
 		Debug.Log("ServerUpdateBuffDataNtf");
 		update_buff_data_ntf ntf = NetUtils.Deserialize<update_buff_data_ntf>(data);

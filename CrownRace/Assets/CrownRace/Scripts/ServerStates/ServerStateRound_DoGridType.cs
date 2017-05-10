@@ -50,6 +50,11 @@ public class ServerStateRound_DoGridType : Singleton<ServerStateRound_DoGridType
 		switch (roundData.stay_grid.CellEffect) {
 		case CELL_EFFECT.END:
 			//胜利
+			for (int i = 0; i < list.Count; i++) {
+				targetPlayer = GetPlayerName (list [i].player_id, roundData.player_id);
+				ServerRoundData.ServerMessageNtf (list [i].player_id, targetPlayer + "获得了胜利");
+			}
+			ServerRoundData.ServerVectoryNtf();
 			break;
 		case CELL_EFFECT.START:
 			DoMoveOver();

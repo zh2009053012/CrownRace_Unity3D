@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class CardPositionCtr : MonoBehaviour {
 	public Transform m_left;
@@ -60,7 +61,7 @@ public class CardPositionCtr : MonoBehaviour {
 //		if(Input.GetKeyDown(KeyCode.A)){
 //			AddCard(Random.Range(0, GameGlobalData.CardList.Length), null);
 //		}
-		if (Input.GetMouseButtonDown (0)) {
+		if (EventSystem.current != null && Input.GetMouseButtonDown (0)) {
 			GameObject go = TryHitCard ();
 			if (go != null) {
 				if (m_curSelect == null) {
@@ -73,7 +74,7 @@ public class CardPositionCtr : MonoBehaviour {
 				BackCurSelectPos ();
 			}
 		}
-		if(Input.GetMouseButtonUp(0)){
+		if(EventSystem.current != null && Input.GetMouseButtonUp(0)){
 			if (m_isShowCard) {
 				m_isReadyUse = false;
 				BackCurSelectPos ();

@@ -38,11 +38,37 @@ public class ServerRoundData  {
 	//现在正在移动的MovePlayerData
 	public static MovePlayerData CurMoveData;
 
+	public static void ServerVectoryNtf(){
+		List<PlayerRoundData> allPlayer = GameGlobalData.GetServerAllPlayerData();
+		PlayerRoundData first = allPlayer[0];
+		for(int i=1; i<allPlayer.Count; i++){
+			if(first.stay_grid.ID > allPlayer[i].stay_grid.ID){
+				first = allPlayer[i];
+			}
+		}
+		allPlayer.Remove(first);
+		PlayerRoundData second = null;
+		if(allPlayer.Count > 0){
+			second = allPlayer[0];
+			for(int j=1; j<allPlayer.Count; j++){
+				if(second.stay_grid.ID > allPlayer[j].stay_grid.ID){
+					second = allPlayer[j];
+				}
+			}
+		}
+		vectory_ntf ntf = new vectory_ntf();
+		ntf.no1 = first.res_name;
+		ntf.no2 = "";
+		if(null != second){
+			ntf.no2 = second.res_name;
+		}
+		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<vectory_ntf>(NET_CMD.VECTORY_NTF_CMD, ntf);
+	}
 	public static void ServerUpdateBuffDataNtf(int playerId, List<buff_data> data){
 		update_buff_data_ntf ntf = new update_buff_data_ntf ();
 		ntf.player_id = playerId;
 		ntf.data.AddRange (data.ToArray());
-		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<update_buff_data_ntf> (NET_CMD.UPDATE_BUFF_DATA_NTF, ntf);
+		TcpListenerHelper.Instance.clientsContainer.SendToAllClient<update_buff_data_ntf> (NET_CMD.UPDATE_BUFF_DATA_NTF_CMD, ntf);
 	}
 	public static void ServerUseCardAck(int playerId, int haveCardNum, bool isSuccess, int cardInstanceId){
 		use_card_ack ack = new use_card_ack();
