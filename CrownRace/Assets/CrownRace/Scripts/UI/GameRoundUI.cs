@@ -16,6 +16,12 @@ public class GameRoundUI : MonoBehaviour {
 	[SerializeField]
 	private Button m_noFullScreenBtn;
 	[SerializeField]
+	private GameObject m_vectoryPanel;
+	[SerializeField]
+	private Text m_no1;
+	[SerializeField]
+	private Text m_no2;
+	[SerializeField]
 	private RectTransform m_rootRectTransform;
 	public Button EndRoundBtn;
 	public RectTransform RootRectTransform{
@@ -27,12 +33,23 @@ public class GameRoundUI : MonoBehaviour {
 		UpdateFullScreenBtn ();
 		HideSettingPanel ();
 		HideCrown ();
+		HideVectoryPanel ();
 	}
 	public void ShowCrown(){
 		m_crow.enabled = true;
 	}
 	public void HideCrown(){
 		m_crow.enabled = false;
+	}
+	public void SetVectoryPanelInfo(string no1, string no2){
+		m_no1.text = no1;
+		m_no2.text = no2;
+	}
+	public void ShowVectoryPanel(){
+		m_vectoryPanel.SetActive (true);
+	}
+	public void HideVectoryPanel(){
+		m_vectoryPanel.SetActive (false);
 	}
 	public void ShowSettingPanel(){
 		m_settingPanel.SetActive (true);
@@ -92,5 +109,8 @@ public class GameRoundUI : MonoBehaviour {
 	void UpdateFullScreenBtn(){
 		m_fullScreenBtn.gameObject.SetActive(!Screen.fullScreen);
 		m_noFullScreenBtn.gameObject.SetActive(Screen.fullScreen);
+	}
+	public void OnBackHomeBtnClick(){
+		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickQuitBtn", null);
 	}
 }

@@ -161,8 +161,11 @@ namespace com.crownrace.msg
       [global::ProtoBuf.ProtoEnum(Name=@"USE_CARD_ACK_CMD", Value=33)]
       USE_CARD_ACK_CMD = 33,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"UPDATE_BUFF_DATA_NTF", Value=34)]
-      UPDATE_BUFF_DATA_NTF = 34
+      [global::ProtoBuf.ProtoEnum(Name=@"UPDATE_BUFF_DATA_NTF_CMD", Value=34)]
+      UPDATE_BUFF_DATA_NTF_CMD = 34,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"VECTORY_NTF_CMD", Value=35)]
+      VECTORY_NTF_CMD = 35
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"BUFF_EFFECT")]

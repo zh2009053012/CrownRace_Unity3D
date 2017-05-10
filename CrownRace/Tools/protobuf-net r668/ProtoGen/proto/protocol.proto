@@ -128,6 +128,11 @@ message update_buff_data_ntf{
 	repeated buff_data data=2;
 }
 
+message vectory_ntf{
+	required string no1=1;
+	required string no2=2;
+}
+
 
 
 
