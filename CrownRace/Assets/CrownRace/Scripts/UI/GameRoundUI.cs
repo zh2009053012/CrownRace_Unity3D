@@ -22,6 +22,8 @@ public class GameRoundUI : MonoBehaviour {
 	[SerializeField]
 	private Text m_no2;
 	[SerializeField]
+	private Slider m_volumeSlider;
+	[SerializeField]
 	private RectTransform m_rootRectTransform;
 	public Button EndRoundBtn;
 	public RectTransform RootRectTransform{
@@ -34,6 +36,8 @@ public class GameRoundUI : MonoBehaviour {
 		HideSettingPanel ();
 		HideCrown ();
 		HideVectoryPanel ();
+		m_volumeSlider.value = PlayerPrefs.GetFloat ("volume");
+
 	}
 	public void ShowCrown(){
 		m_crow.enabled = true;
@@ -67,6 +71,7 @@ public class GameRoundUI : MonoBehaviour {
 	}
 	public void OnRollDiceBtnClick()
 	{
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance ().FSM.CurrentState.Message ("RollDiceBtn", null);
 	}
 	public Vector2 RectTransformToScreenPos(Vector2 pos)
@@ -77,32 +82,40 @@ public class GameRoundUI : MonoBehaviour {
 		return p;
 	}
 	public void OnEndRoundBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickEndRoundBtn", null);
 	}
 	public void OnPauseBtnClick(){
 		
 	}
 	public void OnCardBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickCardBtn", null);
 	}
 	public void OnQuitBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickQuitBtn", null);
 	}
 	public void OnSettingBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		//GameStateManager.Instance ().FSM.CurrentState.Message ("ClickSettingBtn", null);
 		ShowSettingPanel();
 	}
 	public void OnCloseSettingBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		HideSettingPanel ();
 	}
-	public void OnChangeMusicVolume(){
-		
+	public void OnChangeMusicVolume(float volume){
+		AudioManager.Instance.ChangeVolume (m_volumeSlider.value);
+		PlayerPrefs.SetFloat ("volume", m_volumeSlider.value);
 	}
 	public void OnFullScreenBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		Screen.fullScreen = true;
 		UpdateFullScreenBtn ();
 	}
 	public void OnNoFullScreenBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		Screen.fullScreen = false;
 		UpdateFullScreenBtn ();
 	}
@@ -111,6 +124,7 @@ public class GameRoundUI : MonoBehaviour {
 		m_noFullScreenBtn.gameObject.SetActive(Screen.fullScreen);
 	}
 	public void OnBackHomeBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance ().FSM.CurrentState.Message ("ClickQuitBtn", null);
 	}
 }

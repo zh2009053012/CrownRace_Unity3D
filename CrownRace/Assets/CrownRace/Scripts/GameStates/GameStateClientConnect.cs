@@ -39,6 +39,10 @@ public class GameStateClientConnect : IStateBase {
 		ctr.DisConnectBtnInteractable = false;
 		ctr.SetInputReadOnly( false );
 		ctr.SetNotifyText ("");
+		//
+		AudioManager.Instance.StopAudio ("game_scene_bg");
+		AudioManager.Instance.StopAudio ("start_scene_bg");
+		AudioManager.Instance.PlayAudio ("else_scene_bg", true);
 	}
 
 	void InitRegisterNetMsg()

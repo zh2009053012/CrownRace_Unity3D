@@ -109,6 +109,10 @@ public class GameStateRound : IStateBase {
 		InitPlayers();
 		//SendServerRoundEnd ("",1);
 		ClientGameLoadOverReq(GameGlobalData.PlayerID);
+		//
+		AudioManager.Instance.PlayAudio ("game_scene_bg", true);
+		AudioManager.Instance.StopAudio ("start_scene_bg");
+		AudioManager.Instance.StopAudio ("else_scene_bg");
 	}
 
 	public void Execute(GameStateBase owner)
@@ -177,8 +181,11 @@ public class GameStateRound : IStateBase {
 		vectory_ntf ntf = NetUtils.Deserialize<vectory_ntf>(data);
 		m_roundUICtr.SetVectoryPanelInfo(ntf.no1, ntf.no2);
 		m_roundUICtr.ShowVectoryPanel();
-		if(ntf.no1.Equals(GameGlobalData.GetClientPlayerData(GameGlobalData.PlayerID).res_name)){
-			m_roundUICtr.ShowCrown();
+		if (ntf.no1.Equals (GameGlobalData.GetClientPlayerData (GameGlobalData.PlayerID).res_name)) {
+			m_roundUICtr.ShowCrown ();
+			AudioManager.Instance.PlayAudio ("success", false);
+		} else {
+			AudioManager.Instance.PlayAudio ("failure", false);
 		}
 	}
 	void ServerUpdateBuffDataNtf(byte[] data){
@@ -311,6 +318,7 @@ public class GameStateRound : IStateBase {
 		req.card_instance_id = cardInstanceId;
 		req.target_player_id = targetPlayerId;
 		TcpClientHelper.Instance.SendData<use_card_req>(NET_CMD.USE_CARD_REQ_CMD, req);
+		AudioManager.Instance.PlayAudio ("use_card", false);
 	}
 	void ClientGameLoadOverReq(int playerId){
 		game_load_over_req req = new game_load_over_req ();
@@ -536,6 +544,7 @@ public class GameStateRound : IStateBase {
 		//
 		PlayerHeadUI uiCtr = GetHeadUI(ntf.player_id);
 		uiCtr.SetCardNum(ntf.have_card_num);
+		AudioManager.Instance.PlayAudio ("roll_card", false);
 	}
 
 	void SendMoveToEndToServer()

@@ -35,6 +35,17 @@ public class GameStateLaunch : IStateBase {
 		GameGlobalData.ClearClientPlayerData ();
 		GameGlobalData.ClearServerPlayerData ();
 		GameGlobalData.InitResName ();
+		//
+
+		if (PlayerPrefs.HasKey ("volume")) {
+			AudioManager.Instance.Volume = PlayerPrefs.GetFloat ("volume");
+		} else {
+			AudioManager.Instance.Volume = 1;
+			PlayerPrefs.SetFloat ("volume", 1);
+		}
+		AudioManager.Instance.StopAudio ("game_scene_bg");
+		AudioManager.Instance.PlayAudio ("start_scene_bg", true);
+		AudioManager.Instance.StopAudio ("else_scene_bg");
 	}
 
 	public void Execute(GameStateBase owner)

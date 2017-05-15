@@ -36,6 +36,7 @@ public class GameClientUI : MonoBehaviour {
 	public void OnBackBtnClick()
 	{
 		GameStateManager.Instance ().FSM.CurrentState.Message ("BackToPrevious", null);
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 	}
 	public void OnConnectBtnClick()
 	{
@@ -43,9 +44,11 @@ public class GameClientUI : MonoBehaviour {
 		p [0] = (object)serverIPInput.text;
 		p [1] = (object)serverPortInput.text;
 		GameStateManager.Instance ().FSM.CurrentState.Message ("ConnectServer", p);
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 	}
 	public void OnDisconnectBtnClick()
 	{
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance ().FSM.CurrentState.Message ("DisconnectServer", null);
 	}
 }

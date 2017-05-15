@@ -54,6 +54,10 @@ public class GameStateServerWait : IStateBase {
 		GameGlobalData.ClearServerPlayerData ();
 		GameGlobalData.ResetPlayerRoundEnd ();
 		GameGlobalData.ResetPlayerMoveOver ();
+		//
+		AudioManager.Instance.StopAudio ("game_scene_bg");
+		AudioManager.Instance.StopAudio ("start_scene_bg");
+		AudioManager.Instance.PlayAudio ("else_scene_bg", true);
 	}
 
 	public void Execute(GameStateBase owner)
@@ -130,6 +134,7 @@ public class GameStateServerWait : IStateBase {
 			ctr.ServerPort = port.ToString();
 			DoRealStartServer (ip, port);
 		}
+		AudioManager.Instance.PlayAudio ("build_game", false);
 	}
 
 	void DoRealStartServer(IPAddress ip, int port)

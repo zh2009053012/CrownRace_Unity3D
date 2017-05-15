@@ -15,12 +15,16 @@ public class AboutUI : MonoBehaviour {
 
 	public void OnLeftBtnClick(){
 		m_ctr.ShowPre();
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 	}
 	public void OnRightBtnClick(){
 		m_ctr.ShowNext();
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 	}
 	public void OnCloseBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		SceneLoading.LoadSceneName = GameGlobalData.LoginSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
+
 	}
 }

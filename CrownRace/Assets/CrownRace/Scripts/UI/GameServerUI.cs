@@ -48,6 +48,7 @@ public class GameServerUI : MonoBehaviour {
 	}
 	public void OnStartServerBtnClick()
 	{
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		object[] p = new object[2];
 		p [0] = (string)ServerIP;
 		p [1] = (string)ServerPort;
@@ -55,10 +56,12 @@ public class GameServerUI : MonoBehaviour {
 	}
 	public void OnBackBtnClick()
 	{
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance().FSM.CurrentState.Message("BackToStart", null);
 	}
 	public void OnStartGameBtnClick()
 	{
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		GameStateManager.Instance().FSM.CurrentState.Message("StartGame", null);
 	}
 }

@@ -14,12 +14,15 @@ public class ShowCardUI : MonoBehaviour {
 
 
 	public void OnLeftBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		m_ctr.ShowPre();
 	}
 	public void OnRightBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		m_ctr.ShowNext();
 	}
 	public void OnCloseBtnClick(){
+		AudioManager.Instance.PlayAudio ("click_btn", false);
 		SceneLoading.LoadSceneName = GameGlobalData.LoginSceneName;
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync (GameGlobalData.LoadSceneName);
 	}
